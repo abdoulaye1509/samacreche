@@ -1,0 +1,84 @@
+<!-- entete -->
+    <div class=" card p-3 position-sticky top-0 z-1">
+    <div class="d-flex align-items-center justify-content-between mb-1">
+      <div class="fs-4 fw-bold">
+        Privileges {{list.length==les_privileges.length?list.length:list.length + "/" + les_privileges.length}}
+      </div>
+      <div class="d-flex">
+        <button class="btn btn-primary" (click)="openModal_add_privilege()"><i class="bi bi-plus-square-dotted"></i> Privilege</button>
+      </div>
+    </div>
+    <div class="d-flex gap-1 justify-content-end">
+      <ng-select [multiple]="true" [closeOnSelect]="false" placeholder="Rechercher ici ..." notFoundText="Aucun résultat" class="no-limit" [(ngModel)]="filter.text" (search)="filter_change($event)" (change)="filter_change()"
+        style="min-width: 400px;">
+        <!-- <ng-option disabled>Zones</ng-option>
+        @for (let zone of donnees_select.zone) {
+          <ng-option [value]="'zone_'+zone.id_zone">
+            {{ zone.nom }}
+          </ng-option>
+        }
+
+        <ng-option disabled>Domaines</ng-option>
+        @for (let domaine of donnees_select.domaine) {
+          <ng-option [value]="'domaine_'+domaine.id_domaine">
+            {{ domaine.nom }}
+          </ng-option>
+        }-->
+      </ng-select>
+    </div>
+  </div>
+  <!-- Liste des éléments sous forme de tableau -->
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">id_privilege</th>
+<th scope="col">nom_privilege</th>
+<th scope="col">description_privilege</th>
+<th scope="col">les_droits</th>
+<th scope="col">created_at</th>
+<th scope="col">updated_at</th>
+<th scope="col">created_by</th>
+<th scope="col">updated_by</th><th scope="col">actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Affichage du message de chargement -->
+        @if (loading_get_privilege) {
+          <tr>
+            <td colspan="9" class="text-center">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+            </td>
+          </tr>
+        }
+        <!-- Affichage du message lorsqu'il n'y a pas d'éléments -->
+        @if (list.length == 0) {
+          <tr>
+            <td colspan="9" class="text-center">
+              <div class="alert alert-info" role="alert">
+                Aucune donnée trouvée.
+              </div>
+            </td>
+          </tr>
+        }
+        <!-- Boucle pour afficher chaque élément de la liste -->
+        @for (one_privilege of list; track one_privilege) {
+          <tr>
+            <td>{{one_privilege.id_privilege}}</td>
+<td>{{one_privilege.nom_privilege}}</td>
+<td>{{one_privilege.description_privilege}}</td>
+<td>{{one_privilege.les_droits}}</td>
+<td>{{one_privilege.created_at}}</td>
+<td>{{one_privilege.updated_at}}</td>
+<td>{{one_privilege.created_by}}</td>
+<td>{{one_privilege.updated_by}}</td><td>
+    <i style="cursor: pointer;" class="bi bi-pencil-square me-2" (click)="openModal_edit_privilege(one_privilege)"></i>
+    <i style="cursor: pointer;" class="bi bi-trash" (click)="delete_privilege(one_privilege)"></i>
+</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>

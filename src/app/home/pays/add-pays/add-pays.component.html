@@ -1,0 +1,137 @@
+<div class="modal-header" data-bs-theme="ligth">
+      <h1 class="modal-title fs-5">Ajouter pays</h1>
+      <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="reactiveForm_add_pays" 
+            (ngSubmit)="onSubmit_add_pays()" 
+            #form_add_pays="ngForm" 
+            class="row">
+        
+            <!-- Champ Nom Pays -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="nom_pays">Nom Pays</label>
+              <input id="nom_pays" class="form-control" 
+                     type="text" 
+                     formControlName="nom_pays" 
+                     placeholder="Nom Pays"  
+                     [ngClass]="{ 'is-invalid': submitted && f.nom_pays.errors }"/>
+              @if (submitted && f.nom_pays.errors) {
+                <div class="invalid-feedback">
+                  @if (f.nom_pays.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Description Pays -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="description_pays">Description Pays</label>
+              <input id="description_pays" class="form-control" 
+                     type="text" 
+                     formControlName="description_pays" 
+                     placeholder="Description Pays"  
+                     [ngClass]="{ 'is-invalid': submitted && f.description_pays.errors }"/>
+              @if (submitted && f.description_pays.errors) {
+                <div class="invalid-feedback">
+                  @if (f.description_pays.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Lien Juridique -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="lien_juridique">Lien Juridique</label>
+              <input id="lien_juridique" class="form-control" 
+                     type="text" 
+                     formControlName="lien_juridique" 
+                     placeholder="Lien Juridique"  
+                     [ngClass]="{ 'is-invalid': submitted && f.lien_juridique.errors }"/>
+              @if (submitted && f.lien_juridique.errors) {
+                <div class="invalid-feedback">
+                  @if (f.lien_juridique.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Created At -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="created_at">Created At</label>
+              <input id="created_at" class="form-control" 
+                     type="text" 
+                     formControlName="created_at" 
+                     placeholder="Created At"  
+                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
+              @if (submitted && f.created_at.errors) {
+                <div class="invalid-feedback">
+                  @if (f.created_at.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Updated At -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="updated_at">Updated At</label>
+              <input id="updated_at" class="form-control" 
+                     type="text" 
+                     formControlName="updated_at" 
+                     placeholder="Updated At"  
+                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
+              @if (submitted && f.updated_at.errors) {
+                <div class="invalid-feedback">
+                  @if (f.updated_at.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Created By -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="created_by">Created By</label>
+              <input id="created_by" class="form-control" 
+                     type="text" 
+                     formControlName="created_by" 
+                     placeholder="Created By"  
+                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
+              @if (submitted && f.created_by.errors) {
+                <div class="invalid-feedback">
+                  @if (f.created_by.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Updated By -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="updated_by">Updated By</label>
+              <input id="updated_by" class="form-control" 
+                     type="text" 
+                     formControlName="updated_by" 
+                     placeholder="Updated By"  
+                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
+              @if (submitted && f.updated_by.errors) {
+                <div class="invalid-feedback">
+                  @if (f.updated_by.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary m-2" [disabled]="loading_add_pays || loading_get_details_add_pays_form"
+      (click)="form_add_pays.ngSubmit.emit()">
+      {{ loading_add_pays ? "En cours ..." : "Valider" }}
+      </button>
+      <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
+    </div>

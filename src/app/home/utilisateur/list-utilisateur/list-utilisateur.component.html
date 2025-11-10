@@ -1,0 +1,100 @@
+<!-- entete -->
+    <div class=" card p-3 position-sticky top-0 z-1">
+    <div class="d-flex align-items-center justify-content-between mb-1">
+      <div class="fs-4 fw-bold">
+        Utilisateurs {{list.length==les_utilisateurs.length?list.length:list.length + "/" + les_utilisateurs.length}}
+      </div>
+      <div class="d-flex">
+        <button class="btn btn-primary" (click)="openModal_add_utilisateur()"><i class="bi bi-plus-square-dotted"></i> Utilisateur</button>
+      </div>
+    </div>
+    <div class="d-flex gap-1 justify-content-end">
+      <ng-select [multiple]="true" [closeOnSelect]="false" placeholder="Rechercher ici ..." notFoundText="Aucun résultat" class="no-limit" [(ngModel)]="filter.text" (search)="filter_change($event)" (change)="filter_change()"
+        style="min-width: 400px;">
+        <!-- <ng-option disabled>Zones</ng-option>
+        @for (let zone of donnees_select.zone) {
+          <ng-option [value]="'zone_'+zone.id_zone">
+            {{ zone.nom }}
+          </ng-option>
+        }
+
+        <ng-option disabled>Domaines</ng-option>
+        @for (let domaine of donnees_select.domaine) {
+          <ng-option [value]="'domaine_'+domaine.id_domaine">
+            {{ domaine.nom }}
+          </ng-option>
+        }-->
+      </ng-select>
+    </div>
+  </div>
+  <!-- Liste des éléments sous forme de tableau -->
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">id_utilisateur</th>
+<th scope="col">id_genre</th>
+<th scope="col">id_groupe_sanguin</th>
+<th scope="col">id_statut_utilisateur</th>
+<th scope="col">prenom_utilisateur</th>
+<th scope="col">nom_utilisateur</th>
+<th scope="col">adresse_utilisateur</th>
+<th scope="col">telephone_utilisateur</th>
+<th scope="col">date_naissance</th>
+<th scope="col">email_utilisateur</th>
+<th scope="col">mot_de_passe</th>
+<th scope="col">profil_utilisateur</th>
+<th scope="col">created_at</th>
+<th scope="col">updated_at</th>
+<th scope="col">created_by</th>
+<th scope="col">updated_by</th><th scope="col">actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Affichage du message de chargement -->
+        @if (loading_get_utilisateur) {
+          <tr>
+            <td colspan="17" class="text-center">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+            </td>
+          </tr>
+        }
+        <!-- Affichage du message lorsqu'il n'y a pas d'éléments -->
+        @if (list.length == 0) {
+          <tr>
+            <td colspan="17" class="text-center">
+              <div class="alert alert-info" role="alert">
+                Aucune donnée trouvée.
+              </div>
+            </td>
+          </tr>
+        }
+        <!-- Boucle pour afficher chaque élément de la liste -->
+        @for (one_utilisateur of list; track one_utilisateur) {
+          <tr>
+            <td>{{one_utilisateur.id_utilisateur}}</td>
+<td>{{one_utilisateur.id_genre}}</td>
+<td>{{one_utilisateur.id_groupe_sanguin}}</td>
+<td>{{one_utilisateur.id_statut_utilisateur}}</td>
+<td>{{one_utilisateur.prenom_utilisateur}}</td>
+<td>{{one_utilisateur.nom_utilisateur}}</td>
+<td>{{one_utilisateur.adresse_utilisateur}}</td>
+<td>{{one_utilisateur.telephone_utilisateur}}</td>
+<td>{{one_utilisateur.date_naissance}}</td>
+<td>{{one_utilisateur.email_utilisateur}}</td>
+<td>{{one_utilisateur.mot_de_passe}}</td>
+<td>{{one_utilisateur.profil_utilisateur}}</td>
+<td>{{one_utilisateur.created_at}}</td>
+<td>{{one_utilisateur.updated_at}}</td>
+<td>{{one_utilisateur.created_by}}</td>
+<td>{{one_utilisateur.updated_by}}</td><td>
+    <i style="cursor: pointer;" class="bi bi-pencil-square me-2" (click)="openModal_edit_utilisateur(one_utilisateur)"></i>
+    <i style="cursor: pointer;" class="bi bi-trash" (click)="delete_utilisateur(one_utilisateur)"></i>
+</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>

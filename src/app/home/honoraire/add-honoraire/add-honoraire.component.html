@@ -1,0 +1,138 @@
+<div class="modal-header" data-bs-theme="ligth">
+      <h1 class="modal-title fs-5">Ajouter honoraire</h1>
+      <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="reactiveForm_add_honoraire" 
+            (ngSubmit)="onSubmit_add_honoraire()" 
+            #form_add_honoraire="ngForm" 
+            class="row">
+        <!-- Erreur : La clé étrangère id_utilisateur de la table honoraire n'est pas référencée -->
+
+            <!-- Champ Date Honoraire -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="date_honoraire">Date Honoraire</label>
+              <input id="date_honoraire" class="form-control" 
+                     type="text" 
+                     formControlName="date_honoraire" 
+                     placeholder="Date Honoraire"  
+                     [ngClass]="{ 'is-invalid': submitted && f.date_honoraire.errors }"/>
+              @if (submitted && f.date_honoraire.errors) {
+                <div class="invalid-feedback">
+                  @if (f.date_honoraire.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Libelle Honoraire -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="libelle_honoraire">Libelle Honoraire</label>
+              <input id="libelle_honoraire" class="form-control" 
+                     type="text" 
+                     formControlName="libelle_honoraire" 
+                     placeholder="Libelle Honoraire"  
+                     [ngClass]="{ 'is-invalid': submitted && f.libelle_honoraire.errors }"/>
+              @if (submitted && f.libelle_honoraire.errors) {
+                <div class="invalid-feedback">
+                  @if (f.libelle_honoraire.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Montant Recu -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="montant_recu">Montant Recu</label>
+              <input id="montant_recu" class="form-control" 
+                     type="text" 
+                     formControlName="montant_recu" 
+                     placeholder="Montant Recu"  
+                     [ngClass]="{ 'is-invalid': submitted && f.montant_recu.errors }"/>
+              @if (submitted && f.montant_recu.errors) {
+                <div class="invalid-feedback">
+                  @if (f.montant_recu.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Created At -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="created_at">Created At</label>
+              <input id="created_at" class="form-control" 
+                     type="text" 
+                     formControlName="created_at" 
+                     placeholder="Created At"  
+                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
+              @if (submitted && f.created_at.errors) {
+                <div class="invalid-feedback">
+                  @if (f.created_at.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Updated At -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="updated_at">Updated At</label>
+              <input id="updated_at" class="form-control" 
+                     type="text" 
+                     formControlName="updated_at" 
+                     placeholder="Updated At"  
+                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
+              @if (submitted && f.updated_at.errors) {
+                <div class="invalid-feedback">
+                  @if (f.updated_at.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Created By -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="created_by">Created By</label>
+              <input id="created_by" class="form-control" 
+                     type="text" 
+                     formControlName="created_by" 
+                     placeholder="Created By"  
+                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
+              @if (submitted && f.created_by.errors) {
+                <div class="invalid-feedback">
+                  @if (f.created_by.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Updated By -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="updated_by">Updated By</label>
+              <input id="updated_by" class="form-control" 
+                     type="text" 
+                     formControlName="updated_by" 
+                     placeholder="Updated By"  
+                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
+              @if (submitted && f.updated_by.errors) {
+                <div class="invalid-feedback">
+                  @if (f.updated_by.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary m-2" [disabled]="loading_add_honoraire || loading_get_details_add_honoraire_form"
+      (click)="form_add_honoraire.ngSubmit.emit()">
+      {{ loading_add_honoraire ? "En cours ..." : "Valider" }}
+      </button>
+      <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
+    </div>

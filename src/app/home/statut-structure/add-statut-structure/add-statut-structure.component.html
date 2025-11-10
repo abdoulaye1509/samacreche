@@ -1,0 +1,120 @@
+<div class="modal-header" data-bs-theme="ligth">
+      <h1 class="modal-title fs-5">Ajouter statut_structure</h1>
+      <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="reactiveForm_add_statut_structure" 
+            (ngSubmit)="onSubmit_add_statut_structure()" 
+            #form_add_statut_structure="ngForm" 
+            class="row">
+        
+            <!-- Champ Libelle Statut Structure -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="libelle_statut_structure">Libelle Statut Structure</label>
+              <input id="libelle_statut_structure" class="form-control" 
+                     type="text" 
+                     formControlName="libelle_statut_structure" 
+                     placeholder="Libelle Statut Structure"  
+                     [ngClass]="{ 'is-invalid': submitted && f.libelle_statut_structure.errors }"/>
+              @if (submitted && f.libelle_statut_structure.errors) {
+                <div class="invalid-feedback">
+                  @if (f.libelle_statut_structure.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Description Statut Structure -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="description_statut_structure">Description Statut Structure</label>
+              <input id="description_statut_structure" class="form-control" 
+                     type="text" 
+                     formControlName="description_statut_structure" 
+                     placeholder="Description Statut Structure"  
+                     [ngClass]="{ 'is-invalid': submitted && f.description_statut_structure.errors }"/>
+              @if (submitted && f.description_statut_structure.errors) {
+                <div class="invalid-feedback">
+                  @if (f.description_statut_structure.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Created At -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="created_at">Created At</label>
+              <input id="created_at" class="form-control" 
+                     type="text" 
+                     formControlName="created_at" 
+                     placeholder="Created At"  
+                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
+              @if (submitted && f.created_at.errors) {
+                <div class="invalid-feedback">
+                  @if (f.created_at.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Updated At -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="updated_at">Updated At</label>
+              <input id="updated_at" class="form-control" 
+                     type="text" 
+                     formControlName="updated_at" 
+                     placeholder="Updated At"  
+                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
+              @if (submitted && f.updated_at.errors) {
+                <div class="invalid-feedback">
+                  @if (f.updated_at.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Created By -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="created_by">Created By</label>
+              <input id="created_by" class="form-control" 
+                     type="text" 
+                     formControlName="created_by" 
+                     placeholder="Created By"  
+                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
+              @if (submitted && f.created_by.errors) {
+                <div class="invalid-feedback">
+                  @if (f.created_by.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Champ Updated By -->
+            <div class="form-group col-sm-12">
+              <label class="form-label" for="updated_by">Updated By</label>
+              <input id="updated_by" class="form-control" 
+                     type="text" 
+                     formControlName="updated_by" 
+                     placeholder="Updated By"  
+                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
+              @if (submitted && f.updated_by.errors) {
+                <div class="invalid-feedback">
+                  @if (f.updated_by.errors.required) {
+                    <div>Ce champ est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary m-2" [disabled]="loading_add_statut_structure || loading_get_details_add_statut_structure_form"
+      (click)="form_add_statut_structure.ngSubmit.emit()">
+      {{ loading_add_statut_structure ? "En cours ..." : "Valider" }}
+      </button>
+      <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
+    </div>
