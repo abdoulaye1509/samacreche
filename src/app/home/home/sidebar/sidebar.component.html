@@ -1,0 +1,33 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <a>
+      <img src="assets/images/logo.png" alt="Logo" class="logo">
+    </a>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul>
+      <li
+        *ngFor="let item of api.menu"
+        class="nav-item"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">
+        <a [routerLink]="item.path" [title]="item.name">
+          <i class="bi" [ngClass]="item.icon"></i>
+          <!-- <span class="label">{{ item.name }}</span> -->
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+
+  <div class="sidebar-footer">
+     <ul>
+      <li class="nav-item">
+        <a title="Déconnexion" (click)="api.deconnexion()">
+          <i class="bi bi-box-arrow-left"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+</aside>

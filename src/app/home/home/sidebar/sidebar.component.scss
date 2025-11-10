@@ -1,0 +1,55 @@
+.sidebar {
+  width: 90px;
+  background-color: #ffffff;
+  border-right: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 0;
+  height: 100%;
+}
+
+.logo {
+  width: 80px;
+  margin-bottom: 2rem;
+}
+
+.sidebar-nav {
+  flex-grow: 1;
+  overflow: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  margin-bottom: 2rem;
+}
+
+.sidebar-nav ul, .sidebar-footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Espace entre les icônes */
+}
+
+.nav-item a {
+  font-size: 1.5rem; /* Taille des icônes */
+  color: #303030; /* Couleur des icônes inactives */
+  text-decoration: none;
+  display: block;
+  transition:  color 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+
+}
+
+.nav-item a:hover {
+  color: #ffffff;
+  background-color: #004445;
+}
+
+/* Style pour l'élément actif */
+.nav-item.active a {
+  color: #ffffff;
+  background-color: #004445;
+}

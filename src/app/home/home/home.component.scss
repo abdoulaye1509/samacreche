@@ -1,0 +1,24 @@
+:host {
+  display: block;
+  height: 100vh; // Prend toute la hauteur de la vue
+}
+
+.dashboard-container {
+  display: flex;
+  height: 100%;
+  background-color: #f8f9fa; // Couleur de fond légèrement grise
+}
+
+.main-content {
+  flex-grow: 1; // Le contenu principal prend toute la largeur restante
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: hidden;
+}
+
+.content-wrapper {
+  padding: 2rem; // Marge intérieure pour le contenu
+  overflow-y: auto; // Permet de scroller si le contenu dépasse
+  flex-grow: 1;
+}

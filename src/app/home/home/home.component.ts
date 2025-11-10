@@ -1,39 +1,85 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { HeaderComponent } from './header/header.component';
+import { ApiService } from '../../service/api/api.service';
 
 @Component({
   selector: 'app-home',
   standalone: true, // Composant autonome
-  imports: [RouterModule,NgbDropdownModule],
+  imports: [RouterModule, NgbDropdownModule, SidebarComponent, HeaderComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
-  menu:any={
-    titre:"Menu",
-    items:[
-      {libelle:"Activite",path:"/home/activite"},
-{libelle:"Enfant",path:"/home/enfant"},
-{libelle:"Facturation",path:"/home/facturation"},
-{libelle:"FicheEnfant",path:"/home/fiche_enfant"},
-{libelle:"GalerieEnfant",path:"/home/galerie_enfant"},
-{libelle:"Genre",path:"/home/genre"},
-{libelle:"GroupeSanguin",path:"/home/groupe_sanguin"},
-{libelle:"Honoraire",path:"/home/honoraire"},
-{libelle:"LienParente",path:"/home/lien_parente"},
-{libelle:"MensualiteStructure",path:"/home/mensualite_structure"},
-{libelle:"Parent",path:"/home/parent"},
-{libelle:"ParentEnfant",path:"/home/parent_enfant"},
-{libelle:"Pays",path:"/home/pays"},
-{libelle:"PlanningEnfant",path:"/home/planning_enfant"},
-{libelle:"PlanningEquipe",path:"/home/planning_equipe"},
-{libelle:"Privilege",path:"/home/privilege"},
-{libelle:"StatutStructure",path:"/home/statut_structure"},
-{libelle:"StatutUtilisateur",path:"/home/statut_utilisateur"},
-{libelle:"Structure",path:"/home/structure"},
-{libelle:"StructureUtilisateur",path:"/home/structure_utilisateur"},
-{libelle:"Utilisateur",path:"/home/utilisateur"}
-    ]
+export class HomeComponent implements OnInit {
+  user_connected: any;
+  constructor(private api: ApiService) {
+    // api.custom_menu();
   }
+  ngOnInit(): void {
+    this.user_connected = this.api.token.user_connected
+    console.log("user_connected dans home", this.user_connected);
+    let id_utilisateur = this.api.token.user_connected.id_utilisateur;
+    this.get_utilisateur({
+      id_utilisateur: id_utilisateur,
+    });
+  }
+  // récuperer les informations de l'utilisateur connectés
+  // user_connected(){
+
+  // }
+  get_utilisateur(params: any) {
+    this.api.loading_get_utilisateur = true;
+    this.api.taf_post(
+      'utilisateur/auth',
+      params,
+      async (reponse: any) => {
+        if (reponse.status) {
+          const droits = this.normalizeLesDroits(reponse?.data?.action);
+          this.api.les_droits = droits;
+          console.log('droits= ', this.api.les_droits);
+          await this.api.save_on_local_storage("les_droits", droits);
+          this.api.custom_menu();
+          // console.log('auth= ', reponse);
+          this.api.user_connected = reponse.data;
+          console.log('auth= ', this.api.user_connected);
+          setTimeout(() => {
+            this.api.loading_get_utilisateur = false;
+          }, 500);
+        } else {
+          console.log("L'opération sur la table utilisateur a échoué. Réponse= ", reponse);
+          this.api.Swal_error("L'opération a echoué");
+          this.api.loading_get_utilisateur = false;
+        }
+      },
+      (error: any) => {
+        this.api.loading_get_utilisateur = false;
+      }
+    );
+  }
+  private normalizeLesDroits(raw: any): any[] {
+  if (Array.isArray(raw)) return raw;
+
+  if (raw && typeof raw === 'object' && 'les_droits' in raw) {
+    try {
+      let v: any = (raw as any).les_droits;            // { les_droits: '..."' }
+      let first = typeof v === 'string' ? JSON.parse(v) : v;
+      return Array.isArray(first)
+        ? first
+        : (typeof first === 'string' ? JSON.parse(first) : []);
+    } catch { return []; }
+  }
+
+  if (typeof raw === 'string') {
+    try {
+      const first = JSON.parse(raw);                   // string JSON
+      return Array.isArray(first)
+        ? first
+        : (typeof first === 'string' ? JSON.parse(first) : []);
+    } catch { return []; }
+  }
+
+  return [];
+}
 }
