@@ -27,60 +27,59 @@
       </ng-select>
     </div>
   </div>
-  <!-- Liste des éléments sous forme de tableau -->
-  <div class="table-responsive">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">id_mensualite_structure</th>
-<th scope="col">id_structure</th>
-<th scope="col">libelle_mensualite</th>
-<th scope="col">description_mensualite</th>
-<th scope="col">montant_total</th>
-<th scope="col">created_at</th>
-<th scope="col">updated_at</th>
-<th scope="col">created_by</th>
-<th scope="col">updated_by</th><th scope="col">actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Affichage du message de chargement -->
-        @if (loading_get_mensualite_structure) {
-          <tr>
-            <td colspan="10" class="text-center">
-              <div class="spinner-border" role="status">
-                <span class="visually-hidden">Chargement...</span>
-              </div>
-            </td>
-          </tr>
-        }
-        <!-- Affichage du message lorsqu'il n'y a pas d'éléments -->
-        @if (list.length == 0) {
-          <tr>
-            <td colspan="10" class="text-center">
-              <div class="alert alert-info" role="alert">
-                Aucune donnée trouvée.
-              </div>
-            </td>
-          </tr>
-        }
-        <!-- Boucle pour afficher chaque élément de la liste -->
-        @for (one_mensualite_structure of list; track one_mensualite_structure) {
-          <tr>
-            <td>{{one_mensualite_structure.id_mensualite_structure}}</td>
-<td>{{one_mensualite_structure.id_structure}}</td>
-<td>{{one_mensualite_structure.libelle_mensualite}}</td>
-<td>{{one_mensualite_structure.description_mensualite}}</td>
-<td>{{one_mensualite_structure.montant_total}}</td>
-<td>{{one_mensualite_structure.created_at}}</td>
-<td>{{one_mensualite_structure.updated_at}}</td>
-<td>{{one_mensualite_structure.created_by}}</td>
-<td>{{one_mensualite_structure.updated_by}}</td><td>
-    <i style="cursor: pointer;" class="bi bi-pencil-square me-2" (click)="openModal_edit_mensualite_structure(one_mensualite_structure)"></i>
-    <i style="cursor: pointer;" class="bi bi-trash" (click)="delete_mensualite_structure(one_mensualite_structure)"></i>
-</td>
-          </tr>
-        }
-      </tbody>
-    </table>
+  <br>
+  
+<!-- LISTE EN CARTES -->
+<div *ngIf="!loading_get_mensualite_structure && list.length" class="row g-3">
+  <div class="col-12 col-md-6 col-xl-4" *ngFor="let m of list; trackBy: trackById">
+   <div class="card shadow-sm hover-card h-100 mensualite-card">
+  <div class="card-header border-0 pb-0 bg-white">
+    <div class="d-flex justify-content-between align-items-start">
+      <div class="d-flex align-items-center gap-2">
+        <div class="icon-square bg-primary-subtle text-primary">
+          <i class="bi bi-cash-coin fs-5"></i>
+        </div>
+        <div>
+          <div class="fw-bold text-truncate" title="{{ m.libelle_mensualite }}">
+            {{ m.libelle_mensualite || 'Sans libellé' }}
+          </div>
+         
+        </div>
+      </div>
+      
+      </div>
   </div>
+
+  <div class="card-body pt-2 pb-2">
+    <div class="text-end">
+      <div class="fw-bolder display-6 text-dark" title="Montant total">
+        {{ api.formatMontant(m.montant_total, 0) }}
+      </div>
+      <span class="text-muted small fw-semibold">FCFA</span>
+    </div>
+  </div>
+
+  <div class="card-footer bg-light-subtle d-flex justify-content-between align-items-center border-0 pt-2 pb-2">
+    <div class="text-muted small text-truncate me-2" title="{{ m.description_mensualite }}">
+      {{ m.description_mensualite || 'Description non disponible' }}
+    </div>
+    <div class="d-flex gap-2 flex-shrink-0">
+      <button type="button" class="btn btn-primary-subtle btn-sm p-1"
+              (click)="openModal_edit_mensualite_structure(m)" title="Modifier">
+        <i class="bi bi-pencil-square"></i>
+      </button>
+      <button type="button" class="btn btn-danger-subtle btn-sm p-1"
+              (click)="delete_mensualite_structure(m)" title="Supprimer">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
+<!-- états vides / chargement identiques à avant -->
+<div *ngIf="!loading_get_mensualite_structure && !list.length" class="text-center text-secondary py-5">
+  <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+  Aucune mensualité trouvée.
+</div>

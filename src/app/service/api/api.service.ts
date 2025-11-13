@@ -12,7 +12,8 @@ import Swal from 'sweetalert2';
 export class ApiService {
   local_storage_prefixe = "samacreche.angular";
   taf_base_url = "https://samacreche.jambar.tech/taf/";
-private superAdminId = 1;
+    filesBaseUrl = 'https://samacreche.jambar.tech/';
+
   network: any = {
     token: undefined,
     status: true,
@@ -77,7 +78,7 @@ loading_get_utilisateur: boolean = false;
 
   {
     name: 'Équipes',
-    path: '/home/equipe',
+    path: '/home/utilisateur',
     icon: 'bi-person-badge-fill',
     children: [],
     les_actions: [
@@ -100,14 +101,13 @@ loading_get_utilisateur: boolean = false;
       { menu: 'Activité', ongle: 'Supprimer', id: 'delete_activite', action: 'Supprimer une activité' }
     ]
   },
-
   {
     name: 'Plannings',
-    path: '/home/planning',
+    path: '/home/planning_enfant',
     icon: 'bi-calendar-week-fill',
     children: [
-      { name: 'Planning Enfants', path: '/home/planning/enfant', icon: 'bi-calendar-heart-fill' },
-      { name: 'Planning Équipes', path: '/home/planning/equipe', icon: 'bi-calendar-check-fill' }
+      // { name: 'Planning Enfants', path: '/home/planning/enfant', icon: 'bi-calendar-heart-fill' },
+      // { name: 'Planning Équipes', path: '/home/planning/equipe', icon: 'bi-calendar-check-fill' }
     ],
     les_actions: [
       { menu: 'Planning', ongle: 'Vue', id: '/home/planning', action: 'Accéder au planning' }
@@ -116,7 +116,7 @@ loading_get_utilisateur: boolean = false;
 
   {
     name: 'Galerie',
-    path: '/home/galerie',
+    path: '/home/galerie_enfant',
     icon: 'bi-images',
     children: [],
     les_actions: [
@@ -266,6 +266,30 @@ loading_get_utilisateur: boolean = false;
       }
     )
   }
+    async taf_post_object(path: string, data: any, ok: Function, ko: Function, force_online = false) {
+    if (!force_online) {
+      const cacheKey = path + JSON.stringify(data);
+      const last = path.split('/').pop() || '';
+      if (last.includes('get')) {
+        const offline = await this.get_from_local_storage(cacheKey);
+        if (offline != null) ok(offline);
+      }
+    }
+    const api_url = this.taf_base_url + path;
+    const httpOptions = { headers: new HttpHeaders({ Authorization: 'Bearer ' + await this.get_token() }) };
+    this.http.post(api_url, data, httpOptions).subscribe(
+      (r: any) => { ok(r); this.save_on_local_storage(path + JSON.stringify(data), r); },
+      (e: any) => this.on_taf_post_error(e, ko)
+    );
+  }
+    async taf_post_with_files(path: string, data: any, files: any, ok: Function, ko: Function) {
+    const api_url = this.taf_base_url + path;
+    const httpOptions = { headers: new HttpHeaders({ Authorization: 'Bearer ' + await this.get_token() }) };
+    const fd = new FormData();
+    for (const k in data) fd.append(k, typeof data[k] === 'object' && data[k] !== null ? JSON.stringify(data[k]) : String(data[k] ?? ''));
+    for (const k in files) for (let i = 0; i < (files[k]?.length || 0); i++) fd.append(k + '[]', files[k][i]);
+    this.http.post(api_url, fd, httpOptions).subscribe((r: any) => ok(r), (e: any) => this.on_taf_post_error(e, ko));
+  }
   async taf_post_login(path: string, data_to_send: any, on_success: Function, on_error: Function) {
     let api_url = this.taf_base_url + path;
     
@@ -330,15 +354,66 @@ loading_get_utilisateur: boolean = false;
     });
     return info
   }
+Swal_confirm(title: string, text?: string) {
+  return Swal.fire({
+    title, text,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Oui, supprimer',
+    cancelButtonText: 'Annuler',
+    reverseButtons: true
+  });
+}
 
 
-  deconnexion() {
-    this.delete_from_local_storage('token');
-    this.les_droits = [];
-    this.menu = [];
-    this.token = { token_key: null, token_decoded: null, user_connected: null, is_expired: null, date_expiration: null };
-    this.route.navigate(['/']);
-  }
+  // deconnexion() {
+  //   this.delete_from_local_storage('token');
+  //   this.les_droits = [];
+  //   this.menu = [];
+  //   this.token = { token_key: null, token_decoded: null, user_connected: null, is_expired: null, date_expiration: null };
+  //   this.route.navigate(['/']);
+  // }
+// api.service.ts
+async deconnexion() {
+  const { isConfirmed } = await Swal.fire({
+    title: 'Se déconnecter ?',
+    text: 'Vous allez être redirigé vers la page de connexion.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Oui, me déconnecter',
+    cancelButtonText: 'Annuler',
+    reverseButtons: true,
+    focusCancel: true
+  });
+
+  if (!isConfirmed) return; // l’utilisateur a annulé
+
+  // purge locale
+  await this.delete_from_local_storage('token');
+  await this.delete_from_local_storage('infos');
+  await this.delete_from_local_storage('les_droits');
+
+  this.les_droits = [];
+  this.menu = [];
+  this.token = {
+    token_key: null,
+    token_decoded: null,
+    user_connected: null,
+    is_expired: null,
+    date_expiration: null
+  };
+  this.infos = {
+    utilisateur: {}, les_structures: [], current_structure: {},
+    token_key: null,
+    token: { token_key: null, token_decoded: null, user_connected: null, is_expired: null, date_expiration: null },
+    les_droits_utilisateur: [],
+  };
+
+  // (optionnel) petit toast
+  await Swal.fire({ title: 'Déconnecté', icon: 'success', timer: 1200, showConfirmButton: false });
+
+  this.route.navigate(['/login']); // ou ['/'] selon ta route de connexion
+}
 
   // ---------- DROITS (source unique)
   private parseMaybeString(x: any): any[] {
@@ -355,7 +430,7 @@ loading_get_utilisateur: boolean = false;
   }
 
 can(id: string) {
-  console.log(this.infos.token.user_connected, 'user_connected');
+  // console.log(this.infos.token.user_connected, 'user_connected');
     if (this.infos.token.user_connected.id_utilisateur == 1) {// ne pas restreindre les droits de l'administrateur JANT TECH support
       return true
     }
@@ -367,7 +442,7 @@ can(id: string) {
     this.menu = this.full_menu.filter((one: any) => {// pour chaque module
       return this.can(one.path)
     })
-    console.log(this.menu, 'menuFalll');
+    console.log('this.menu', this.menu);
     //.filter((one: any) => one.items.length > 0)// filtrer la module non vide
   }
 
@@ -413,4 +488,104 @@ can(id: string) {
     await this.update_infos({ token_key: tk, utilisateur: { les_droits_utilisateur: JSON.stringify(droits) }, les_structures: [] });
     return this.infos;
   }
+
+  // --- Format: 1234567.89 -> "1,234,567.89"
+formatMontant(value: number | string | null | undefined, decimals = 0, sep = ',', dec = '.'): string {
+  if (value === null || value === undefined || value === '') return '';
+  const n = typeof value === 'number' ? value : Number(String(value).replace(/[^\d.-]/g, ''));
+  if (isNaN(n)) return '';
+  const fixed = decimals > 0 ? n.toFixed(decimals) : Math.round(n).toString();
+  const [intP, decP] = fixed.split('.');
+  const intWithSep = intP.replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+  return decP ? `${intWithSep}${dec}${decP}` : intWithSep;
+}
+
+// --- Unformat: "1,234,567.89" -> 1234567.89 (number)
+unformatMontant(str: string, sep = ',', dec = '.'): number {
+  if (!str) return NaN;
+  // Supprime les séparateurs de milliers et remplace le séparateur décimal par un point
+  const normalized = str.replace(new RegExp(`\\${sep}`, 'g'), '').replace(dec, '.');
+  const n = Number(normalized.replace(/[^\d.-]/g, ''));
+  return n;
+}
+
+/**
+ * A brancher sur (input) pour formater visuellement.
+ * - event: l'événement input
+ * - form: le FormGroup
+ * - controlName: le nom du contrôle (ex: 'montant_total')
+ * - opts.decimals: nb décimales (0, 2…)
+ * - opts.sep / opts.dec: séparateurs (par défaut ',' et '.')
+ */
+formatMontantInput(
+  event: Event,
+  form: import('@angular/forms').FormGroup,
+  controlName: string,
+  opts: { decimals?: number; sep?: string; dec?: string } = {}
+): void {
+  const { decimals = 0, sep = ',', dec = '.' } = opts;
+
+  const input = event.target as HTMLInputElement;
+  const start = input.selectionStart ?? input.value.length;
+
+  // 1) Nettoie ce que tape l'utilisateur (garde chiffres, - et séparateur décimal)
+  const raw = input.value.replace(/[^\d\-\.,]/g, '');
+
+  // 2) Convertit en nombre
+  const numeric = this.unformatMontant(raw, sep, dec);
+  // Met à jour le FormControl avec la vraie valeur numérique
+  form.get(controlName)?.setValue(Number.isFinite(numeric) ? numeric : null, {
+    emitEvent: true,
+    emitModelToViewChange: false, // on gère nous-mêmes l'affichage
+  });
+
+  // 3) Reformate pour l’affichage (avec séparateurs)
+  const display = Number.isFinite(numeric) ? this.formatMontant(numeric, decimals, sep, dec) : '';
+
+  // 4) Réinjecte la valeur affichée dans l’input (ne pas casser le caret)
+  input.value = display;
+
+  // Tente de repositionner le curseur intelligemment
+  const diff = display.length - raw.length;
+  const newPos = Math.max(0, start + diff);
+  input.setSelectionRange(newPos, newPos);
+}
+  currentDate() {
+    const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+  }
+
+resolveFileUrl(path: string | null | undefined): string {
+  if (!path) return '';
+
+  let raw = String(path).trim();
+  if (!raw) return '';
+
+  // 1) cas déjà “utilisable” tel quel
+  if (/^data:/i.test(raw)) return raw;                 // data URI
+  if (/^https?:\/\//i.test(raw)) {
+    // normalise juste les doublons dans la partie path
+    try {
+      const u = new URL(raw);
+      u.pathname = u.pathname.replace(/\/taf\/taf\//g, '/taf/').replace(/\/{2,}/g, '/');
+      return u.toString();
+    } catch { return raw; }
+  }
+  if (/^\/\//.test(raw)) {                             // protocol-relative //cdn...
+    return (window.location.protocol || 'https:') + raw;
+  }
+  if (/^(assets\/|\/assets\/)/i.test(raw)) return raw; // assets locaux
+
+  // 2) normalisation chemin relatif
+  raw = raw.replace(/\\/g, '/');                       // anti backslashes
+  // assure un leading slash
+  let clean = '/' + raw.replace(/^\/+/, '');
+
+  // corrige doublons /taf/taf/ et // multiples
+  clean = clean.replace(/\/taf\/taf\//g, '/taf/').replace(/\/{2,}/g, '/');
+
+  // 3) assemble avec l’origin (filesBaseUrl)
+  const base = this.filesBaseUrl.replace(/\/+$/, '');  // pas de trailing /
+  // encodeURI n’encode pas '/', c’est ce qu’on veut
+  return base + encodeURI(clean);
+}
 }

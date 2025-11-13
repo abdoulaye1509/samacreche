@@ -32,9 +32,7 @@ export class AddLienParenteComponent implements OnInit, OnDestroy {
       this.reactiveForm_add_lien_parente  = this.formBuilder.group({
           libelle_lien_parente: [""],
 description: [""],
-updated_at: [""],
-created_by: [""],
-updated_by: [""]
+
       });
   }
 
@@ -49,6 +47,7 @@ updated_by: [""]
           return;
       }
       var lien_parente =this.reactiveForm_add_lien_parente .value
+      lien_parente.created_by = this.api.user_connected.id_utilisateur
       this.add_lien_parente (lien_parente )
   }
   // vider le formulaire

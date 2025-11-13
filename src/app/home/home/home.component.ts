@@ -18,22 +18,20 @@ export class HomeComponent implements OnInit {
     // api.custom_menu();
   }
   ngOnInit(): void {
-    this.user_connected = this.api.token.user_connected
-    console.log("user_connected dans home", this.user_connected);
+    // this.user_connected = this.api.token.user_connected
+    // console.log("user_connected dans home", this.user_connected);
     let id_utilisateur = this.api.token.user_connected.id_utilisateur;
-    this.get_utilisateur({
-      id_utilisateur: id_utilisateur,
-    });
+    this.get_utilisateur();
+
   }
   // récuperer les informations de l'utilisateur connectés
   // user_connected(){
 
   // }
-  get_utilisateur(params: any) {
+  get_utilisateur() {
+    console.log("id_utilisateur dans get_utilisateur", this.api.token.user_connected.id_utilisateur);
     this.api.loading_get_utilisateur = true;
-    this.api.taf_post(
-      'utilisateur/auth',
-      params,
+    this.api.taf_post_object('utilisateur/auth',{ 'u.id_utilisateur': this.api.token.user_connected.id_utilisateur },
       async (reponse: any) => {
         if (reponse.status) {
           const droits = this.normalizeLesDroits(reponse?.data?.action);
@@ -43,7 +41,7 @@ export class HomeComponent implements OnInit {
           this.api.custom_menu();
           // console.log('auth= ', reponse);
           this.api.user_connected = reponse.data;
-          console.log('auth= ', this.api.user_connected);
+          console.log('utilisateur/auth= ', this.api.user_connected);
           setTimeout(() => {
             this.api.loading_get_utilisateur = false;
           }, 500);
@@ -59,27 +57,27 @@ export class HomeComponent implements OnInit {
     );
   }
   private normalizeLesDroits(raw: any): any[] {
-  if (Array.isArray(raw)) return raw;
+    if (Array.isArray(raw)) return raw;
 
-  if (raw && typeof raw === 'object' && 'les_droits' in raw) {
-    try {
-      let v: any = (raw as any).les_droits;            // { les_droits: '..."' }
-      let first = typeof v === 'string' ? JSON.parse(v) : v;
-      return Array.isArray(first)
-        ? first
-        : (typeof first === 'string' ? JSON.parse(first) : []);
-    } catch { return []; }
+    if (raw && typeof raw === 'object' && 'les_droits' in raw) {
+      try {
+        let v: any = (raw as any).les_droits;            // { les_droits: '..."' }
+        let first = typeof v === 'string' ? JSON.parse(v) : v;
+        return Array.isArray(first)
+          ? first
+          : (typeof first === 'string' ? JSON.parse(first) : []);
+      } catch { return []; }
+    }
+
+    if (typeof raw === 'string') {
+      try {
+        const first = JSON.parse(raw);                   // string JSON
+        return Array.isArray(first)
+          ? first
+          : (typeof first === 'string' ? JSON.parse(first) : []);
+      } catch { return []; }
+    }
+
+    return [];
   }
-
-  if (typeof raw === 'string') {
-    try {
-      const first = JSON.parse(raw);                   // string JSON
-      return Array.isArray(first)
-        ? first
-        : (typeof first === 'string' ? JSON.parse(first) : []);
-    } catch { return []; }
-  }
-
-  return [];
-}
 }

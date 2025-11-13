@@ -1,0 +1,17 @@
+.sheet{ background:#fff; border:1px solid #e7e7e7; border-radius:18px; }
+.section-cap{ font-weight:600; color:#111827; margin-bottom:.5rem; }
+.form-label.required::after{ content:' *'; color:#ef4444; }
+.form-control, .form-select{ border:1px solid #e5e7eb; border-radius:8px; }
+.form-control::placeholder{ color:#9ca3af; }
+.btn-success{ background:#176a5b; border-color:#176a5b; }
+.btn-success:hover{ background:#145b4e; border-color:#145b4e; }
+/* ng-select invalid */
+.ng-select.is-invalid .ng-select-container{ border-color:#dc3545 !important; }
+/* carte parent */
+.parent-card{ background:#f9fafb; }
+
+
+
+/* Preview image carré */
+.img-preview{ width:96px; height:96px; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden; background:#fff; display:flex; align-items:center; justify-content:center; }
+.img-preview img{ width:100%; height:100%; object-fit:cover; }

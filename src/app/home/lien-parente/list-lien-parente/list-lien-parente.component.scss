@@ -1,0 +1,29 @@
+/* Effet de survol sur la carte */
+.hover-card { 
+    transition: transform .15s ease, box-shadow .15s ease; 
+}
+.hover-card:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,.06); 
+}
+
+/* Style pour l'icône de la carte */
+.icon-circle {
+    width: 45px; 
+    height: 45px; 
+    border-radius: 50%;
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    /* Utilisation de couleurs Bootstrap (ex: bg-info-subtle & text-info) */
+}
+
+/* Limiter le texte de la description à 3 lignes */
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 3.5rem; /* Pour garder les cartes à la même hauteur */
+}

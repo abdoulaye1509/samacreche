@@ -5,11 +5,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
   import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   import { NgSelectModule } from '@ng-select/ng-select';
 import { LienParenteTafType } from '../taf-type/lien-parente-taf-type';
-  import { FormsModule } from '@angular/forms';
+  import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
   @Component({
     selector: 'app-list-lien-parente',
     standalone: true, // Composant autonome
-    imports: [FormsModule,NgSelectModule], // Dépendances importées
+    imports: [FormsModule,NgSelectModule,CommonModule,ReactiveFormsModule], // Dépendances importées
     templateUrl: './list-lien-parente.component.html',
     styleUrls: ['./list-lien-parente.component.scss']
   })
@@ -21,6 +22,7 @@ import { LienParenteTafType } from '../taf-type/lien-parente-taf-type';
     filter: any = {
       text: [],
     };
+    palette = ['primary','success','danger','warning','info','secondary'];
     constructor(public api: ApiService,private modalService: NgbModal) {
   
     }
@@ -120,4 +122,41 @@ import { LienParenteTafType } from '../taf-type/lien-parente-taf-type';
         }
       })
     }
+    /** Renvoie les classes bg/text Bootstrap 5.3 “subtle” en fonction du libellé */
+  colorClass(seed: string | undefined | null): string {
+    const s = (seed || '').toString();
+    let h = 0; for (let i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
+    const tone = this.palette[h % this.palette.length];
+    return `bg-${tone}-subtle text-${tone}`;
+  }
+
+    /** Confirmation + suppression optimiste */
+  async confirm_delete(item: any) {
+    const swal = await this.api.Swal_confirm(
+      'Supprimer ce lien ?',
+      `« ${item?.libelle_lien_parente || 'Sans libellé'} » sera supprimé.`
+    );
+    if (!swal.isConfirmed) return;
+
+    // suppression optimiste
+    const before = [...this.list];
+    this.list = this.list.filter(x => x.id_lien_parente !== item.id_lien_parente);
+
+    this.loading_delete_lien_parente = true;
+    this.api.taf_post("lien_parente/delete", item, (reponse: any) => {
+      this.loading_delete_lien_parente = false;
+      if (reponse?.status) {
+        // enlève aussi de la source pour cohérence
+        this.les_lien_parentes = this.les_lien_parentes
+          .filter(x => x.id_lien_parente !== item.id_lien_parente);
+        this.api.Swal_success("Opération éffectuée avec succès");
+      } else {
+        this.list = before; // rollback
+        this.api.Swal_error("L'opération a échoué");
+      }
+    }, (_err: any) => {
+      this.loading_delete_lien_parente = false;
+      this.list = before; // rollback
+    });
+  }
   }

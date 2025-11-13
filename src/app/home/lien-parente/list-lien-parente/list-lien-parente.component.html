@@ -1,17 +1,19 @@
 <!-- entete -->
-    <div class=" card p-3 position-sticky top-0 z-1">
-    <div class="d-flex align-items-center justify-content-between mb-1">
-      <div class="fs-4 fw-bold">
-        LienParentes {{list.length==les_lien_parentes.length?list.length:list.length + "/" + les_lien_parentes.length}}
-      </div>
-      <div class="d-flex">
-        <button class="btn btn-primary" (click)="openModal_add_lien_parente()"><i class="bi bi-plus-square-dotted"></i> LienParente</button>
-      </div>
+<div class=" card p-3 position-sticky top-0 z-1">
+  <div class="d-flex align-items-center justify-content-between mb-1">
+    <div class="fs-4 fw-bold">
+      LienParentes {{list.length==les_lien_parentes.length?list.length:list.length + "/" + les_lien_parentes.length}}
     </div>
-    <div class="d-flex gap-1 justify-content-end">
-      <ng-select [multiple]="true" [closeOnSelect]="false" placeholder="Rechercher ici ..." notFoundText="Aucun résultat" class="no-limit" [(ngModel)]="filter.text" (search)="filter_change($event)" (change)="filter_change()"
-        style="min-width: 400px;">
-        <!-- <ng-option disabled>Zones</ng-option>
+    <div class="d-flex">
+      <button class="btn btn-primary" (click)="openModal_add_lien_parente()"><i class="bi bi-plus-square-dotted"></i>
+        LienParente</button>
+    </div>
+  </div>
+  <div class="d-flex gap-1 justify-content-end">
+    <ng-select [multiple]="true" [closeOnSelect]="false" placeholder="Rechercher ici ..." notFoundText="Aucun résultat"
+      class="no-limit" [(ngModel)]="filter.text" (search)="filter_change($event)" (change)="filter_change()"
+      style="min-width: 400px;">
+      <!-- <ng-option disabled>Zones</ng-option>
         @for (let zone of donnees_select.zone) {
           <ng-option [value]="'zone_'+zone.id_zone">
             {{ zone.nom }}
@@ -24,59 +26,65 @@
             {{ domaine.nom }}
           </ng-option>
         }-->
-      </ng-select>
+    </ng-select>
+  </div>
+</div>
+<div *ngIf="!loading_get_lien_parente && list.length" class="row g-3 mt-2">
+  @for (one_lien_parente of list; track one_lien_parente.id_lien_parente) {
+    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+      <div class="card shadow-sm hover-card h-100">
+        <div class="card-body pb-0">
+          <div class="d-flex align-items-center gap-3">
+            <div class="icon-circle"
+                 [ngClass]="colorClass(one_lien_parente.libelle_lien_parente)">
+              <i class="bi bi-person-hearts fs-5"></i>
+            </div>
+
+            <div>
+              <div class="fw-bold text-truncate fs-5"
+                   [title]="one_lien_parente.libelle_lien_parente">
+                {{ one_lien_parente.libelle_lien_parente || 'Lien Inconnu' }}
+              </div>
+              <div class="text-muted small">
+                #{{ one_lien_parente.id_lien_parente }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body pt-2 pb-2">
+          <div class="text-muted small text-truncate-3"
+               [title]="one_lien_parente.description">
+            {{ one_lien_parente.description || '— Aucune description fournie —' }}
+          </div>
+        </div>
+
+        <div class="card-footer bg-transparent d-flex justify-content-end gap-2 pt-2">
+          <button type="button" class="btn btn-outline-primary btn-sm"
+                  (click)="openModal_edit_lien_parente(one_lien_parente)" title="Modifier">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+          <button type="button" class="btn btn-outline-danger btn-sm"
+                  (click)="confirm_delete(one_lien_parente)" title="Supprimer">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
     </div>
+  }
+</div>
+
+@if (loading_get_lien_parente) {
+  <div class="text-center text-secondary py-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <div class="mt-2">Chargement des liens de parenté...</div>
   </div>
-  <!-- Liste des éléments sous forme de tableau -->
-  <div class="table-responsive">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">id_lien_parente</th>
-<th scope="col">libelle_lien_parente</th>
-<th scope="col">description</th>
-<th scope="col">created_at</th>
-<th scope="col">updated_at</th>
-<th scope="col">created_by</th>
-<th scope="col">updated_by</th><th scope="col">actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Affichage du message de chargement -->
-        @if (loading_get_lien_parente) {
-          <tr>
-            <td colspan="8" class="text-center">
-              <div class="spinner-border" role="status">
-                <span class="visually-hidden">Chargement...</span>
-              </div>
-            </td>
-          </tr>
-        }
-        <!-- Affichage du message lorsqu'il n'y a pas d'éléments -->
-        @if (list.length == 0) {
-          <tr>
-            <td colspan="8" class="text-center">
-              <div class="alert alert-info" role="alert">
-                Aucune donnée trouvée.
-              </div>
-            </td>
-          </tr>
-        }
-        <!-- Boucle pour afficher chaque élément de la liste -->
-        @for (one_lien_parente of list; track one_lien_parente) {
-          <tr>
-            <td>{{one_lien_parente.id_lien_parente}}</td>
-<td>{{one_lien_parente.libelle_lien_parente}}</td>
-<td>{{one_lien_parente.description}}</td>
-<td>{{one_lien_parente.created_at}}</td>
-<td>{{one_lien_parente.updated_at}}</td>
-<td>{{one_lien_parente.created_by}}</td>
-<td>{{one_lien_parente.updated_by}}</td><td>
-    <i style="cursor: pointer;" class="bi bi-pencil-square me-2" (click)="openModal_edit_lien_parente(one_lien_parente)"></i>
-    <i style="cursor: pointer;" class="bi bi-trash" (click)="delete_lien_parente(one_lien_parente)"></i>
-</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+}
+
+<div *ngIf="!loading_get_lien_parente && !list.length" class="text-center text-secondary py-5">
+  <i class="bi bi-person-bounding-box fs-1 d-block mb-2"></i>
+  Aucun lien de parenté n'a été trouvé.
+  <p class="small text-muted mt-2">Cliquez sur le bouton "LienParente" pour en ajouter un.</p>
+</div>

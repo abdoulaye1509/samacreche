@@ -1,0 +1,19 @@
+/* Feuille claire et arrondis */
+.sheet{ background:#fff; border:1px solid #e7e7e7; border-radius:18px; }
+.section-cap{ font-weight:600; color:#111827; margin-bottom:.5rem; }
+
+/* Indicateur de champs requis */
+.form-label.required::after{ content:' *'; color:#ef4444; }
+
+/* Inputs / selects */
+.form-control, .form-select{ border:1px solid #e5e7eb; border-radius:8px; }
+.form-control::placeholder{ color:#9ca3af; }
+
+/* Bouton principal (vert) */
+.btn-success{ background:#4A90E2; border-color:#4A90E2; }
+.btn-success:hover{ background:#4A90E2; border-color:#4A90E2; }
+
+/* petit helper pour marquer ng-select invalid quand on force .is-invalid */
+.ng-select.is-invalid .ng-select-container{
+  border-color:#dc3545 !important;
+}

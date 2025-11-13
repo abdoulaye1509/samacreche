@@ -6,10 +6,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
   import { NgSelectModule } from '@ng-select/ng-select';
 import { MensualiteStructureTafType } from '../taf-type/mensualite-structure-taf-type';
   import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
   @Component({
     selector: 'app-list-mensualite-structure',
     standalone: true, // Composant autonome
-    imports: [FormsModule,NgSelectModule], // Dépendances importées
+    imports: [FormsModule,NgSelectModule,CommonModule], // Dépendances importées
     templateUrl: './list-mensualite-structure.component.html',
     styleUrls: ['./list-mensualite-structure.component.scss']
   })
@@ -120,4 +121,6 @@ import { MensualiteStructureTafType } from '../taf-type/mensualite-structure-taf
         }
       })
     }
+    trackById = (_: number, m: any) => m?.id_mensualite_structure ?? _;
+
   }

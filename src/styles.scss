@@ -2,3 +2,54 @@
 
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
+@import url(../node_modules/@ng-select/ng-select/themes/default.theme.css);
+
+
+
+*,
+*::after,
+*::before {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Lato", sans-serif;;
+}
+
+body {
+  max-width: 2000px;
+  margin: auto;
+}
+
+.clique{
+  cursor: pointer;
+}
+.btn.btn-primary{
+  background-color: #4A90E2 !important;
+}
+.modal-header{
+  background-color: #4A90E2 !important;
+}
+
+/* dégradé or (même rendu que zone) */
+.modal .modal-header {
+  background: linear-gradient(
+    90deg,
+    #4A90E2 0%,
+    #4A90E2 55%,
+    #4A90E2 100%
+  ) !important;
+  color: white !important;
+  border-bottom: 1px solid #4A90E2 !important;
+}
+
+:root{
+  --topbar-h: 64px;          /* hauteur de ta barre du haut */
+  --app-sidenav-w: 72px;      /* largeur de la 1ère sidebar (icônes) */
+  --param-sidenav-w: 220px;   /* largeur de la sidebar Paramètres */
+//
+}
+.fc-daygrid-day-number,.fc-col-header-cell-cushion{
+  color: gray !important;
+  text-decoration: none;
+  font-weight: bold;
+}

@@ -5,11 +5,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
   import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   import { NgSelectModule } from '@ng-select/ng-select';
 import { EnfantTafType } from '../taf-type/enfant-taf-type';
-  import { FormsModule } from '@angular/forms';
+  import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DetailEnfantComponent } from '../detail-enfant/detail-enfant.component';
+import { CommonModule } from '@angular/common';
   @Component({
     selector: 'app-list-enfant',
     standalone: true, // Composant autonome
-    imports: [FormsModule,NgSelectModule], // Dépendances importées
+    imports: [FormsModule,NgSelectModule,CommonModule,DetailEnfantComponent,AddEnfantComponent,EditEnfantComponent,ReactiveFormsModule], // Dépendances importées
     templateUrl: './list-enfant.component.html',
     styleUrls: ['./list-enfant.component.scss']
   })
@@ -91,7 +93,7 @@ import { EnfantTafType } from '../taf-type/enfant-taf-type';
       let options: any = {
         centered: true,
         scrollable: true,
-        size: "lg"//'sm' | 'lg' | 'xl' | string
+        size: "xl"//'sm' | 'lg' | 'xl' | string
       }
       const modalRef = this.modalService.open(AddEnfantComponent, { ...options, backdrop: 'static' })
       modalRef.result.then((result: any) => {
@@ -107,7 +109,7 @@ import { EnfantTafType } from '../taf-type/enfant-taf-type';
       let options: any = {
         centered: true,
         scrollable: true,
-        size: "lg"//'sm' | 'lg' | 'xl' | string
+        size: "xl"//'sm' | 'lg' | 'xl' | string
       }
       const modalRef = this.modalService.open(EditEnfantComponent, { ...options, backdrop: 'static', })
       modalRef.componentInstance.enfant_to_edit = one_enfant;
@@ -120,4 +122,43 @@ import { EnfantTafType } from '../taf-type/enfant-taf-type';
         }
       })
     }
+      openModal_detail_enfant(one_enfant: any) {
+      let options: any = {
+        centered: true,
+        scrollable: true,
+        size: "xl"//'sm' | 'lg' | 'xl' | string
+      }
+      const modalRef = this.modalService.open(DetailEnfantComponent, { ...options, backdrop: 'static', })
+      modalRef.componentInstance.enfant_to_edit = one_enfant;
+      modalRef.result.then((result: any) => {
+        console.log('Modal closed with:', result);
+        if (result?.status) {
+          this.get_enfant()
+        } else {
+
+        }
+      })
+    }
+     // url photo avec fallback
+  photoUrl(e: any): string {
+    const src = e?.photo_enfant ? this.api.resolveFileUrl(e.photo_enfant) : '';
+    return src || this.api.placeholderLogo;
+  }
+
+  onImgError(ev: Event) {
+    (ev.target as HTMLImageElement).src = this.api.placeholderLogo;
+  }
+
+  // âge “X ans” à partir d’une date (YYYY-MM-DD)
+  ageFrom(dateStr: string): string {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    if (isNaN(+d)) return '';
+    const now = new Date();
+    let a = now.getFullYear() - d.getFullYear();
+    const m = now.getMonth() - d.getMonth();
+    if (m < 0 || (m === 0 && now.getDate() < d.getDate())) a--;
+    return a + ' ans';
+  }
+
   }

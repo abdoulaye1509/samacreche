@@ -1,0 +1,19 @@
+<div class="parametre-layout">
+  <nav class="sidebar">
+    <h2>Paramètres</h2>
+    <ul>
+        @for (item of sous_module; track $index) {
+          <li [class.active]="selectedItem?.path === item.path">
+            <a [routerLink]="item.path" routerLinkActive="active">
+              <i class="{{ item.icon }}"></i>
+              <span>{{ item.name }}</span>
+            </a>
+          </li>
+        }
+    </ul>
+  </nav>
+
+  <main class="content content px-2 bg-white">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,136 +1,90 @@
-<div class="modal-header" data-bs-theme="ligth">
-        <h1 class="modal-title fs-5">Modifier mensualite_structure</h1>
-        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+<!-- Header -->
+<div class="modal-header bg-transparent border-0 pt-3" data-bs-theme="light">
+  <div class="w-100 position-relative">
+    <h1 class="modal-title fs-5 mb-0 d-flex align-items-center gap-2">
+      Modifier une mensualité structure
+    </h1>
+    <button
+      type="button"
+      class="btn-close position-absolute end-0 top-50 translate-middle-y"
+      aria-label="Close"
+      (click)="activeModal.close()">
+    </button>
+  </div>
+</div>
+
+<!-- Body -->
+<div class="modal-body p-0">
+  <form
+    [formGroup]="reactiveForm_edit_mensualite_structure"
+    (ngSubmit)="onSubmit_edit_mensualite_structure()"
+    #form_edit_mensualite_structure="ngForm">
+
+    <div class="sheet p-3 p-md-4">
+      <div class="section-cap">Mensualité</div>
+      <hr class="py-2" />
+
+      <div class="row g-3 align-items-end">
+        <!-- Libellé -->
+        <div class="col-xl-4 col-md-6">
+          <label class="form-label required" for="libelle_mensualite">Libellé</label>
+          <input
+            id="libelle_mensualite"
+            class="form-control"
+            type="text"
+            formControlName="libelle_mensualite"
+            placeholder="Ex. : Mensualité standard"
+            [ngClass]="{ 'is-invalid': submitted && f.libelle_mensualite?.errors }" />
+          <div class="invalid-feedback" *ngIf="submitted && f.libelle_mensualite?.errors">
+            <div *ngIf="f.libelle_mensualite?.errors?.['required']">Ce champ est obligatoire</div>
+          </div>
+        </div>
+
+        <!-- Montant total -->
+        <div class="col-xl-4 col-md-6">
+          <label class="form-label required" for="montant_total">Montant total</label>
+          <input
+            id="montant_total"
+            class="form-control"
+            type="text"
+            inputmode="decimal"
+            placeholder="Ex. : 25,000"
+            [value]="api.formatMontant(f.montant_total?.value, 0)"
+            (input)="api.formatMontantInput($event, reactiveForm_edit_mensualite_structure, 'montant_total', {decimals: 0})"
+            [ngClass]="{ 'is-invalid': submitted && f.montant_total?.errors }" />
+          <div class="invalid-feedback" *ngIf="submitted && f.montant_total?.errors">
+            <div *ngIf="f.montant_total?.errors?.['required']">Ce champ est obligatoire</div>
+            <div *ngIf="f.montant_total?.errors?.['min']">Le montant doit être ≥ 0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-end mt-1">
+        <!-- Description -->
+        <div class="col-12">
+          <label class="form-label" for="description_mensualite">Description</label>
+          <textarea
+            id="description_mensualite"
+            class="form-control"
+            rows="2"
+            formControlName="description_mensualite"
+            placeholder="Note ou description (facultatif)"></textarea>
+        </div>
+      </div>
     </div>
-    <div class="modal-body">
-      <form [formGroup]="reactiveForm_edit_mensualite_structure" (ngSubmit)="onSubmit_edit_mensualite_structure()" #form_edit_mensualite_structure="ngForm" class="row">
-        
-<!-- Erreur : La clé étrangère id_structure de la table mensualite_structure n'est pas référencée -->
+  </form>
+</div>
 
-            <!-- Champ Libelle Mensualite -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="libelle_mensualite">Libelle Mensualite</label>
-              <input id="libelle_mensualite" class="form-control" 
-                     type="text" 
-                     formControlName="libelle_mensualite" 
-                     placeholder="Libelle Mensualite"  
-                     [ngClass]="{ 'is-invalid': submitted && f.libelle_mensualite.errors }"/>
-              @if (submitted && f.libelle_mensualite.errors) {
-                <div class="invalid-feedback">
-                  @if (f.libelle_mensualite.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Description Mensualite -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="description_mensualite">Description Mensualite</label>
-              <input id="description_mensualite" class="form-control" 
-                     type="text" 
-                     formControlName="description_mensualite" 
-                     placeholder="Description Mensualite"  
-                     [ngClass]="{ 'is-invalid': submitted && f.description_mensualite.errors }"/>
-              @if (submitted && f.description_mensualite.errors) {
-                <div class="invalid-feedback">
-                  @if (f.description_mensualite.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Montant Total -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="montant_total">Montant Total</label>
-              <input id="montant_total" class="form-control" 
-                     type="text" 
-                     formControlName="montant_total" 
-                     placeholder="Montant Total"  
-                     [ngClass]="{ 'is-invalid': submitted && f.montant_total.errors }"/>
-              @if (submitted && f.montant_total.errors) {
-                <div class="invalid-feedback">
-                  @if (f.montant_total.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_at">Created At</label>
-              <input id="created_at" class="form-control" 
-                     type="text" 
-                     formControlName="created_at" 
-                     placeholder="Created At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
-              @if (submitted && f.created_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_at">Updated At</label>
-              <input id="updated_at" class="form-control" 
-                     type="text" 
-                     formControlName="updated_at" 
-                     placeholder="Updated At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
-              @if (submitted && f.updated_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_by">Created By</label>
-              <input id="created_by" class="form-control" 
-                     type="text" 
-                     formControlName="created_by" 
-                     placeholder="Created By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
-              @if (submitted && f.created_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_by">Updated By</label>
-              <input id="updated_by" class="form-control" 
-                     type="text" 
-                     formControlName="updated_by" 
-                     placeholder="Updated By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
-              @if (submitted && f.updated_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary m-2" [disabled]="loading_edit_mensualite_structure ||
-      loading_get_details_edit_mensualite_structure_form" (click)="form_edit_mensualite_structure.ngSubmit.emit()">
-          {{ loading_edit_mensualite_structure ? "En cours ..." : "Valider" }}
-      </button>
-      <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
-    </div>
+<!-- Footer -->
+<div class="modal-footer bg-transparent border-0 pt-0 pb-4 px-4">
+  <div class="w-100 d-flex justify-content-end">
+    <button
+      type="button"
+      class="btn btn-success px-4 py-2 rounded-pill shadow-sm"
+      [disabled]="loading_edit_mensualite_structure || loading_get_details_edit_mensualite_structure_form"
+      (click)="form_edit_mensualite_structure.ngSubmit.emit()">
+      <span *ngIf="loading_edit_mensualite_structure" class="spinner-border spinner-border-sm me-2" role="status"></span>
+      {{ loading_edit_mensualite_structure ? 'En cours...' : 'Enregistrer' }}
+    </button>
+  </div>
+</div>

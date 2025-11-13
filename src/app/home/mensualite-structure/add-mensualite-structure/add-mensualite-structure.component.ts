@@ -14,80 +14,80 @@ import { MensualiteStructureTafType } from '../taf-type/mensualite-structure-taf
 })
 export class AddMensualiteStructureComponent implements OnInit, OnDestroy {
   reactiveForm_add_mensualite_structure !: FormGroup;
-  submitted:boolean=false
-  loading_add_mensualite_structure :boolean=false
+  submitted: boolean = false
+  loading_add_mensualite_structure: boolean = false
   form_details: any = {}
   loading_get_details_add_mensualite_structure_form = false
-  constructor(private formBuilder: FormBuilder,public api:ApiService, public activeModal: NgbActiveModal) { }
+  constructor(private formBuilder: FormBuilder, public api: ApiService, public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
-      console.groupCollapsed("AddMensualiteStructureComponent");
-      this.get_details_add_mensualite_structure_form()
-      this.init_form()
+    console.groupCollapsed("AddMensualiteStructureComponent");
+    this.get_details_add_mensualite_structure_form()
+    this.init_form()
+    console.log("utilisateur connecté = ", this.api.user_connected);
+    console.log("id structure de l'utilisateur connecté = ", this.api.user_connected.id_structure);
   }
   ngOnDestroy(): void {
     console.groupEnd();
   }
   init_form() {
-      this.reactiveForm_add_mensualite_structure  = this.formBuilder.group({
-          id_structure: [""],
-libelle_mensualite: [""],
-description_mensualite: [""],
-montant_total: [""],
-updated_at: [""],
-created_by: [""],
-updated_by: [""]
-      });
+    this.reactiveForm_add_mensualite_structure = this.formBuilder.group({
+      libelle_mensualite: ["", Validators.required],
+      description_mensualite: [""],
+      montant_total: [null, [Validators.required, Validators.min(0)]],
+    });
   }
 
   // acces facile au champs de votre formulaire
-  get f(): any { return this.reactiveForm_add_mensualite_structure .controls; }
+  get f(): any { return this.reactiveForm_add_mensualite_structure.controls; }
   // validation du formulaire
-  onSubmit_add_mensualite_structure () {
-      this.submitted = true;
-      console.log(this.reactiveForm_add_mensualite_structure .value)
-      // stop here if form is invalid
-      if (this.reactiveForm_add_mensualite_structure .invalid) {
-          return;
-      }
-      var mensualite_structure =this.reactiveForm_add_mensualite_structure .value
-      this.add_mensualite_structure (mensualite_structure )
+  onSubmit_add_mensualite_structure() {
+    this.submitted = true;
+    console.log(this.reactiveForm_add_mensualite_structure.value)
+    // stop here if form is invalid
+    if (this.reactiveForm_add_mensualite_structure.invalid) {
+      return;
+    }
+    var mensualite_structure = this.reactiveForm_add_mensualite_structure.value
+    mensualite_structure.id_structure = this.api.user_connected.id_structure;
+    mensualite_structure.created_by = this.api.user_connected.id_utilisateur;
+    this.add_mensualite_structure(mensualite_structure)
   }
   // vider le formulaire
-  onReset_add_mensualite_structure () {
-      this.submitted = false;
-      this.reactiveForm_add_mensualite_structure .reset();
+  onReset_add_mensualite_structure() {
+    this.submitted = false;
+    this.reactiveForm_add_mensualite_structure.reset();
   }
   add_mensualite_structure(mensualite_structure: any) {
-      this.loading_add_mensualite_structure = true;
-      this.api.taf_post("mensualite_structure/add", mensualite_structure, (reponse: any) => {
+    this.loading_add_mensualite_structure = true;
+    this.api.taf_post("mensualite_structure/add", mensualite_structure, (reponse: any) => {
       this.loading_add_mensualite_structure = false;
       if (reponse.status) {
-          console.log("Opération effectuée avec succés sur la table mensualite_structure. Réponse= ", reponse);
-          this.onReset_add_mensualite_structure()
-          this.api.Swal_success("Opération éffectuée avec succés")
-          this.activeModal.close(reponse)
+        console.log("Opération effectuée avec succés sur la table mensualite_structure. Réponse= ", reponse);
+        this.onReset_add_mensualite_structure()
+        this.api.Swal_success("Opération éffectuée avec succés")
+        this.activeModal.close(reponse)
       } else {
-          console.log("L'opération sur la table mensualite_structure a échoué. Réponse= ", reponse);
-          this.api.Swal_error("L'opération a echoué")
+        console.log("L'opération sur la table mensualite_structure a échoué. Réponse= ", reponse);
+        this.api.Swal_error("L'opération a echoué")
       }
     }, (error: any) => {
-        this.loading_add_mensualite_structure = false;
+      this.loading_add_mensualite_structure = false;
     })
   }
-  
+
   get_details_add_mensualite_structure_form() {
-      this.loading_get_details_add_mensualite_structure_form = true;
-      this.api.taf_post("mensualite_structure/get_form_details", {}, (reponse: any) => {
-        if (reponse.status) {
-          this.form_details = reponse.data
-          console.log("Opération effectuée avec succés sur la table mensualite_structure. Réponse= ", reponse);
-        } else {
-          console.log("L'opération sur la table mensualite_structure a échoué. Réponse= ", reponse);
-          this.api.Swal_error("L'opération a echoué")
-        }
-        this.loading_get_details_add_mensualite_structure_form = false;
-      }, (error: any) => {
+    this.loading_get_details_add_mensualite_structure_form = true;
+    this.api.taf_post("mensualite_structure/get_form_details", {}, (reponse: any) => {
+      if (reponse.status) {
+        this.form_details = reponse.data
+        console.log("Opération effectuée avec succés sur la table mensualite_structure. Réponse= ", reponse);
+      } else {
+        console.log("L'opération sur la table mensualite_structure a échoué. Réponse= ", reponse);
+        this.api.Swal_error("L'opération a echoué")
+      }
+      this.loading_get_details_add_mensualite_structure_form = false;
+    }, (error: any) => {
       this.loading_get_details_add_mensualite_structure_form = false;
     })
   }
