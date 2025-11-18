@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
   import { ApiService } from '../../../service/api/api.service';
   import { AddEnfantComponent } from '../add-enfant/add-enfant.component';
   import { EditEnfantComponent } from '../edit-enfant/edit-enfant.component';
@@ -23,6 +23,7 @@ import { CommonModule } from '@angular/common';
     filter: any = {
       text: [],
     };
+    @Input() enfant_to_view !: EnfantTafType;
     constructor(public api: ApiService,private modalService: NgbModal) {
   
     }
@@ -129,7 +130,7 @@ import { CommonModule } from '@angular/common';
         size: "xl"//'sm' | 'lg' | 'xl' | string
       }
       const modalRef = this.modalService.open(DetailEnfantComponent, { ...options, backdrop: 'static', })
-      modalRef.componentInstance.enfant_to_edit = one_enfant;
+      modalRef.componentInstance.enfant_to_view = one_enfant;
       modalRef.result.then((result: any) => {
         console.log('Modal closed with:', result);
         if (result?.status) {

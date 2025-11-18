@@ -1,0 +1,9 @@
+.parent-card { transition: .15s transform ease, .15s box-shadow ease; }
+.parent-card:hover { transform: translateY(-2px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.08); }
+.clickable { cursor: pointer; }  /* ajout */
+
+.avatar-circle {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: grid; place-items: center; background: #f2f2f2; font-weight: 600;
+}
+.avatar-sm { width: 36px; height: 36px; font-size: .9rem; }

@@ -1,0 +1,7 @@
+.clickable { cursor: pointer; }
+.parent-card { transition: .15s transform ease, .15s box-shadow ease; }
+.parent-card:hover { transform: translateY(-2px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.08); }
+.avatar img { width:56px; height:56px; object-fit:cover; border-radius:50%; }
+
+/* garder le vrai modal-header visible si scroll long */
+.modal-header { position: sticky; top: 0; z-index: 1055; background: var(--bs-body-bg); }

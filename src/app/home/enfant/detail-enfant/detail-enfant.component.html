@@ -1,1 +1,143 @@
-<p>detail-enfant works!</p>
+<!-- Modal header (optionnel si ouvert dans un modal) -->
+<div class="modal-header">
+  <h5 class="modal-title">
+    Enfant • {{ enfant?.prenom_enfant }} {{ enfant?.nom_enfant }}
+    <span class="text-muted ms-2">#{{ enfant?.id_enfant }}</span>
+  </h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal?.close()"></button>
+</div>
+
+<div class="modal-body p-0">
+
+  <!-- État chargement -->
+  <div *ngIf="loading_get_enfant" class="text-center text-secondary py-5">
+    <div class="spinner-border" role="status"></div>
+    <div class="mt-2">Chargement…</div>
+  </div>
+
+  <!-- Contenu -->
+  <ng-container *ngIf="!loading_get_enfant && enfant; else emptyTpl">
+
+    <div class="accordion" id="acc-enfant">
+
+      <!-- ========== Panel 1 : Informations de l’enfant ========== -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="hdr-info">
+          <button class="accordion-button" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#pan-info" aria-expanded="true">
+            Informations de l’enfant
+          </button>
+        </h2>
+        <div id="pan-info" class="accordion-collapse collapse show" aria-labelledby="hdr-info"
+             data-bs-parent="#acc-enfant">
+          <div class="accordion-body">
+            <div class="row g-3 align-items-start">
+              <!-- Photo -->
+              <div class="col-md-4">
+                <div class="ratio ratio-1x1 border rounded overflow-hidden bg-light">
+                  <img
+                    [src]="enfant?.photo_enfant ? api.resolveFileUrl(enfant.photo_enfant) : api.placeholderLogo"
+                    (error)="$any($event.target).src = api.placeholderLogo"
+                    class="w-100 h-100 object-fit-cover"
+                    alt="photo enfant">
+                </div>
+              </div>
+
+              <!-- Champs -->
+              <div class="col-md-8">
+                <div class="row g-3">
+                  <div class="col-sm-6">
+                    <div class="text-muted small">Prénom</div>
+                    <div class="fw-semibold">{{ enfant?.prenom_enfant }}</div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="text-muted small">Nom</div>
+                    <div class="fw-semibold">{{ enfant?.nom_enfant }}</div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="text-muted small">Date de naissance</div>
+                    <div class="fw-semibold">{{ enfant?.date_naissance | date:'dd/MM/yyyy' }}</div>
+                  </div>
+                  <div class="col-sm-6" *ngIf="enfant?.lieu_naissance">
+                    <div class="text-muted small">Lieu de naissance</div>
+                    <div class="fw-semibold">{{ enfant?.lieu_naissance }}</div>
+                  </div>
+                  <div class="col-12" *ngIf="enfant?.adresse_enfant">
+                    <div class="text-muted small">Adresse</div>
+                    <div class="fw-semibold">{{ enfant?.adresse_enfant }}</div>
+                  </div>
+                  <div class="col-sm-6" *ngIf="enfant?.id_genre">
+                    <div class="text-muted small">Genre</div>
+                    <span class="badge text-bg-light">
+                      {{ enfant?.nom_genre || enfant?.id_genre }}
+                    </span>
+                  </div>
+                  <div class="col-sm-6" *ngIf="enfant?.id_pays">
+                    <div class="text-muted small">Pays</div>
+                    <span class="badge text-bg-light">
+                      {{ enfant?.nom_pays || enfant?.id_pays }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div> <!-- row -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== Panel 2 : Parents / Tuteurs ========== -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="hdr-parents">
+          <button class="accordion-button collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#pan-parents">
+            Parents / Tuteurs
+            <span class="badge rounded-pill text-bg-secondary ms-2">{{ parents?.length || 0 }}</span>
+          </button>
+        </h2>
+        <div id="pan-parents" class="accordion-collapse collapse" aria-labelledby="hdr-parents"
+             data-bs-parent="#acc-enfant">
+          <div class="accordion-body">
+            <ng-container *ngIf="parents?.length; else noParent">
+              <div class="row g-3">
+                <div class="col-12 col-md-6 col-xl-4" *ngFor="let p of parents">
+                  <div class="card h-100">
+                    <div class="card-body d-flex gap-3 align-items-start">
+                      <div class="avatar-circle avatar-sm">
+                        <span>{{ (p?.prenom_parent?.[0] || 'P') + (p?.nom_parent?.[0] || '') | uppercase }}</span>
+                      </div>
+                      <div class="flex-grow-1">
+                        <div class="fw-semibold">{{ p?.prenom_parent }} {{ p?.nom_parent }}</div>
+                        <div class="text-muted small">#{{ p?.id_parent }}</div>
+                        <div class="text-muted small mt-1">
+                          <span *ngIf="p?.adresse_parent">
+                            <i class="bi bi-geo-alt me-1"></i>{{ p.adresse_parent }}
+                          </span>
+                          <span *ngIf="p?.email_parent" class="ms-3">
+                            <i class="bi bi-envelope me-1"></i>{{ p.email_parent }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> <!-- col -->
+              </div>
+            </ng-container>
+            <ng-template #noParent>
+              <div class="text-muted">Aucun parent lié.</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- /accordion -->
+
+  </ng-container>
+
+  <ng-template #emptyTpl>
+    <div class="text-center text-secondary py-5">
+      <i class="bi bi-emoji-frown fs-1 d-block mb-2"></i>
+      Aucune donnée enfant.
+    </div>
+  </ng-template>
+
+</div>

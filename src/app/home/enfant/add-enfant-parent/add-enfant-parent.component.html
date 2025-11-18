@@ -1,0 +1,171 @@
+<!-- Header -->
+<div class="modal-header bg-transparent border-0 pt-3" data-bs-theme="light">
+  <div class="w-100 position-relative">
+    <h1 class="modal-title fs-5 mb-0 d-flex align-items-center gap-2">
+      Ajouter un enfant
+    </h1>
+    <button type="button" class="btn-close position-absolute end-0 top-50 translate-middle-y" aria-label="Close"
+      (click)="activeModal.close()"></button>
+  </div>
+</div>
+
+<!-- Body -->
+<div class="modal-body p-0">
+  <form [formGroup]="reactiveForm_add_enfant" (ngSubmit)="onSubmit_add_enfant()" #form_add_enfant="ngForm">
+    <!-- SECTION : Fiche & Scolarité -->
+    <div class="sheet p-3 p-md-4 mt-3">
+      <div class="section-cap">Fiche & Scolarité</div>
+      <hr class="py-2" />
+
+      <div class="row g-3 align-items-end">
+        <!-- Mensualité -->
+        <div class="col-xl-6 col-md-6">
+          <label class="form-label required" for="id_mensualite_structure">Mensualité</label>
+          <ng-select id="id_mensualite_structure" formControlName="id_mensualite_structure"
+            [class.is-invalid]="submitted && f.id_mensualite_structure?.errors" placeholder="Choisir une mensualité">
+            <ng-option *ngFor="let m of form_details?.les_mensualite_structures" [value]="m.id_mensualite_structure">
+              {{ m.libelle_mensualite }} — {{ api.formatMontant(m.montant_total,0,' ','.') }} FCFA
+            </ng-option>
+          </ng-select>
+          <div class="invalid-feedback d-block" *ngIf="submitted && f.id_mensualite_structure?.errors">
+            <div *ngIf="f.id_mensualite_structure?.errors?.['required']">Ce champ est obligatoire</div>
+          </div>
+        </div>
+
+        <!-- Abonnement cantine (id_cantine) -->
+        <div class="col-xl-6 col-md-6">
+          <label class="form-label d-block required">Abonnement cantine</label>
+          <div class="btn-group" role="group" aria-label="Cantine" formControlName="id_cantine">
+            <ng-container *ngFor="let c of form_details?.les_cantines">
+              <input type="radio" class="btn-check" [id]="'cantine-'+c.id_cantine" [value]="c.id_cantine"
+                formControlName="id_cantine">
+              <label class="btn"
+                [ngClass]="{'btn-outline-success': c.abonnement==='abonné', 'btn-outline-secondary': c.abonnement!=='abonné'}"
+                [for]="'cantine-'+c.id_cantine">
+                {{ c.abonnement }} <span *ngIf="c.montant_abonnement">— {{ api.formatMontant(c.montant_abonnement,0,'
+                  ','.') }} FCFA</span>
+              </label>
+            </ng-container>
+          </div>
+          <div class="invalid-feedback d-block" *ngIf="submitted && f.id_cantine?.errors">
+            <div *ngIf="f.id_cantine?.errors?.['required']">Ce champ est obligatoire</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION : Informations de l'enfant -->
+    <div class="sheet p-3 p-md-4">
+      <div class="section-cap">Informations de l’enfant</div>
+      <hr class="py-2" />
+
+      <div class="row g-3 align-items-end">
+        <div class="col-xl-4 col-md-6">
+          <label class="form-label required" for="prenom_enfant">Prénom</label>
+          <input id="prenom_enfant" class="form-control" type="text" formControlName="prenom_enfant"
+            placeholder="Ex. : Aïcha" [ngClass]="{ 'is-invalid': submitted && f.prenom_enfant?.errors }" />
+          <div class="invalid-feedback" *ngIf="submitted && f.prenom_enfant?.errors">
+            <div *ngIf="f.prenom_enfant?.errors?.required">Ce champ est obligatoire</div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6">
+          <label class="form-label required" for="nom_enfant">Nom</label>
+          <input id="nom_enfant" class="form-control" type="text" formControlName="nom_enfant" placeholder="Ex. : Diop"
+            [ngClass]="{ 'is-invalid': submitted && f.nom_enfant?.errors }" />
+          <div class="invalid-feedback" *ngIf="submitted && f.nom_enfant?.errors">
+            <div *ngIf="f.nom_enfant?.errors?.required">Ce champ est obligatoire</div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6">
+          <label class="form-label required" for="date_naissance">Date de naissance</label>
+          <input id="date_naissance" class="form-control" type="date" formControlName="date_naissance"
+            [ngClass]="{ 'is-invalid': submitted && f.date_naissance?.errors }" />
+          <div class="invalid-feedback" *ngIf="submitted && f.date_naissance?.errors">
+            <div *ngIf="f.date_naissance?.errors?.required">Ce champ est obligatoire</div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6">
+          <label class="form-label required" for="id_genre">Genre</label>
+          <ng-select id="id_genre" class="form-select" formControlName="id_genre"
+            [class.is-invalid]="submitted && f.id_genre?.errors">
+            <ng-option value="" disabled>Ex. : Fille</ng-option>
+            <ng-option *ngFor="let g of form_details?.les_genres" [value]="g.id_genre">{{ g.nom_genre }}</ng-option>
+          </ng-select>
+          <div class="invalid-feedback d-block" *ngIf="submitted && f.id_genre?.errors">
+            <div *ngIf="f.id_genre?.errors?.required">Ce champ est obligatoire</div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6">
+          <label class="form-label required" for="id_pays">Pays</label>
+          <ng-select id="id_pays" class="form-select" formControlName="id_pays"
+            [class.is-invalid]="submitted && f.id_pays?.errors">
+            <ng-option value="" disabled>Ex. : Sénégal</ng-option>
+            <ng-option *ngFor="let p of form_details?.les_payss" [value]="p.id_pays">{{ p.nom_pays }}</ng-option>
+          </ng-select>
+          <div class="invalid-feedback d-block" *ngIf="submitted && f.id_pays?.errors">
+            <div *ngIf="f.id_pays?.errors?.required">Ce champ est obligatoire</div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6">
+          <label class="form-label" for="lieu_naissance">Lieu de naissance</label>
+          <input id="lieu_naissance" class="form-control" type="text" formControlName="lieu_naissance"
+            placeholder="Ex. : Dakar" />
+        </div>
+
+        <div class="col-12">
+          <label class="form-label" for="adresse_enfant">Adresse</label>
+          <input id="adresse_enfant" class="form-control" type="text" formControlName="adresse_enfant"
+            placeholder="Adresse complète" />
+        </div>
+      </div>
+      <!-- LIGNE 3: Image (carte icône caméra) + PREVIEW -->
+      <div class="row g-3 mt-2 align-items-start">
+        <div class="col-xl-3 col-md-6">
+          <label class="form-label d-block">Image</label>
+          <div class="d-flex align-items-center gap-3">
+            <!-- Preview si sélectionnée -->
+            <div class="img-preview" *ngIf="imagePreviewUrl; else cameraCard">
+              <img [src]="imagePreviewUrl" alt="aperçu image produit" />
+            </div>
+            <!-- Carte caméra si pas d'image -->
+            <ng-template #cameraCard>
+              <div class="cam-card" (click)="imageInput.click()">
+                <i class="bi bi-camera fs-2"></i>
+              </div>
+            </ng-template>
+            <div class="d-flex flex-column gap-2">
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="imageInput.click()">
+                <i class="bi bi-upload me-1"></i> Choisir une photo
+              </button>
+              <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeImage()"
+                [disabled]="!imagePreviewUrl">
+                <i class="bi bi-x-circle me-1"></i> Retirer
+              </button>
+            </div>
+          </div>
+          <input type="file" class="d-none" accept="image/*" #imageInput (change)="onImageSelected($event)">
+          <div class="invalid-feedback d-block" *ngIf="imageError">{{ imageError }}</div>
+        </div>
+      </div>
+    </div>
+
+   
+  </form>
+</div>
+
+<!-- Footer -->
+<div class="modal-footer bg-transparent border-0 pt-0 pb-4 px-4">
+  <div class="w-100 d-flex justify-content-end">
+    <button type="button" class="btn btn-success px-4 py-2 rounded-pill shadow-sm"
+      [disabled]="loading_add_enfant || loading_get_details_add_enfant_form" (click)="form_add_enfant.ngSubmit.emit()">
+      <span *ngIf="loading_add_enfant" class="spinner-border spinner-border-sm me-2" role="status"></span>
+      {{ loading_add_enfant ? 'En cours...' : 'Ajouter' }}
+    </button>
+  </div>
+</div>
