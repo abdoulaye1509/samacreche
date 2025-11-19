@@ -12,10 +12,9 @@
   </div>
 
   <div class="d-flex gap-1 justify-content-end">
-    <ng-select [multiple]="true" [closeOnSelect]="false" placeholder="Rechercher ici ..."
-               notFoundText="Aucun résultat" class="no-limit"
-               [(ngModel)]="filter.text" (search)="filter_change($event)" (change)="filter_change()"
-               style="min-width: 400px;">
+    <ng-select [multiple]="true" [closeOnSelect]="false" placeholder="Rechercher ici ..." notFoundText="Aucun résultat"
+      class="no-limit" [(ngModel)]="filter.text" (search)="filter_change($event)" (change)="filter_change()"
+      style="min-width: 400px;">
     </ng-select>
   </div>
 </div>
@@ -34,41 +33,36 @@
 </div>
 
 <!-- GRILLE DE CARTES -->
+
 <div *ngIf="!loading_get_enfant && list.length" class="row g-3 mt-2">
   @for (one_enfant of list; track one_enfant) {
-    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-      <div class="card child-card h-100" (click)="openModal_detail_enfant(one_enfant)" title="Voir les détails">
-        <div class="card-body d-flex gap-3 align-items-center">
-          <!-- Avatar / icône -->
-          <div class="avatar">
-            <img [src]="photoUrl(one_enfant)" (error)="onImgError($event)" alt="photo enfant" />
-          </div>
+  <div class="col-12 col-sm-6 col-lg-4 col-xl-3" [routerLink]="['/home/enfant', one_enfant.id_enfant]">
+    <div class="card child-card h-100" title="Voir les détails">
+      <div class="card-body d-flex gap-3 align-items-center">
+        <!-- Avatar / icône -->
+        <div class="avatar">
+          <img [src]="photoUrl(one_enfant)" (error)="onImgError($event)" alt="photo enfant" />
+        </div>
 
-          <!-- Infos -->
-          <div class="flex-grow-1">
-            <div class="fw-semibold text-truncate">
-              {{ one_enfant.prenom_enfant }} {{ one_enfant.nom_enfant }}
-            </div>
-            <div class="text-muted small">#{{ one_enfant.id_enfant }}</div>
-            <div class="d-flex gap-2 mt-1 small">
-              <span class="badge bg-light text-dark" *ngIf="one_enfant.nom_genre">{{ one_enfant.nom_genre }}</span>
-              <!-- <span class="badge bg-light text-dark" *ngIf="one_enfant.date_naissance">{{ ageFrom(one_enfant.date_naissance) }}</span> -->
-            </div>
+        <!-- Infos -->
+        <div class="flex-grow-1">
+          <div class="fw-semibold text-truncate">
+            {{ one_enfant.prenom_enfant }} {{ one_enfant.nom_enfant }}
           </div>
+          <div class="d-flex gap-2 mt-1 small">
+            <span class="badge bg-light text-dark" *ngIf="one_enfant.id_genre">{{ one_enfant.nom_genre }}</span>
+          </div>
+        </div>
 
-          <!-- Actions (sans déclencher le clic carte) -->
-          <div class="ms-auto d-flex gap-2 child-actions" (click)="$event.stopPropagation()">
-            <button type="button" class="btn btn-outline-primary btn-sm"
-                    (click)="openModal_edit_enfant(one_enfant)" title="Modifier">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button type="button" class="btn btn-outline-danger btn-sm"
-                    (click)="delete_enfant(one_enfant)" title="Supprimer">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
+        <!-- Actions (sans déclencher le clic carte) -->
+        <div class="ms-auto d-flex gap-2 child-actions" (click)="$event.stopPropagation()">
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="openModal_edit_enfant(one_enfant)"
+            title="Modifier">
+            <i class="bi bi-pencil-square"></i>
+          </button>
         </div>
       </div>
     </div>
+  </div>
   }
 </div>

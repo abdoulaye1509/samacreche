@@ -1,189 +1,91 @@
-<div class="modal-header" data-bs-theme="ligth">
-      <h1 class="modal-title fs-5">Ajouter parent</h1>
-      <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+<div class="modal-header">
+  <h1 class="modal-title fs-5">Ajouter un parent</h1>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+</div>
+
+<form [formGroup]="reactiveForm_add_parent" (ngSubmit)="onSubmit_add_parent()">
+  <div class="modal-body">
+
+    <!-- Section : Identité -->
+    <h6 class="section-title"><i class="bi bi-person-badge me-1"></i> Identité</h6>
+    <div class="row g-3">
+      <div class="col-sm-6">
+        <label class="form-label">Prénom</label>
+        <input class="form-control" placeholder="Prénom" formControlName="prenom_parent"
+               [ngClass]="{'is-invalid': submitted && f['prenom_parent'].errors}">
+        <div class="invalid-feedback" *ngIf="submitted && f['prenom_parent'].errors">Champ obligatoire</div>
+      </div>
+
+      <div class="col-sm-6">
+        <label class="form-label">Nom</label>
+        <input class="form-control" placeholder="Nom" formControlName="nom_parent"
+               [ngClass]="{'is-invalid': submitted && f['nom_parent'].errors}">
+        <div class="invalid-feedback" *ngIf="submitted && f['nom_parent'].errors">Champ obligatoire</div>
+      </div>
+
+      <div class="col-sm-6" *ngIf="form_details?.liens_parente?.length">
+        <label class="form-label">Lien de parenté</label>
+        <ng-select formControlName="id_lien_parente"
+                   [items]="form_details.liens_parente"
+                   bindLabel="libelle"
+                   bindValue="id_lien_parente"
+                   placeholder="Sélectionner…">
+        </ng-select>
+      </div>
     </div>
-    <div class="modal-body">
-      <form [formGroup]="reactiveForm_add_parent" 
-            (ngSubmit)="onSubmit_add_parent()" 
-            #form_add_parent="ngForm" 
-            class="row">
-        <!-- Erreur : La clé étrangère id_lien_parente de la table parent n'est pas référencée -->
 
-            <!-- Champ Prenom Parent -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="prenom_parent">Prenom Parent</label>
-              <input id="prenom_parent" class="form-control" 
-                     type="text" 
-                     formControlName="prenom_parent" 
-                     placeholder="Prenom Parent"  
-                     [ngClass]="{ 'is-invalid': submitted && f.prenom_parent.errors }"/>
-              @if (submitted && f.prenom_parent.errors) {
-                <div class="invalid-feedback">
-                  @if (f.prenom_parent.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
+    <hr class="my-3">
 
-            <!-- Champ Nom Parent -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="nom_parent">Nom Parent</label>
-              <input id="nom_parent" class="form-control" 
-                     type="text" 
-                     formControlName="nom_parent" 
-                     placeholder="Nom Parent"  
-                     [ngClass]="{ 'is-invalid': submitted && f.nom_parent.errors }"/>
-              @if (submitted && f.nom_parent.errors) {
-                <div class="invalid-feedback">
-                  @if (f.nom_parent.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
+    <!-- Section : Coordonnées -->
+    <h6 class="section-title"><i class="bi bi-geo me-1"></i> Coordonnées</h6>
+    <div class="row g-3">
+      <div class="col-sm-6">
+        <label class="form-label">Téléphone</label>
+        <input class="form-control" type="tel" placeholder="Téléphone" formControlName="telephone_parent"
+               autocomplete="tel"
+               [ngClass]="{'is-invalid': submitted && f['telephone_parent'].errors}">
+        <div class="invalid-feedback" *ngIf="submitted && f['telephone_parent'].errors">Champ obligatoire</div>
+      </div>
 
-            <!-- Champ Adresse Parent -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="adresse_parent">Adresse Parent</label>
-              <input id="adresse_parent" class="form-control" 
-                     type="text" 
-                     formControlName="adresse_parent" 
-                     placeholder="Adresse Parent"  
-                     [ngClass]="{ 'is-invalid': submitted && f.adresse_parent.errors }"/>
-              @if (submitted && f.adresse_parent.errors) {
-                <div class="invalid-feedback">
-                  @if (f.adresse_parent.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
+      <div class="col-sm-6">
+        <label class="form-label">Email</label>
+        <input class="form-control" type="email" placeholder="Email" formControlName="email_parent"
+               autocomplete="email"
+               [ngClass]="{'is-invalid': submitted && f['email_parent'].errors}">
+        <div class="invalid-feedback" *ngIf="submitted && f['email_parent'].errors">
+          {{ f['email_parent'].errors?.['required'] ? 'Champ obligatoire' : 'Email invalide' }}
+        </div>
+      </div>
 
-            <!-- Champ Email Parent -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="email_parent">Email Parent</label>
-              <input id="email_parent" class="form-control" 
-                     type="text" 
-                     formControlName="email_parent" 
-                     placeholder="Email Parent"  
-                     [ngClass]="{ 'is-invalid': submitted && f.email_parent.errors }"/>
-              @if (submitted && f.email_parent.errors) {
-                <div class="invalid-feedback">
-                  @if (f.email_parent.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Mot De Passe -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="mot_de_passe">Mot De Passe</label>
-              <input id="mot_de_passe" class="form-control" 
-                     type="text" 
-                     formControlName="mot_de_passe" 
-                     placeholder="Mot De Passe"  
-                     [ngClass]="{ 'is-invalid': submitted && f.mot_de_passe.errors }"/>
-              @if (submitted && f.mot_de_passe.errors) {
-                <div class="invalid-feedback">
-                  @if (f.mot_de_passe.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Cni -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="cni">Cni</label>
-              <input id="cni" class="form-control" 
-                     type="text" 
-                     formControlName="cni" 
-                     placeholder="Cni"  
-                     [ngClass]="{ 'is-invalid': submitted && f.cni.errors }"/>
-              @if (submitted && f.cni.errors) {
-                <div class="invalid-feedback">
-                  @if (f.cni.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_at">Created At</label>
-              <input id="created_at" class="form-control" 
-                     type="text" 
-                     formControlName="created_at" 
-                     placeholder="Created At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
-              @if (submitted && f.created_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_at">Updated At</label>
-              <input id="updated_at" class="form-control" 
-                     type="text" 
-                     formControlName="updated_at" 
-                     placeholder="Updated At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
-              @if (submitted && f.updated_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_by">Created By</label>
-              <input id="created_by" class="form-control" 
-                     type="text" 
-                     formControlName="created_by" 
-                     placeholder="Created By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
-              @if (submitted && f.created_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_by">Updated By</label>
-              <input id="updated_by" class="form-control" 
-                     type="text" 
-                     formControlName="updated_by" 
-                     placeholder="Updated By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
-              @if (submitted && f.updated_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-      </form>
+      <div class="col-12">
+        <label class="form-label">Adresse</label>
+        <input class="form-control" placeholder="Adresse" formControlName="adresse_parent" autocomplete="street-address">
+      </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary m-2" [disabled]="loading_add_parent || loading_get_details_add_parent_form"
-      (click)="form_add_parent.ngSubmit.emit()">
-      {{ loading_add_parent ? "En cours ..." : "Valider" }}
-      </button>
-      <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
+
+    <hr class="my-3">
+
+    <!-- Section : Sécurité & Documents -->
+    <h6 class="section-title"><i class="bi bi-shield-lock me-1"></i> Sécurité & Documents</h6>
+    <div class="row g-3">
+      <div class="col-sm-6">
+        <label class="form-label">Mot de passe</label>
+        <input class="form-control" type="password" placeholder="Mot de passe" formControlName="mot_de_passe" autocomplete="new-password">
+      </div>
+
+      <div class="col-sm-6">
+        <label class="form-label">CNI</label>
+        <input class="form-control" placeholder="Numéro CNI" formControlName="cni" autocomplete="off">
+      </div>
     </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="submit"
+            [disabled]="loading_add_parent || loading_get_details_add_parent_form">
+      {{ loading_add_parent ? 'En cours…' : 'Valider' }}
+    </button>
+    <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
+  </div>
+</form>

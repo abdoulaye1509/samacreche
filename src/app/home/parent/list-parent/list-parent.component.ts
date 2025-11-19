@@ -8,10 +8,11 @@ import { ParentTafType } from '../taf-type/parent-taf-type';
 import { FormsModule } from '@angular/forms';
 import { DetailParentComponent } from '../detail-parent/detail-parent.component';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-list-parent',
   standalone: true, // Composant autonome
-  imports: [FormsModule, NgSelectModule,CommonModule], // Dépendances importées
+  imports: [FormsModule, NgSelectModule,CommonModule,RouterLink], // Dépendances importées
   templateUrl: './list-parent.component.html',
   styleUrls: ['./list-parent.component.scss']
 })

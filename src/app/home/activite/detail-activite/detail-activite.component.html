@@ -1,23 +1,31 @@
-<!-- add-activite.component.html (simplifié pour NgbModal.open) -->
-<div class="modal-header" data-bs-theme="dark">
-  <h1 class="modal-title fs-5">Remplir le cahier de vie</h1>
-  <button type="button" class="btn-close" (click)="activeModal.dismiss()"></button>
+<div class="modal-header">
+  <h5 class="modal-title">
+    Cahier de vie • C°{{ selected_activite?.id_activite }}
+  </h5>
+  <button type="button" class="btn-close" (click)="activeModal?.close()"></button>
 </div>
 
 <div class="modal-body">
   <div class="d-flex justify-content-between align-items-center">
-    <div><img src="../../../../assets/images/logo2.png" alt="Logo" class="logo mb-4"></div>
+    <div><img src="../../../../assets/images/logo.png" alt="Logo" class="logo mb-4"></div>
     <div>
-      Adresse: 8394 Sicap Sacré Cœur 1 <br>
-      Tel: 33 822 21 88 / 77 669 90 88 <br>
-      Ninea 008678403 Rc: SN DKR 2021 B 22185
+      <!-- Crèche:{{selected_activite.nom_structure}} -->
+      <div>Crèche : {{ selected_activite?.nom_structure }}</div>
+      <div>Adresse : {{ selected_activite?.adresse_structure }}</div>
+      <div>Téléphone : {{ selected_activite?.telephone_structure }}</div>
+      <div>Ninea : {{ selected_activite?.ninea }}</div>
+
     </div>
   </div>
 
-  <div class="mt-3">
+  <div class="mb-3">
     Date et heure d'arrivée :
-    <input type="date" [(ngModel)]="date_activite">
-    <input type="time" [(ngModel)]="heure_activite">
+    <ng-container *ngIf="formattedArriveeDate as d; else dateOnly">
+      {{ d | date:'dd/MM/yyyy à HH:mm' }}
+    </ng-container>
+    <ng-template #dateOnly>
+      {{ selected_activite?.date_activite | date:'dd/MM/yyyy' }}
+    </ng-template>
   </div>
 
   <ng-container *ngFor="let one_rubrique of form">
@@ -42,14 +50,12 @@
               <tr class="tr1" [ngClass]="{couleur1: even, couleur2: odd}">
                 <td *ngFor="let one_option of one_ligne.options">
                   <ng-container *ngIf="one_option.type==='text'; else radioTpl">
-                    <input class="form-control" type="text"
-                           [(ngModel)]="one_option.value" (change)="form_change()" [name]="one_ligne.name">
+                    <input class="form-control" type="text" [ngModel]="one_option.value" disabled>
                   </ng-container>
                   <ng-template #radioTpl>
                     <div class="form-check form-switch d-flex p-0">
-                      <input class="form-check-input" type="radio" role="switch"
-                             [(ngModel)]="one_ligne.value" [value]="one_option.name"
-                             (change)="form_change()" [name]="one_ligne.name">
+                      <input class="form-check-input" type="radio" role="switch" [ngModel]="one_ligne.value"
+                        [value]="one_option.name" disabled>
                     </div>
                   </ng-template>
                 </td>
@@ -63,8 +69,5 @@
 </div>
 
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary m-2" [disabled]="disabled" (click)="valider()">
-    {{ loading_add_activite ? "En cours ..." : "Valider" }}
-  </button>
-  <button type="button" class="btn btn-secondary m-2" (click)="reset()">Vider</button>
+  <button class="btn btn-outline-secondary" (click)="activeModal?.close()">Fermer</button>
 </div>

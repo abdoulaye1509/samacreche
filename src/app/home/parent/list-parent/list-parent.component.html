@@ -54,56 +54,44 @@
   Aucun parent trouvé.
   <p class="small text-muted mt-2">Clique sur “Parent” pour en ajouter un.</p>
 </div>
-
-<!-- ===== Vue CARTES ===== -->
+<!-- ===== Vue CARTES (simple + icônes) ===== -->
 <div *ngIf="!loading_get_parent && list.length && viewMode==='cards'" class="row g-3 mt-2">
-  <div class="col-12 col-sm-6 col-lg-4 col-xl-3" *ngFor="let p of list; trackBy: trackParent">
-    <div class="card parent-card clickable h-100"
-         (click)="openModal_detail_parent(p)"
-         title="Voir les détails">
-      <div class="card-body d-flex align-items-center gap-3">
-        <!-- Avatar -->
-        <div class="avatar-circle"><span>{{ initials(p) }}</span></div>
+  <div class="col-12 col-sm-6 col-lg-4 col-xl-3" *ngFor="let p of list; trackBy: trackParent" [routerLink]="['/home/parent',p.id_parent]">
+    <div class="card parent-simple-card h-100"  title="Voir les détails">
+      <div class="card-body">
 
-        <!-- Infos -->
-        <div class="flex-grow-1">
-          <div class="fw-semibold text-truncate">{{ fullName(p) }}</div>
-          <div class="text-muted small">#{{ p.id_parent }}</div>
-          <div class="text-muted small mt-1">
-            <span *ngIf="p?.adresse_parent"><i class="bi bi-geo-alt me-1"></i>{{ p.adresse_parent }}</span>
-            <span *ngIf="p?.email_parent" class="ms-3"><i class="bi bi-envelope me-1"></i>{{ p.email_parent }}</span>
-          </div>
+        <div class="id-line d-flex align-items-center gap-1">
+          <i class="bi bi-hash text-muted"></i>
+          <span class="id-badge">P°{{ p.id_parent }}</span>
         </div>
 
-        <!-- Actions (ne pas déclencher le clic carte) -->
-        <div class="ms-auto d-flex gap-2" (click)="$event.stopPropagation()">
-          <button class="btn btn-outline-primary btn-sm" (click)="openModal_edit_parent(p)" title="Modifier">
-            <i class="bi bi-pencil-square"></i>
-          </button>
-          <button class="btn btn-outline-danger btn-sm" (click)="delete_parent(p)" title="Supprimer">
-            <i class="bi bi-trash"></i>
-          </button>
+        <div class="name d-flex align-items-center gap-2">
+          <i class="bi bi-person text-primary"></i>
+          <span>{{ p.prenom_parent }} {{ p.nom_parent }}</span>
         </div>
+
+        <div class="addr d-flex align-items-center gap-2" *ngIf="p?.adresse_parent">
+          <i class="bi bi-geo-alt text-secondary"></i>
+          <span>{{ p.adresse_parent }}</span>
+        </div>
+
       </div>
     </div>
   </div>
 </div>
-
-
 <!-- ===== Vue LISTE COMPACTE ===== -->
 <div *ngIf="!loading_get_parent && list.length && viewMode==='list'" class="list-group mt-2">
   <div class="list-group-item list-group-item-action py-3"
        *ngFor="let p of list; trackBy: trackParent"
-       (click)="openModal_detail_parent(p)">
+       [routerLink]="['/home/parent',p.id_parent]">
     <div class="d-flex align-items-center gap-3">
       <div class="avatar-circle avatar-sm">
         <span>{{ initials(p) }}</span>
       </div>
-
       <div class="flex-grow-1">
         <div class="d-flex align-items-center gap-2 flex-wrap">
           <span class="fw-semibold">{{ fullName(p) }}</span>
-          <span class="badge text-bg-light">#{{ p.id_parent }}</span>
+          <span class="badge text-bg-light">{{ p.id_parent }}</span>
         </div>
         <div class="text-muted small mt-1">
           <span *ngIf="p?.adresse_parent"><i class="bi bi-geo-alt me-1"></i>{{ p.adresse_parent }}</span>
@@ -137,7 +125,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let p of list; trackBy: trackParent">
+      <tr *ngFor="let p of list; trackBy: trackParent" [routerLink]="['/home/parent',p.id_parent]">
         <td>{{ p.id_parent }}</td>
         <td>{{ p.prenom_parent }}</td>
         <td>{{ p.nom_parent }}</td>

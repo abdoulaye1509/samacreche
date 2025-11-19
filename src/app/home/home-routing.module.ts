@@ -22,11 +22,15 @@ import { ListStructureComponent } from './structure/list-structure/list-structur
 import { ListStructureUtilisateurComponent } from './structure-utilisateur/list-structure-utilisateur/list-structure-utilisateur.component';
 import { ListUtilisateurComponent } from './utilisateur/list-utilisateur/list-utilisateur.component';
 import { ParametreComponent } from './home/parametre/parametre.component';
+import { DetailEnfantComponent } from './enfant/detail-enfant/detail-enfant.component';
+import { DetailParentComponent } from './parent/detail-parent/detail-parent.component';
 
 const routes: Routes = [
-  { path: "", component: ListActiviteComponent },
+  { path: "", redirectTo: "enfant", pathMatch: "full" }, // ou "enfant", comme tu veux
   { path: "activite", component: ListActiviteComponent },
+    //{ path: "activite/:id_activite", component: ListActiviteComponent },
   { path: "enfant", component: ListEnfantComponent },
+  { path: "enfant/:id_enfant", component: DetailEnfantComponent },
   { path: "facturation", component: ListFacturationComponent },
   { path: "fiche_enfant", component: ListFicheEnfantComponent },
   { path: "galerie_enfant", component: ListGalerieEnfantComponent },
@@ -37,6 +41,7 @@ const routes: Routes = [
   { path: "mensualite_structure", component: ListMensualiteStructureComponent },
   { path: "parent", component: ListParentComponent },
   { path: "parent_enfant", component: ListParentEnfantComponent },
+  { path: "parent/:id_parent", component: DetailParentComponent },
   { path: "pays", component: ListPaysComponent },
   { path: "planning_enfant", component: ListPlanningEnfantComponent },
   { path: "planning_equipe", component: ListPlanningEquipeComponent },

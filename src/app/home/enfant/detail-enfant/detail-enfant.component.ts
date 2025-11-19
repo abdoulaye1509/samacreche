@@ -1,79 +1,62 @@
-import { Component, Input } from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ApiService } from '../../../service/api/api.service';
-import { EnfantTafType } from '../taf-type/enfant-taf-type';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Optional } from '@angular/core';
+import { CommonModule, DatePipe, SlicePipe, UpperCasePipe } from '@angular/common'; // Ajout de pipes si non déjà là
 import { FormsModule } from '@angular/forms';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap'; // facultatif si parfois ouvert en modale
+import { ApiService } from '../../../service/api/api.service';
+import { Location } from '@angular/common';
+import { ListActiviteComponent } from "../../activite/list-activite/list-activite.component";
 @Component({
   selector: 'app-detail-enfant',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  // Assurez-vous d'importer tous les modules et pipes nécessaires pour le template
+  imports: [CommonModule, FormsModule, DatePipe, SlicePipe, UpperCasePipe, ListActiviteComponent],
   templateUrl: './detail-enfant.component.html',
-  styleUrl: './detail-enfant.component.scss'
+  styleUrls: ['./detail-enfant.component.scss']
 })
-export class DetailEnfantComponent {
-  loading_get_enfant: boolean = false;
-  les_enfants: any;
-  les_parents: any;
-  list: any;
-  loading_delete_enfant: boolean = false;
-  filter: any = {
-    text: [],
-  };
-  @Input() enfant_to_view !: EnfantTafType;
-  // Ajoute ces propriétés
+export class DetailEnfantComponent implements OnInit {
+  loading_get_enfant = false;
   enfant: any = null;
   parents: any[] = [];
-  constructor(public api: ApiService, private modalService: NgbModal,public activeModal: NgbActiveModal) {
+  id_enfant = 0;
 
-  }
+  // 🆕 État de l'onglet actif
+  activeTab: 'info' | 'parents' = 'info';
+
+  constructor(
+    public api: ApiService,
+    private route: ActivatedRoute,
+    private location: Location, private router: Router,
+    @Optional() public activeModal?: NgbActiveModal,
+  ) { }
+
   ngOnInit(): void {
-    console.groupCollapsed("ListEnfantComponent");
-    this.get_enfant()
-  }
-  ngOnDestroy(): void {
-    console.groupEnd();
+    this.route.params.subscribe(p => {
+      const id = +p['id_enfant'];
+      if (id) { this.id_enfant = id; this.get_enfant(); }
+    });
   }
   get_enfant() {
-    console.log("enfant_to view for detail:", this.enfant_to_view);
     this.loading_get_enfant = true;
-    this.api.taf_post_object("enfant/get_2", { id_enfant: this.enfant_to_view.id_enfant }, (reponse: any) => {
-      if (reponse.status) {
-        const d = reponse.data;
-        this.enfant = d;                         // objet enfant
-        this.parents = Array.isArray(d.les_parents) ? d.les_parents : [];
-        this.loading_get_enfant = false;
-        return;
-      }
-      else {
-        console.log("L'opération sur la table enfant a échoué. Réponse= ", reponse);
-        this.api.Swal_error("L'opération a echoué")
-      }
-      this.loading_get_enfant = false;
-    }, (error: any) => {
-      this.loading_get_enfant = false;
-    })
-  }
+    // Utilisation de id_enfant: 1 à titre d'exemple pour le test si id_enfant est 0
+    const payload = { id_enfant: this.id_enfant || 1 };
 
-  delete_enfant(enfant: any) {
-    this.loading_delete_enfant = true;
-    this.api.taf_post("enfant/delete", enfant, (reponse: any) => {
-      //when success
-      if (reponse.status) {
-        console.log("Opération effectuée avec succés sur la table enfant . Réponse = ", reponse)
-        this.get_enfant()
-        this.api.Swal_success("Opération éffectuée avec succés")
+    this.api.taf_post_object('enfant/get_2', payload, (res: any) => {
+      if (res.status) {
+        this.enfant = res.data;
+        // La structure de l'API montre que les parents sont dans res.data.les_parents
+        this.parents = Array.isArray(res.data.les_parents) ? res.data.les_parents : [];
       } else {
-        console.log("L'opération sur la table enfant  a échoué. Réponse = ", reponse)
-        this.api.Swal_error("L'opération a echoué")
+        this.api.Swal_error("Impossible de charger l'enfant");
       }
-      this.loading_delete_enfant = false;
-    },
-      (error: any) => {
-        //when error
-        console.log("Erreur inconnue! ", error)
-        this.loading_delete_enfant = false;
-      })
+      this.loading_get_enfant = false;
+    }, () => this.loading_get_enfant = false);
+  }
+  goBack(): void {
+    if (history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/home/enfant']); // adapte le chemin si besoin
+    }
   }
 }

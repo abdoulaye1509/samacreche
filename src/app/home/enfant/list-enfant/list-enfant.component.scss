@@ -17,3 +17,13 @@
 
 .child-actions { opacity: .0; transition: opacity .15s ease; }
 .child-card:hover .child-actions { opacity: 1; }
+/* XXL custom width */
+.modal-xxl {
+  .modal-dialog {
+    max-width: 1400px;   /* ou 1200px, 1400px… */
+    width: 1400px;         /* ou 1200px, 1400px… */
+  }
+  .modal-content {
+    height: 1000px;      /* optionnel, si tu veux plus de hauteur utile */
+  }
+}

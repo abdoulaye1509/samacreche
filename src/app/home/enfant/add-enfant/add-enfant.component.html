@@ -169,7 +169,7 @@
         <div class="parent-card p-3 border rounded-3" *ngFor="let parentGrp of parents.controls; let i = index"
           [formGroupName]="i">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="fw-semibold">Parent #{{ i + 1 }}</div>
+            <div class="fw-semibold">Parent {{ i + 1 }}</div>
             <button type="button" class="btn btn-outline-danger btn-sm" *ngIf="parents.length > 1"
               (click)="removeParent(i)">
               <i class="bi bi-x-lg"></i>

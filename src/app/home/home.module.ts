@@ -10,7 +10,7 @@ import { NgModule } from '@angular/core';
     imports: [
       CommonModule,
       HomeRoutingModule,
-      ReactiveFormsModule
+      ReactiveFormsModule,
     ]
   })
   export class HomeModule { }

@@ -1,95 +1,98 @@
-import { Component, EventEmitter, Output, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, EventEmitter, Output, OnDestroy, OnInit, Input } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ApiService } from '../../../service/api/api.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ActiviteTafType } from '../taf-type/activite-taf-type';
 @Component({
   selector: 'app-add-activite',
   standalone: true, // Composant autonome
-  imports: [CommonModule, ReactiveFormsModule, NgSelectModule], // Dépendances importées
+  imports: [CommonModule, ReactiveFormsModule, NgSelectModule,NgClass,FormsModule], // Dépendances importées
   templateUrl: './add-activite.component.html',
   styleUrls: ['./add-activite.component.scss']
 })
-export class AddActiviteComponent implements OnInit, OnDestroy {
+export class AddActiviteComponent implements OnInit {
   reactiveForm_add_activite !: FormGroup;
-  submitted:boolean=false
-  loading_add_activite :boolean=false
+  submitted: boolean = false
+  loading_add_activite: boolean = false
   form_details: any = {}
   loading_get_details_add_activite_form = false
-  constructor(private formBuilder: FormBuilder,public api:ApiService, public activeModal: NgbActiveModal) { }
+  form: any[] = []
+  @Input()
+  id_enfant = 0
+  date_activite: string = '';
+  heure_activite: string = '';
+    loading_get_activite = false
+  activite: ActiviteTafType[] = [];
 
-  ngOnInit(): void {
-      console.groupCollapsed("AddActiviteComponent");
-      this.get_details_add_activite_form()
-      this.init_form()
+  constructor(private formBuilder: FormBuilder, public api: ApiService, public activeModal: NgbActiveModal) 
+  { 
+     this.form = JSON.parse(JSON.stringify(api.form))
+    console.log("form = ",this.form)
+    console.log("api.form = ",this.api.form)
   }
-  ngOnDestroy(): void {
-    console.groupEnd();
+    ngOnInit(): void {
+    const now = new Date();
+    this.date_activite  = now.toISOString().slice(0, 10);  // YYYY-MM-DD
+    this.heure_activite = now.toTimeString().slice(0, 5);  // HH:mm
   }
-  init_form() {
-      this.reactiveForm_add_activite  = this.formBuilder.group({
-          id_enfant: [""],
-contenu: [""],
-description: [""],
-date_activite: [""],
-heure_activite: [""],
-updated_at: [""],
-created_by: [""],
-updated_by: [""]
-      });
+    get disabled(): boolean {
+    return this.loading_add_activite || !this.date_activite || !this.id_enfant;
+  }
+  form_change() {
+    console.log("form= ", this.form)
+    console.log("api.form = ",this.api.form)
+  }
+   valider() {
+    const data = {
+      created_by: this.api.token.user_connected.id_utilisateur,
+      id_structure: this.api.token.user_connected.id_structure,
+      id_enfant: this.id_enfant,
+      date_activite: this.date_activite,
+      heure_activite: this.heure_activite || null,
+      contenu: JSON.stringify(this.form)
+    };
+    this.add_activite(data);
+  }
+  reset() {
+    this.date_activite= '';
+    this.form = JSON.parse(JSON.stringify(this.api.form))
   }
 
-  // acces facile au champs de votre formulaire
-  get f(): any { return this.reactiveForm_add_activite .controls; }
-  // validation du formulaire
-  onSubmit_add_activite () {
-      this.submitted = true;
-      console.log(this.reactiveForm_add_activite .value)
-      // stop here if form is invalid
-      if (this.reactiveForm_add_activite .invalid) {
-          return;
-      }
-      var activite =this.reactiveForm_add_activite .value
-      this.add_activite (activite )
-  }
-  // vider le formulaire
-  onReset_add_activite () {
-      this.submitted = false;
-      this.reactiveForm_add_activite .reset();
-  }
-  add_activite(activite: any) {
-      this.loading_add_activite = true;
-      this.api.taf_post("activite/add", activite, (reponse: any) => {
+   add_activite(activite: any) {
+    this.loading_add_activite = true;
+    this.api.taf_post("activite/add", activite, (reponse: any) => {
       this.loading_add_activite = false;
       if (reponse.status) {
-          console.log("Opération effectuée avec succés sur la table activite. Réponse= ", reponse);
-          this.onReset_add_activite()
-          this.api.Swal_success("Opération éffectuée avec succés")
-          this.activeModal.close(reponse)
+        console.log("Opération effectuée avec succés sur la table activite. Réponse= ", reponse);
+        this.api.Swal_success("Opération éffectuée avec succés")
+        this.activeModal.close(reponse)
       } else {
-          console.log("L'opération sur la table activite a échoué. Réponse= ", reponse);
-          this.api.Swal_error("L'opération a echoué")
+        console.log("L'opération sur la table activite a échoué. Réponse= ", reponse);
+        this.api.Swal_error("L'opération a echoué")
       }
     }, (error: any) => {
-        this.loading_add_activite = false;
+      this.loading_add_activite = false;
     })
   }
-  
-  get_details_add_activite_form() {
-      this.loading_get_details_add_activite_form = true;
-      this.api.taf_post("activite/get_form_details", {}, (reponse: any) => {
-        if (reponse.status) {
-          this.form_details = reponse.data
-          console.log("Opération effectuée avec succés sur la table activite. Réponse= ", reponse);
-        } else {
-          console.log("L'opération sur la table activite a échoué. Réponse= ", reponse);
-          this.api.Swal_error("L'opération a echoué")
-        }
-        this.loading_get_details_add_activite_form = false;
-      }, (error: any) => {
-      this.loading_get_details_add_activite_form = false;
-    })
+  get_activite() {
+    let params = { id_enfant: this.id_enfant }// les conditions à mettre ici
+    this.loading_get_activite = true;
+    this.api.taf_post("activite/get", params, (reponse: any) => {
+      //when success
+      if (reponse.status) {
+        this.api.les_activites = reponse.data
+        console.log("Opération effectuée avec succés sur la table activite. Réponse= ", reponse);
+      } else {
+        console.log("L\'opération sur la table activite a échoué. Réponse= ", reponse);
+      }
+      this.loading_get_activite = false;
+    },
+      (error: any) => {
+        //when error
+        this.loading_get_activite = false;
+        console.log("Erreur inconnue! ", error);
+      })
   }
 }

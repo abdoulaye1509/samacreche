@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 export class ApiService {
   local_storage_prefixe = "samacreche.angular";
   taf_base_url = "https://samacreche.jambar.tech/taf/";
-    filesBaseUrl = 'https://samacreche.jambar.tech/';
+  filesBaseUrl = 'https://samacreche.jambar.tech/';
 
   network: any = {
     token: undefined,
@@ -26,175 +26,809 @@ export class ApiService {
     is_expired: null,
     date_expiration: null
   }
-   infos: any = {
+  infos: any = {
     utilisateur: {}, les_structures: [], current_structure: {},
     token_key: null,
     token: { token_key: null, token_decoded: null, user_connected: null, is_expired: null, date_expiration: null },
     les_droits_utilisateur: [],
   };
-     placeholderLogo = 'assets/medoc.png'; // mets une petite image locale
-loading_get_utilisateur: boolean = false;
+  les_activites: any[] = [];
+  placeholderLogo = 'assets/medoc.png'; // mets une petite image locale
+  loading_get_utilisateur: boolean = false;
   // ⚠️ on garde mais on ne dépend plus de ce champ seul
   les_droits: any[] = [];
-   user_connected: any;
+  user_connected: any;
   menu: any[] = [];
 
- full_menu: any[] = [
-  {
-    name: 'Tableau de bord',
-    path: '/home/tableau_de_bord',
-    icon: 'bi-speedometer2',
-    children: [],
-    les_actions: [
-      { menu: 'Dashboard', ongle: 'Vue', id: '/home/tableau_de_bord', action: 'Accéder au tableau de bord' }
-    ]
-  },
+  full_menu: any[] = [
+    {
+      name: 'Tableau de bord',
+      path: '/home/tableau_de_bord',
+      icon: 'bi-speedometer2',
+      children: [],
+      les_actions: [
+        { menu: 'Dashboard', ongle: 'Vue', id: '/home/tableau_de_bord', action: 'Accéder au tableau de bord' }
+      ]
+    },
 
-  {
-    name: 'Enfants',
-    path: '/home/enfant',
-    icon: 'bi-emoji-smile-fill',
-    children: [],
-    les_actions: [
-      { menu: 'Enfant', ongle: 'Liste', id: 'view_enfant', action: 'Voir la liste des enfants' },
-      { menu: 'Enfant', ongle: 'Ajouter', id: 'add_enfant', action: 'Ajouter un enfant' },
-      { menu: 'Enfant', ongle: 'Modifier', id: 'edit_enfant', action: 'Modifier un enfant' },
-      { menu: 'Enfant', ongle: 'Supprimer', id: 'delete_enfant', action: 'Supprimer un enfant' }
-    ]
-  },
+    {
+      name: 'Enfants',
+      path: '/home/enfant',
+      icon: 'bi-emoji-smile-fill',
+      children: [],
+      les_actions: [
+        { menu: 'Enfant', ongle: 'Liste', id: 'view_enfant', action: 'Voir la liste des enfants' },
+        { menu: 'Enfant', ongle: 'Ajouter', id: 'add_enfant', action: 'Ajouter un enfant' },
+        { menu: 'Enfant', ongle: 'Modifier', id: 'edit_enfant', action: 'Modifier un enfant' },
+        { menu: 'Enfant', ongle: 'Supprimer', id: 'delete_enfant', action: 'Supprimer un enfant' }
+      ]
+    },
 
-  {
-    name: 'Parents',
-    path: '/home/parent',
-    icon: 'bi-people-fill',
-    children: [],
-    les_actions: [
-      { menu: 'Parent', ongle: 'Liste', id: 'view_parent', action: 'Voir les parents' },
-      { menu: 'Parent', ongle: 'Ajouter', id: 'add_parent', action: 'Ajouter un parent' },
-      { menu: 'Parent', ongle: 'Modifier', id: 'edit_parent', action: 'Modifier un parent' },
-      { menu: 'Parent', ongle: 'Supprimer', id: 'delete_parent', action: 'Supprimer un parent' }
-    ]
-  },
+    {
+      name: 'Parents',
+      path: '/home/parent',
+      icon: 'bi-people-fill',
+      children: [],
+      les_actions: [
+        { menu: 'Parent', ongle: 'Liste', id: 'view_parent', action: 'Voir les parents' },
+        { menu: 'Parent', ongle: 'Ajouter', id: 'add_parent', action: 'Ajouter un parent' },
+        { menu: 'Parent', ongle: 'Modifier', id: 'edit_parent', action: 'Modifier un parent' },
+        { menu: 'Parent', ongle: 'Supprimer', id: 'delete_parent', action: 'Supprimer un parent' }
+      ]
+    },
 
-  {
-    name: 'Équipes',
-    path: '/home/utilisateur',
-    icon: 'bi-person-badge-fill',
-    children: [],
-    les_actions: [
-      { menu: 'Equipe', ongle: 'Liste', id: 'view_equipe', action: 'Voir les membres de l’équipe' },
-      { menu: 'Equipe', ongle: 'Ajouter', id: 'add_equipe', action: 'Ajouter un membre du personnel' },
-      { menu: 'Equipe', ongle: 'Modifier', id: 'edit_equipe', action: 'Modifier un membre du personnel' },
-      { menu: 'Equipe', ongle: 'Supprimer', id: 'delete_equipe', action: 'Supprimer un membre du personnel' }
-    ]
-  },
+    {
+      name: 'Équipes',
+      path: '/home/utilisateur',
+      icon: 'bi-person-badge-fill',
+      children: [],
+      les_actions: [
+        { menu: 'Equipe', ongle: 'Liste', id: 'view_equipe', action: 'Voir les membres de l’équipe' },
+        { menu: 'Equipe', ongle: 'Ajouter', id: 'add_equipe', action: 'Ajouter un membre du personnel' },
+        { menu: 'Equipe', ongle: 'Modifier', id: 'edit_equipe', action: 'Modifier un membre du personnel' },
+        { menu: 'Equipe', ongle: 'Supprimer', id: 'delete_equipe', action: 'Supprimer un membre du personnel' }
+      ]
+    },
 
-  {
-    name: 'Activités',
-    path: '/home/activite',
-    icon: 'bi-brush-fill',
-    children: [],
-    les_actions: [
-      { menu: 'Activité', ongle: 'Liste', id: 'view_activite', action: 'Voir les activités' },
-      { menu: 'Activité', ongle: 'Ajouter', id: 'add_activite', action: 'Ajouter une activité' },
-      { menu: 'Activité', ongle: 'Modifier', id: 'edit_activite', action: 'Modifier une activité' },
-      { menu: 'Activité', ongle: 'Supprimer', id: 'delete_activite', action: 'Supprimer une activité' }
-    ]
-  },
-  {
-    name: 'Plannings',
-    path: '/home/planning_enfant',
-    icon: 'bi-calendar-week-fill',
-    children: [
-      // { name: 'Planning Enfants', path: '/home/planning/enfant', icon: 'bi-calendar-heart-fill' },
-      // { name: 'Planning Équipes', path: '/home/planning/equipe', icon: 'bi-calendar-check-fill' }
-    ],
-    les_actions: [
-      { menu: 'Planning', ongle: 'Vue', id: '/home/planning', action: 'Accéder au planning' }
-    ]
-  },
+    {
+      name: 'Activités',
+      path: '/home/activite',
+      icon: 'bi-brush-fill',
+      children: [],
+      les_actions: [
+        { menu: 'Activité', ongle: 'Liste', id: 'view_activite', action: 'Voir les activités' },
+        { menu: 'Activité', ongle: 'Ajouter', id: 'add_activite', action: 'Ajouter une activité' },
+        { menu: 'Activité', ongle: 'Modifier', id: 'edit_activite', action: 'Modifier une activité' },
+        { menu: 'Activité', ongle: 'Supprimer', id: 'delete_activite', action: 'Supprimer une activité' }
+      ]
+    },
+    {
+      name: 'Plannings',
+      path: '/home/planning_enfant',
+      icon: 'bi-calendar-week-fill',
+      children: [
+        // { name: 'Planning Enfants', path: '/home/planning/enfant', icon: 'bi-calendar-heart-fill' },
+        // { name: 'Planning Équipes', path: '/home/planning/equipe', icon: 'bi-calendar-check-fill' }
+      ],
+      les_actions: [
+        { menu: 'Planning', ongle: 'Vue', id: '/home/planning', action: 'Accéder au planning' }
+      ]
+    },
 
-  {
-    name: 'Galerie',
-    path: '/home/galerie_enfant',
-    icon: 'bi-images',
-    children: [],
-    les_actions: [
-      { menu: 'Galerie', ongle: 'Liste', id: 'view_galerie', action: 'Voir la galerie' },
-      { menu: 'Galerie', ongle: 'Ajouter', id: 'add_galerie', action: 'Ajouter une photo ou vidéo' },
-      { menu: 'Galerie', ongle: 'Supprimer', id: 'delete_galerie', action: 'Supprimer un média' }
-    ]
-  },
+    {
+      name: 'Galerie',
+      path: '/home/galerie_enfant',
+      icon: 'bi-images',
+      children: [],
+      les_actions: [
+        { menu: 'Galerie', ongle: 'Liste', id: 'view_galerie', action: 'Voir la galerie' },
+        { menu: 'Galerie', ongle: 'Ajouter', id: 'add_galerie', action: 'Ajouter une photo ou vidéo' },
+        { menu: 'Galerie', ongle: 'Supprimer', id: 'delete_galerie', action: 'Supprimer un média' }
+      ]
+    },
 
-  {
-    name: 'Facturation',
-    path: '/home/facturation',
-    icon: 'bi-receipt-cutoff',
-    children: [],
-    les_actions: [
-      { menu: 'Facturation', ongle: 'Liste', id: 'view_facturation', action: 'Voir les factures' },
-      { menu: 'Facturation', ongle: 'Créer', id: 'add_facturation', action: 'Créer une facture' },
-      { menu: 'Facturation', ongle: 'Modifier', id: 'edit_facturation', action: 'Modifier une facture' },
-      { menu: 'Facturation', ongle: 'Supprimer', id: 'delete_facturation', action: 'Supprimer une facture' }
-    ]
-  },
+    {
+      name: 'Facturation',
+      path: '/home/facturation',
+      icon: 'bi-receipt-cutoff',
+      children: [],
+      les_actions: [
+        { menu: 'Facturation', ongle: 'Liste', id: 'view_facturation', action: 'Voir les factures' },
+        { menu: 'Facturation', ongle: 'Créer', id: 'add_facturation', action: 'Créer une facture' },
+        { menu: 'Facturation', ongle: 'Modifier', id: 'edit_facturation', action: 'Modifier une facture' },
+        { menu: 'Facturation', ongle: 'Supprimer', id: 'delete_facturation', action: 'Supprimer une facture' }
+      ]
+    },
 
-  {
-    name: 'Honoraires',
-    path: '/home/honoraire',
-    icon: 'bi-cash-coin',
-    children: [],
-    les_actions: [
-      { menu: 'Honoraire', ongle: 'Liste', id: 'view_honoraire', action: 'Voir les honoraires' },
-      { menu: 'Honoraire', ongle: 'Ajouter', id: 'add_honoraire', action: 'Ajouter un honoraire' },
-      { menu: 'Honoraire', ongle: 'Modifier', id: 'edit_honoraire', action: 'Modifier un honoraire' },
-      { menu: 'Honoraire', ongle: 'Supprimer', id: 'delete_honoraire', action: 'Supprimer un honoraire' }
-    ]
-  },
+    {
+      name: 'Honoraires',
+      path: '/home/honoraire',
+      icon: 'bi-cash-coin',
+      children: [],
+      les_actions: [
+        { menu: 'Honoraire', ongle: 'Liste', id: 'view_honoraire', action: 'Voir les honoraires' },
+        { menu: 'Honoraire', ongle: 'Ajouter', id: 'add_honoraire', action: 'Ajouter un honoraire' },
+        { menu: 'Honoraire', ongle: 'Modifier', id: 'edit_honoraire', action: 'Modifier un honoraire' },
+        { menu: 'Honoraire', ongle: 'Supprimer', id: 'delete_honoraire', action: 'Supprimer un honoraire' }
+      ]
+    },
 
-  {
-    name: 'Structures',
-    path: '/home/structure',
-    icon: 'bi-building',
-    children: [],
-    les_actions: [
-      { menu: 'Structure', ongle: 'Liste', id: 'view_structure', action: 'Voir les structures' },
-      { menu: 'Structure', ongle: 'Ajouter', id: 'add_structure', action: 'Ajouter une structure' },
-      { menu: 'Structure', ongle: 'Modifier', id: 'edit_structure', action: 'Modifier une structure' },
-      { menu: 'Structure', ongle: 'Supprimer', id: 'delete_structure', action: 'Supprimer une structure' }
-    ]
-  },
+    {
+      name: 'Structures',
+      path: '/home/structure',
+      icon: 'bi-building',
+      children: [],
+      les_actions: [
+        { menu: 'Structure', ongle: 'Liste', id: 'view_structure', action: 'Voir les structures' },
+        { menu: 'Structure', ongle: 'Ajouter', id: 'add_structure', action: 'Ajouter une structure' },
+        { menu: 'Structure', ongle: 'Modifier', id: 'edit_structure', action: 'Modifier une structure' },
+        { menu: 'Structure', ongle: 'Supprimer', id: 'delete_structure', action: 'Supprimer une structure' }
+      ]
+    },
 
-  {
-    name: 'Paramètres',
-    path: '/home/parametre',
-    icon: 'bi-gear-fill',
-    children: [
-      { name: 'Genre', path: '/home/parametre/genre', icon: 'bi-gender-ambiguous' },
-      { name: 'Pays', path: '/home/parametre/pays', icon: 'bi-globe2' },
-      { name: 'Statut Structure', path: '/home/parametre/statut_structure', icon: 'bi-building-check' },
-      { name: 'Statut Utilisateur', path: '/home/parametre/statut_utilisateur', icon: 'bi-person-check-fill' },
-      { name: 'Privilèges', path: '/home/parametre/privilege', icon: 'bi-shield-lock-fill' },
-      { name: 'Mensualités', path: '/home/parametre/mensualite', icon: 'bi-calendar-month-fill' },
-      { name: 'Liens de parenté', path: '/home/parametre/lien_parente', icon: 'bi-people' }
-    ],
-    les_actions: [
-      { menu: 'Paramètre', ongle: 'Vue', id: '/home/parametre', action: 'Accéder aux paramètres' }
-    ]
-  },
+    {
+      name: 'Paramètres',
+      path: '/home/parametre',
+      icon: 'bi-gear-fill',
+      children: [
+        { name: 'Genre', path: '/home/parametre/genre', icon: 'bi-gender-ambiguous' },
+        { name: 'Pays', path: '/home/parametre/pays', icon: 'bi-globe2' },
+        { name: 'Statut Structure', path: '/home/parametre/statut_structure', icon: 'bi-building-check' },
+        { name: 'Statut Utilisateur', path: '/home/parametre/statut_utilisateur', icon: 'bi-person-check-fill' },
+        { name: 'Privilèges', path: '/home/parametre/privilege', icon: 'bi-shield-lock-fill' },
+        { name: 'Mensualités', path: '/home/parametre/mensualite', icon: 'bi-calendar-month-fill' },
+        { name: 'Liens de parenté', path: '/home/parametre/lien_parente', icon: 'bi-people' }
+      ],
+      les_actions: [
+        { menu: 'Paramètre', ongle: 'Vue', id: '/home/parametre', action: 'Accéder aux paramètres' }
+      ]
+    },
 
-  {
-    name: 'Profil',
-    path: '/home/profil',
-    icon: 'bi-person-circle',
-    children: [],
-    les_actions: [
-      { menu: 'Profil', ongle: 'Profil', id: '/home/profil', action: 'Voir le profil' },
-      { menu: 'Profil', ongle: 'Modifier', id: 'edit_profil', action: 'Modifier le profil' },
-      { menu: 'Profil', ongle: 'MotDePasse', id: 'change_password', action: 'Changer le mot de passe' }
-    ]
-  }
-];
+    {
+      name: 'Profil',
+      path: '/home/profil',
+      icon: 'bi-person-circle',
+      children: [],
+      les_actions: [
+        { menu: 'Profil', ongle: 'Profil', id: '/home/profil', action: 'Voir le profil' },
+        { menu: 'Profil', ongle: 'Modifier', id: 'edit_profil', action: 'Modifier le profil' },
+        { menu: 'Profil', ongle: 'MotDePasse', id: 'change_password', action: 'Changer le mot de passe' }
+      ]
+    }
+  ];
+ form: any[] = [
+    {
+      titre: "Arrivée",
+      lignes: [{
+        name: "accompagnateur",
+        titre: "Accompagnateur",
+        value: "",
+        options: [
+          { name: "papa", titre: "Papa", value: "" },
+          { name: "maman", titre: "Maman", value: "" },
+          { name: "nounou", titre: "Nounou", value: "" }
+        ]
+      },
+      {
+        name: "humeur",
+        titre: "Humeur",
+        value: "",
+        options: [
+          { name: "joyeuse", titre: "Joyeuse", value: "" },
+          { name: "maussade", titre: "Maussade", value: "" },
+        ]
+      }]
+    },
+    {
+      titre: "Repas",
+      lignes: [
+        {
+          name: "Déjeuner",
+          titre: "Déjeuner",
+          value: "",
+          options: [
+            { name: "Bon", titre: "Bon", value: "" },
+            { name: "Moyen", titre: "Moyen", value: "" },
+            { name: "Mange_peu", titre: "Mange peu", value: "" }
+          ]
+        },
+        {
+          name: "Goûter",
+          titre: "Goûter",
+          value: "",
+          options: [
+            { name: "Bon", titre: "Bon", value: "" },
+            { name: "Moyen", titre: "Moyen", value: "" },
+            { name: "Mange_peu", titre: "Mange peu", value: "" }
+          ]
+        },
+        {
+          name: "Collation",
+          titre: "Collation",
+          value: "",
+          options: [
+            { name: "Bouillie", titre: "Bouillie", value: "" },
+            { name: "Céréales", titre: "Céréales", value: "" },
+            { name: "Autres", titre: "Autres", value: "" },
+          ]
+        },
+        {
+          name: "Aliments_du_goûter",
+          titre: "Aliments du goûter",
+          value: "",
+          options: [
+            { name: "Yaourt", titre: "Yaourt", value: "" },
+            { name: "Compote", titre: "Compote", value: "" },
+            { name: "Fruits", titre: "Fruits", value: "" },
+          ]
+        },
+        {
+          name: "Aliments_du_goûter",
+          titre: "Biberons",
+          value: "",
+          rowspan: 4,
+          options: [
+            { name: "1", titre: "Première prise", value: "", type: "text" },
+            { name: "2", titre: "Deuxième prise", value: "", type: "text" },
+            { name: "3", titre: "Troixième prise", value: "", type: "text" },
+            { name: "3", titre: "Quatrième prise", value: "", type: "text" },
+          ]
+        },
+        {
+          name: "Aliments_du_goûter",
+          titre: "Biberons",
+          value: "",
+          hide: true,
+          options: [
+            { name: "1", titre: "Quantités bues", value: "", type: "text" },
+            { name: "2", titre: "Quantités bues", value: "", type: "text" },
+            { name: "3", titre: "Quantités bues", value: "", type: "text" },
+            { name: "3", titre: "Quantités bues", value: "", type: "text" },
+          ]
+        },
+      ]
+    },
+    {
+      titre: "Repos",
+      lignes: [
+        {
+          name: "Temps",
+          titre: "Temps",
+          value: "",
+          options: [
+            { name: "Bon", titre: "Bon", value: "", type: "text" },
+            { name: "Moyen", titre: "Moyen", value: "", type: "text" },
+            { name: "Agité", titre: "Agité", value: "", type: "text" }
+          ]
+        },
+        {
+          name: "Matin",
+          titre: "Matin",
+          value: "",
+          options: [
+            { name: "Bon", titre: "Bon", value: "" },
+            { name: "Moyen", titre: "Moyen", value: "" },
+            { name: "Agité", titre: "Agité", value: "" }
+          ]
+        },
+        {
+          name: "Après_midi",
+          titre: "Après-midi",
+          value: "",
+          options: [
+            { name: "Bon", titre: "Bon", value: "" },
+            { name: "Moyen", titre: "Moyen", value: "" },
+            { name: "Agité", titre: "Agité", value: "" }
+          ]
+        },
+      ]
+    },
+    {
+      titre: "Repas",
+      lignes: [
+        {
+          name: "Matin",
+          titre: "Matin",
+          value: "",
+          options: [
+            { name: "Avec_Selles", titre: "Avec Selles", value: "" },
+            { name: "Sans_Selles", titre: "Sans Selles", value: "" },
+            { name: "Nombres", titre: "Nombres", value: "" }
+          ]
+        },
+        {
+          name: "Après_midi",
+          titre: "Après-midi",
+          value: "",
+          options: [
+            { name: "Avec_Selles", titre: "Avec Selles", value: "" },
+            { name: "Sans_Selles", titre: "Sans Selles", value: "" },
+            { name: "Nombres", titre: "Nombres", value: "" }
+          ]
+        },
+        {
+          name: "Aliments du goûter",
+          titre: "Aliments du goûter",
+          value: "",
+          options: [
+            { name: "Yaourt", titre: "Yaourt", value: "" },
+            { name: "Compote", titre: "Compote", value: "" },
+            { name: "AgFruitsité", titre: "Fruits", value: "" }
+          ]
+        },
+      ]
+    },
+    {
+      titre: "Activités de la Journée",
+      lignes: [
+        {
+          name: "Matin",
+          titre: "Matin",
+          value: "",
+          options: [
+            { name: "Peinture/ Collage", titre: "Peinture/ Collage" },
+            { name: "Pâte à modeler/Pâte à sel", titre: "Pâte à modeler/Pâte à sel" },
+            { name: "Jeux de transvasement (vider/remplir)", titre: "Jeux de transvasement (vider/remplir)" },
+            { name: "Jeux d'eau", titre: "Jeux d'eau" },
+            { name: "Jeux libre", titre: "Jeux libre" },
+            { name: "Jardin", titre: "Jardin" },
+            { name: "Atelier Cuisine", titre: "Atelier Cuisine" },
+            { name: "Motricité", titre: "Motricité" },
+            { name: "Musique", titre: "Musique" },
+            { name: "Lecture de Conte", titre: "Lecture de Conte" },
+
+          ]
+        },
+        {
+          name: "Après_midi",
+          titre: "Après-midi",
+          value: "",
+          options: [
+            { name: "Peinture/ Collage", titre: "Peinture/ Collage" },
+            { name: "Pâte à modeler/Pâte à sel", titre: "Pâte à modeler/Pâte à sel" },
+            { name: "Jeux de transvasement (vider/remplir)", titre: "Jeux de transvasement (vider/remplir)" },
+            { name: "Jeux d'eau", titre: "Jeux d'eau" },
+            { name: "Jeux libre", titre: "Jeux libre" },
+            { name: "Jardin", titre: "Jardin" },
+            { name: "Atelier Cuisine", titre: "Atelier Cuisine" },
+            { name: "Motricité", titre: "Motricité" },
+            { name: "Musique", titre: "Musique" },
+            { name: "Lecture de Conte", titre: "Lecture de Conte" },
+
+
+          ]
+        },
+
+      ]
+    },
+    {
+      titre: "Composition des repas",
+      lignes: [
+        {
+          name: "Poisson",
+          titre: "Poisson",
+          value: "",
+          options: [
+            { name: "Lotte", titre: "Lotte", value: "" },
+            { name: "Cabilaud", titre: "Cabilaud", value: "" },
+            { name: "Turbo", titre: "Turbo", value: "" },
+            { name: "Espadon", titre: "Espadon", value: "" },
+          ]
+        },
+        {
+          name: "Viandes",
+          titre: "Viandes",
+          value: "",
+          options: [
+            { name: "Boeuf", titre: "Boeuf", value: "" },
+            { name: "Veau", titre: "Veau", value: "" },
+            { name: "Mouton", titre: "Mouton", value: "" },
+            { name: "Poulet", titre: "Poulet", value: "" },
+            { name: "Jambon de dinde", titre: "Jambon de dinde", value: "" },
+            { name: "Nuggets de poulet", titre: "Nuggets de poulet", value: "" },
+          ]
+        },
+        {
+          name: "Préparation",
+          titre: "Préparation",
+          value: "",
+          options: [
+            //
+            { name: "Gratin Dauphinois", titre: "Gratin Dauphinois", value: "" },
+            { name: "Raviolis", titre: "Raviolis", value: "" },
+            { name: "Hachis_Parmentier", titre: "Hachis Parmentier", value: "" },
+            { name: "Ratatouille", titre: "Ratatouille", value: "" },
+            { name: "Pâtes Bolognaise", titre: "Pâtes Bolognaise", value: "" },
+          ]
+        },
+        {
+          name: "Féculents",
+          titre: "Féculents",
+          value: "",
+          options: [
+            //
+            { name: "Riz", titre: "Riz", value: "" },
+            { name: "Polenta", titre: "Polenta", value: "" },
+            { name: "Pites", titre: "Pites", value: "" },
+            { name: "Couscous", titre: "Couscous", value: "" },
+          ]
+        },
+        {
+          name: "Légumes Secs",
+          titre: "Légumes Secs",
+          value: "",
+          options: [
+            //
+            { name: "Haricots Blancs", titre: "Haricots Blancs", value: "" },
+            { name: "Niebes", titre: "Niebes", value: "" },
+            { name: "Lentilles", titre: "Lentilles", value: "" },
+          ]
+        },
+        {
+          name: "Yaourts",
+          titre: "Yaourts",
+          value: "",
+          options: [
+            { name: "Chocolat", titre: "Chocolat", value: "" },
+            { name: "Vanille", titre: "Vanille", value: "" },
+            { name: "Fraise", titre: "Fraise", value: "" },
+            { name: "Nature", titre: "Nature", value: "" },
+          ]
+        },
+        {
+          name: "Compotes",
+          titre: "Compotes",
+          value: "",
+          options: [
+            { name: "Pommes", titre: "Pommes", value: "" },
+            { name: "Poires", titre: "Poires", value: "" },
+            { name: "Bananes", titre: "Bananes", value: "" },
+            { name: "Abricots", titre: "Abricots", value: "" },
+            { name: "Mangues", titre: "Mangues", value: "" },
+            { name: "Melon", titre: "Melon", value: "" },
+          ]
+        },
+        {
+          name: "Fruits_Frais",
+          titre: "Fruits Frais",
+          value: "",
+          options: [
+            { name: "Pommes", titre: "Pommes", value: "" },
+            { name: "Bananes", titre: "Bananes", value: "" },
+            { name: "Poires", titre: "Poires", value: "" },
+            { name: "Melon", titre: "Melon", value: "" },
+            { name: "Papaye", titre: "Papaye", value: "" },
+            { name: "Pastèque", titre: "Pastèque", value: "" },
+            { name: "Orange", titre: "Orange", value: "" },
+            { name: "Clementine", titre: "Clementine", value: "" },
+            { name: "Raisins", titre: "Raisins", value: "" },
+          ]
+        },
+        {
+          name: "Légumes",
+          titre: "Légumes",
+          value: "",
+          options: [
+            { name: "Écrasé", titre: "Écrasé", value: "" },
+            { name: "Morceaux", titre: "Morceaux", value: "" },
+            { name: "Mouline", titre: "Mouline", value: "" },
+            { name: "Betteraves Rouges", titre: "Betteraves Rouges", value: "" },
+            { name: "Brocolis", titre: "Brocolis", value: "" },
+            { name: "Carottes", titre: "Carottes", value: "" },
+            { name: "Choux Blancs", titre: "Choux Blancs", value: "" },
+            { name: "Choux Fleurs", titre: "Choux Fleurs", value: "" },
+            { name: "Courgus", titre: "Courgus", value: "" },
+            { name: "Courgettes", titre: "Courgettes", value: "" },
+            { name: "Epinards", titre: "Epinards", value: "" },
+            { name: "Haricots verts", titre: "Haricots verts", value: "" },
+            { name: "Navets", titre: "Navets", value: "" },
+            { name: "Patates Douces", titre: "Patates Douces", value: "" },
+            { name: "Petits Pois", titre: "Petits Pois", value: "" },
+            { name: "Poireaux", titre: "Poireaux", value: "" },
+            { name: "Pommes de Terre", titre: "Pommes de Terre", value: "" },
+            { name: "Aubergines", titre: "Aubergines", value: "" },
+            { name: "Tomates", titre: "Tomates", value: "" },
+          ]
+        },
+
+      ]
+    },
+  ]
+   formV2 = {
+  version: 2,
+  sections: [
+    {
+      id: "arrival",
+      title: "Arrivée",
+      fields: [
+        { id: "accompagnateur", label: "Accompagnateur", type: "select",
+          options: [
+            { value: "papa", label: "Papa" },
+            { value: "maman", label: "Maman" },
+            { value: "nounou", label: "Nounou" }
+          ],
+          required: true
+        },
+        { id: "humeur_arrivee", label: "Humeur à l’arrivée", type: "select",
+          options: [
+            { value: "joyeuse", label: "Joyeuse" },
+            { value: "calme", label: "Calme" },
+            { value: "maussade", label: "Maussade" },
+            { value: "fatigue", label: "Fatigué·e" }
+          ]
+        },
+        { id: "commentaire_arrivee", label: "Commentaire", type: "textarea", maxLength: 500 }
+      ]
+    },
+
+    {
+      id: "meals",
+      title: "Repas",
+      fields: [
+        { id: "dejeuner_appreciation", label: "Déjeuner", type: "select",
+          options: [
+            { value: "bon", label: "Bon" },
+            { value: "moyen", label: "Moyen" },
+            { value: "peu", label: "Mange peu" }
+          ]
+        },
+        { id: "gouter_appreciation", label: "Goûter", type: "select",
+          options: [
+            { value: "bon", label: "Bon" },
+            { value: "moyen", label: "Moyen" },
+            { value: "peu", label: "Mange peu" }
+          ]
+        },
+        { id: "collation_type", label: "Collation", type: "select",
+          options: [
+            { value: "bouillie", label: "Bouillie" },
+            { value: "cereales", label: "Céréales" },
+            { value: "autre", label: "Autre" }
+          ]
+        },
+        { id: "aliments_gouter", label: "Aliments du goûter", type: "multiselect",
+          options: [
+            { value: "yaourt", label: "Yaourt" },
+            { value: "compote", label: "Compote" },
+            { value: "fruits", label: "Fruits" }
+          ]
+        }
+      ]
+    },
+
+    {
+      id: "bottles",
+      title: "Biberons",
+      fields: [
+        {
+          id: "biberons",
+          type: "repeater", min: 0, max: 6,   // 0..6 prises
+          itemLabel: "Prise",
+          itemFields: [
+            { id: "heure", label: "Heure", type: "time", required: true },
+            { id: "quantite_ml", label: "Quantité (ml)", type: "number", min: 0, max: 400, step: 10 },
+            { id: "type", label: "Type", type: "select",
+              options: [
+                { value: "maternel", label: "Lait maternel" },
+                { value: "formule", label: "Lait infantile" },
+                { value: "eau", label: "Eau" }
+              ]
+            },
+            { id: "termine", label: "Terminé", type: "checkbox" }
+          ]
+        }
+      ]
+    },
+
+    {
+      id: "nap",
+      title: "Repos / Sieste",
+      fields: [
+        { id: "qualite_global", label: "Qualité générale", type: "select",
+          options: [
+            { value: "bon", label: "Bon" },
+            { value: "moyen", label: "Moyen" },
+            { value: "agite", label: "Agité" }
+          ]
+        },
+        {
+          id: "siestes",
+          type: "repeater", min: 0, max: 4,
+          itemLabel: "Sieste",
+          itemFields: [
+            { id: "debut", label: "Début", type: "time" },
+            { id: "fin", label: "Fin", type: "time" },
+            { id: "qualite", label: "Qualité", type: "select",
+              options: [
+                { value: "bon", label: "Bon" },
+                { value: "moyen", label: "Moyen" },
+                { value: "agite", label: "Agité" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      id: "hygiene",
+      title: "Changes & Hygiène",
+      fields: [
+        {
+          id: "changes",
+          type: "repeater", min: 0, max: 12,
+          itemLabel: "Change",
+          itemFields: [
+            { id: "heure", label: "Heure", type: "time" },
+            { id: "type", label: "Type", type: "multiselect",
+              options: [
+                { value: "urines", label: "Urines" },
+                { value: "selles", label: "Selles" }
+              ]
+            },
+            { id: "note", label: "Note", type: "text", maxLength: 120 }
+          ]
+        },
+        { id: "observations_hygiene", label: "Observations", type: "textarea", maxLength: 400 }
+      ]
+    },
+
+    {
+      id: "activities",
+      title: "Activités",
+      fields: [
+        { id: "activites_matin", label: "Matin", type: "tags",
+          options: [
+            { value: "peinture_collage", label: "Peinture/Collage" },
+            { value: "pate_modeler", label: "Pâte à modeler/sel" },
+            { value: "transvasement", label: "Transvasement" },
+            { value: "jeux_eau", label: "Jeux d’eau" },
+            { value: "jeux_libres", label: "Jeux libres" },
+            { value: "jardin", label: "Jardin" },
+            { value: "cuisine", label: "Atelier cuisine" },
+            { value: "motricite", label: "Motricité" },
+            { value: "musique", label: "Musique" },
+            { value: "conte", label: "Lecture de conte" }
+          ]
+        },
+        { id: "activites_apm", label: "Après-midi", type: "tags", optionsFrom: "activites_matin" },
+        { id: "commentaire_activites", label: "Commentaire", type: "textarea", maxLength: 400 }
+      ]
+    },
+
+    {
+      id: "menu",
+      title: "Composition des repas",
+      fields: [
+        { id: "poissons", label: "Poisson", type: "multiselect",
+          options: [
+            { value: "lotte", label: "Lotte" },
+            { value: "cabillaud", label: "Cabillaud" },
+            { value: "turbo", label: "Turbot" },
+            { value: "espadon", label: "Espadon" }
+          ]
+        },
+        { id: "viandes", label: "Viandes", type: "multiselect",
+          options: [
+            { value: "boeuf", label: "Bœuf" },
+            { value: "veau", label: "Veau" },
+            { value: "mouton", label: "Mouton" },
+            { value: "poulet", label: "Poulet" },
+            { value: "jambon_dinde", label: "Jambon de dinde" },
+            { value: "nuggets_poulet", label: "Nuggets de poulet" }
+          ]
+        },
+        { id: "preparations", label: "Préparation", type: "multiselect",
+          options: [
+            { value: "gratin_dauphinois", label: "Gratin dauphinois" },
+            { value: "raviolis", label: "Raviolis" },
+            { value: "hachis_parmentier", label: "Hachis Parmentier" },
+            { value: "ratatouille", label: "Ratatouille" },
+            { value: "pates_bolognaise", label: "Pâtes bolognaise" }
+          ]
+        },
+        { id: "feculents", label: "Féculents", type: "multiselect",
+          options: [
+            { value: "riz", label: "Riz" },
+            { value: "polenta", label: "Polenta" },
+            { value: "pates", label: "Pâtes" },
+            { value: "couscous", label: "Couscous" }
+          ]
+        },
+        { id: "legumes_secs", label: "Légumineuses", type: "multiselect",
+          options: [
+            { value: "haricots_blancs", label: "Haricots blancs" },
+            { value: "niebes", label: "Niébés" },
+            { value: "lentilles", label: "Lentilles" }
+          ]
+        },
+        { id: "yaourts", label: "Yaourts", type: "multiselect",
+          options: [
+            { value: "chocolat", label: "Chocolat" },
+            { value: "vanille", label: "Vanille" },
+            { value: "fraise", label: "Fraise" },
+            { value: "nature", label: "Nature" }
+          ]
+        },
+        { id: "compotes", label: "Compotes", type: "multiselect",
+          options: [
+            { value: "pomme", label: "Pomme" },
+            { value: "poire", label: "Poire" },
+            { value: "banane", label: "Banane" },
+            { value: "abricot", label: "Abricot" },
+            { value: "mangue", label: "Mangue" },
+            { value: "melon", label: "Melon" }
+          ]
+        },
+        { id: "fruits_frais", label: "Fruits frais", type: "multiselect",
+          options: [
+            { value: "pomme", label: "Pomme" },
+            { value: "banane", label: "Banane" },
+            { value: "poire", label: "Poire" },
+            { value: "melon", label: "Melon" },
+            { value: "papaye", label: "Papaye" },
+            { value: "pasteque", label: "Pastèque" },
+            { value: "orange", label: "Orange" },
+            { value: "clementine", label: "Clémentine" },
+            { value: "raisin", label: "Raisin" }
+          ]
+        },
+        { id: "legumes", label: "Légumes", type: "multiselect",
+          options: [
+            { value: "ecrase", label: "Écrasé" },
+            { value: "morceaux", label: "Morceaux" },
+            { value: "mouline", label: "Mouliné" },
+            { value: "betterave", label: "Betteraves rouges" },
+            { value: "brocoli", label: "Brocolis" },
+            { value: "carotte", label: "Carottes" },
+            { value: "chou_blanc", label: "Chou blanc" },
+            { value: "chou_fleur", label: "Chou-fleur" },
+            { value: "courges", label: "Courges" },
+            { value: "courgette", label: "Courgettes" },
+            { value: "epinard", label: "Épinards" },
+            { value: "haricot_vert", label: "Haricots verts" },
+            { value: "navet", label: "Navets" },
+            { value: "patate_douce", label: "Patates douces" },
+            { value: "petit_pois", label: "Petits pois" },
+            { value: "poireau", label: "Poireaux" },
+            { value: "pomme_de_terre", label: "Pommes de terre" },
+            { value: "aubergine", label: "Aubergines" },
+            { value: "tomate", label: "Tomates" }
+          ]
+        }
+      ]
+    },
+
+    {
+      id: "health",
+      title: "Santé",
+      fields: [
+        { id: "temperature", label: "Température (°C)", type: "number", min: 34, max: 42, step: 0.1 },
+        {
+          id: "medications",
+          type: "repeater", min: 0, max: 6,
+          itemLabel: "Médicament",
+          itemFields: [
+            { id: "nom", label: "Nom", type: "text" },
+            { id: "dose", label: "Dose (mg/ml)", type: "text" },
+            { id: "heure", label: "Heure", type: "time" }
+          ]
+        },
+        { id: "incident", label: "Incident / blessure", type: "textarea", maxLength: 500 }
+      ]
+    },
+
+    {
+      id: "media_notes",
+      title: "Médias & Remarques",
+      fields: [
+        { id: "photos", label: "Photos", type: "file[]", accept: "image/*" },
+        { id: "videos", label: "Vidéos", type: "file[]", accept: "video/*" },
+        { id: "note_generale", label: "Note générale", type: "textarea", maxLength: 1000 }
+      ]
+    }
+  ]
+} as const;
 
   constructor(private http: HttpClient, private route: Router, private idb: IdbService) { }
   // sauvegardes
@@ -266,7 +900,7 @@ loading_get_utilisateur: boolean = false;
       }
     )
   }
-    async taf_post_object(path: string, data: any, ok: Function, ko: Function, force_online = false) {
+  async taf_post_object(path: string, data: any, ok: Function, ko: Function, force_online = false) {
     if (!force_online) {
       const cacheKey = path + JSON.stringify(data);
       const last = path.split('/').pop() || '';
@@ -282,7 +916,7 @@ loading_get_utilisateur: boolean = false;
       (e: any) => this.on_taf_post_error(e, ko)
     );
   }
-    async taf_post_with_files(path: string, data: any, files: any, ok: Function, ko: Function) {
+  async taf_post_with_files(path: string, data: any, files: any, ok: Function, ko: Function) {
     const api_url = this.taf_base_url + path;
     const httpOptions = { headers: new HttpHeaders({ Authorization: 'Bearer ' + await this.get_token() }) };
     const fd = new FormData();
@@ -292,7 +926,7 @@ loading_get_utilisateur: boolean = false;
   }
   async taf_post_login(path: string, data_to_send: any, on_success: Function, on_error: Function) {
     let api_url = this.taf_base_url + path;
-    
+
     this.http.post(api_url, data_to_send).subscribe(
       (reponse: any) => {// on success
         on_success(reponse)
@@ -354,16 +988,16 @@ loading_get_utilisateur: boolean = false;
     });
     return info
   }
-Swal_confirm(title: string, text?: string) {
-  return Swal.fire({
-    title, text,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Oui, supprimer',
-    cancelButtonText: 'Annuler',
-    reverseButtons: true
-  });
-}
+  Swal_confirm(title: string, text?: string) {
+    return Swal.fire({
+      title, text,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Oui, supprimer',
+      cancelButtonText: 'Annuler',
+      reverseButtons: true
+    });
+  }
 
 
   // deconnexion() {
@@ -373,47 +1007,47 @@ Swal_confirm(title: string, text?: string) {
   //   this.token = { token_key: null, token_decoded: null, user_connected: null, is_expired: null, date_expiration: null };
   //   this.route.navigate(['/']);
   // }
-// api.service.ts
-async deconnexion() {
-  const { isConfirmed } = await Swal.fire({
-    title: 'Se déconnecter ?',
-    text: 'Vous allez être redirigé vers la page de connexion.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Oui, me déconnecter',
-    cancelButtonText: 'Annuler',
-    reverseButtons: true,
-    focusCancel: true
-  });
+  // api.service.ts
+  async deconnexion() {
+    const { isConfirmed } = await Swal.fire({
+      title: 'Se déconnecter ?',
+      text: 'Vous allez être redirigé vers la page de connexion.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Oui, me déconnecter',
+      cancelButtonText: 'Annuler',
+      reverseButtons: true,
+      focusCancel: true
+    });
 
-  if (!isConfirmed) return; // l’utilisateur a annulé
+    if (!isConfirmed) return; // l’utilisateur a annulé
 
-  // purge locale
-  await this.delete_from_local_storage('token');
-  await this.delete_from_local_storage('infos');
-  await this.delete_from_local_storage('les_droits');
+    // purge locale
+    await this.delete_from_local_storage('token');
+    await this.delete_from_local_storage('infos');
+    await this.delete_from_local_storage('les_droits');
 
-  this.les_droits = [];
-  this.menu = [];
-  this.token = {
-    token_key: null,
-    token_decoded: null,
-    user_connected: null,
-    is_expired: null,
-    date_expiration: null
-  };
-  this.infos = {
-    utilisateur: {}, les_structures: [], current_structure: {},
-    token_key: null,
-    token: { token_key: null, token_decoded: null, user_connected: null, is_expired: null, date_expiration: null },
-    les_droits_utilisateur: [],
-  };
+    this.les_droits = [];
+    this.menu = [];
+    this.token = {
+      token_key: null,
+      token_decoded: null,
+      user_connected: null,
+      is_expired: null,
+      date_expiration: null
+    };
+    this.infos = {
+      utilisateur: {}, les_structures: [], current_structure: {},
+      token_key: null,
+      token: { token_key: null, token_decoded: null, user_connected: null, is_expired: null, date_expiration: null },
+      les_droits_utilisateur: [],
+    };
 
-  // (optionnel) petit toast
-  await Swal.fire({ title: 'Déconnecté', icon: 'success', timer: 1200, showConfirmButton: false });
+    // (optionnel) petit toast
+    await Swal.fire({ title: 'Déconnecté', icon: 'success', timer: 1200, showConfirmButton: false });
 
-  this.route.navigate(['/login']); // ou ['/'] selon ta route de connexion
-}
+    this.route.navigate(['/login']); // ou ['/'] selon ta route de connexion
+  }
 
   // ---------- DROITS (source unique)
   private parseMaybeString(x: any): any[] {
@@ -429,8 +1063,8 @@ async deconnexion() {
     return this.parseMaybeString(this.infos?.les_droits_utilisateur);
   }
 
-can(id: string) {
-  // console.log(this.infos.token.user_connected, 'user_connected');
+  can(id: string) {
+    // console.log(this.infos.token.user_connected, 'user_connected');
     if (this.infos.token.user_connected.id_utilisateur == 1) {// ne pas restreindre les droits de l'administrateur JANT TECH support
       return true
     }
@@ -490,102 +1124,102 @@ can(id: string) {
   }
 
   // --- Format: 1234567.89 -> "1,234,567.89"
-formatMontant(value: number | string | null | undefined, decimals = 0, sep = ',', dec = '.'): string {
-  if (value === null || value === undefined || value === '') return '';
-  const n = typeof value === 'number' ? value : Number(String(value).replace(/[^\d.-]/g, ''));
-  if (isNaN(n)) return '';
-  const fixed = decimals > 0 ? n.toFixed(decimals) : Math.round(n).toString();
-  const [intP, decP] = fixed.split('.');
-  const intWithSep = intP.replace(/\B(?=(\d{3})+(?!\d))/g, sep);
-  return decP ? `${intWithSep}${dec}${decP}` : intWithSep;
-}
+  formatMontant(value: number | string | null | undefined, decimals = 0, sep = ',', dec = '.'): string {
+    if (value === null || value === undefined || value === '') return '';
+    const n = typeof value === 'number' ? value : Number(String(value).replace(/[^\d.-]/g, ''));
+    if (isNaN(n)) return '';
+    const fixed = decimals > 0 ? n.toFixed(decimals) : Math.round(n).toString();
+    const [intP, decP] = fixed.split('.');
+    const intWithSep = intP.replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+    return decP ? `${intWithSep}${dec}${decP}` : intWithSep;
+  }
 
-// --- Unformat: "1,234,567.89" -> 1234567.89 (number)
-unformatMontant(str: string, sep = ',', dec = '.'): number {
-  if (!str) return NaN;
-  // Supprime les séparateurs de milliers et remplace le séparateur décimal par un point
-  const normalized = str.replace(new RegExp(`\\${sep}`, 'g'), '').replace(dec, '.');
-  const n = Number(normalized.replace(/[^\d.-]/g, ''));
-  return n;
-}
+  // --- Unformat: "1,234,567.89" -> 1234567.89 (number)
+  unformatMontant(str: string, sep = ',', dec = '.'): number {
+    if (!str) return NaN;
+    // Supprime les séparateurs de milliers et remplace le séparateur décimal par un point
+    const normalized = str.replace(new RegExp(`\\${sep}`, 'g'), '').replace(dec, '.');
+    const n = Number(normalized.replace(/[^\d.-]/g, ''));
+    return n;
+  }
 
-/**
- * A brancher sur (input) pour formater visuellement.
- * - event: l'événement input
- * - form: le FormGroup
- * - controlName: le nom du contrôle (ex: 'montant_total')
- * - opts.decimals: nb décimales (0, 2…)
- * - opts.sep / opts.dec: séparateurs (par défaut ',' et '.')
- */
-formatMontantInput(
-  event: Event,
-  form: import('@angular/forms').FormGroup,
-  controlName: string,
-  opts: { decimals?: number; sep?: string; dec?: string } = {}
-): void {
-  const { decimals = 0, sep = ',', dec = '.' } = opts;
+  /**
+   * A brancher sur (input) pour formater visuellement.
+   * - event: l'événement input
+   * - form: le FormGroup
+   * - controlName: le nom du contrôle (ex: 'montant_total')
+   * - opts.decimals: nb décimales (0, 2…)
+   * - opts.sep / opts.dec: séparateurs (par défaut ',' et '.')
+   */
+  formatMontantInput(
+    event: Event,
+    form: import('@angular/forms').FormGroup,
+    controlName: string,
+    opts: { decimals?: number; sep?: string; dec?: string } = {}
+  ): void {
+    const { decimals = 0, sep = ',', dec = '.' } = opts;
 
-  const input = event.target as HTMLInputElement;
-  const start = input.selectionStart ?? input.value.length;
+    const input = event.target as HTMLInputElement;
+    const start = input.selectionStart ?? input.value.length;
 
-  // 1) Nettoie ce que tape l'utilisateur (garde chiffres, - et séparateur décimal)
-  const raw = input.value.replace(/[^\d\-\.,]/g, '');
+    // 1) Nettoie ce que tape l'utilisateur (garde chiffres, - et séparateur décimal)
+    const raw = input.value.replace(/[^\d\-\.,]/g, '');
 
-  // 2) Convertit en nombre
-  const numeric = this.unformatMontant(raw, sep, dec);
-  // Met à jour le FormControl avec la vraie valeur numérique
-  form.get(controlName)?.setValue(Number.isFinite(numeric) ? numeric : null, {
-    emitEvent: true,
-    emitModelToViewChange: false, // on gère nous-mêmes l'affichage
-  });
+    // 2) Convertit en nombre
+    const numeric = this.unformatMontant(raw, sep, dec);
+    // Met à jour le FormControl avec la vraie valeur numérique
+    form.get(controlName)?.setValue(Number.isFinite(numeric) ? numeric : null, {
+      emitEvent: true,
+      emitModelToViewChange: false, // on gère nous-mêmes l'affichage
+    });
 
-  // 3) Reformate pour l’affichage (avec séparateurs)
-  const display = Number.isFinite(numeric) ? this.formatMontant(numeric, decimals, sep, dec) : '';
+    // 3) Reformate pour l’affichage (avec séparateurs)
+    const display = Number.isFinite(numeric) ? this.formatMontant(numeric, decimals, sep, dec) : '';
 
-  // 4) Réinjecte la valeur affichée dans l’input (ne pas casser le caret)
-  input.value = display;
+    // 4) Réinjecte la valeur affichée dans l’input (ne pas casser le caret)
+    input.value = display;
 
-  // Tente de repositionner le curseur intelligemment
-  const diff = display.length - raw.length;
-  const newPos = Math.max(0, start + diff);
-  input.setSelectionRange(newPos, newPos);
-}
+    // Tente de repositionner le curseur intelligemment
+    const diff = display.length - raw.length;
+    const newPos = Math.max(0, start + diff);
+    input.setSelectionRange(newPos, newPos);
+  }
   currentDate() {
     const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
   }
 
-resolveFileUrl(path: string | null | undefined): string {
-  if (!path) return '';
+  resolveFileUrl(path: string | null | undefined): string {
+    if (!path) return '';
 
-  let raw = String(path).trim();
-  if (!raw) return '';
+    let raw = String(path).trim();
+    if (!raw) return '';
 
-  // 1) cas déjà “utilisable” tel quel
-  if (/^data:/i.test(raw)) return raw;                 // data URI
-  if (/^https?:\/\//i.test(raw)) {
-    // normalise juste les doublons dans la partie path
-    try {
-      const u = new URL(raw);
-      u.pathname = u.pathname.replace(/\/taf\/taf\//g, '/taf/').replace(/\/{2,}/g, '/');
-      return u.toString();
-    } catch { return raw; }
+    // 1) cas déjà “utilisable” tel quel
+    if (/^data:/i.test(raw)) return raw;                 // data URI
+    if (/^https?:\/\//i.test(raw)) {
+      // normalise juste les doublons dans la partie path
+      try {
+        const u = new URL(raw);
+        u.pathname = u.pathname.replace(/\/taf\/taf\//g, '/taf/').replace(/\/{2,}/g, '/');
+        return u.toString();
+      } catch { return raw; }
+    }
+    if (/^\/\//.test(raw)) {                             // protocol-relative //cdn...
+      return (window.location.protocol || 'https:') + raw;
+    }
+    if (/^(assets\/|\/assets\/)/i.test(raw)) return raw; // assets locaux
+
+    // 2) normalisation chemin relatif
+    raw = raw.replace(/\\/g, '/');                       // anti backslashes
+    // assure un leading slash
+    let clean = '/' + raw.replace(/^\/+/, '');
+
+    // corrige doublons /taf/taf/ et // multiples
+    clean = clean.replace(/\/taf\/taf\//g, '/taf/').replace(/\/{2,}/g, '/');
+
+    // 3) assemble avec l’origin (filesBaseUrl)
+    const base = this.filesBaseUrl.replace(/\/+$/, '');  // pas de trailing /
+    // encodeURI n’encode pas '/', c’est ce qu’on veut
+    return base + encodeURI(clean);
   }
-  if (/^\/\//.test(raw)) {                             // protocol-relative //cdn...
-    return (window.location.protocol || 'https:') + raw;
-  }
-  if (/^(assets\/|\/assets\/)/i.test(raw)) return raw; // assets locaux
-
-  // 2) normalisation chemin relatif
-  raw = raw.replace(/\\/g, '/');                       // anti backslashes
-  // assure un leading slash
-  let clean = '/' + raw.replace(/^\/+/, '');
-
-  // corrige doublons /taf/taf/ et // multiples
-  clean = clean.replace(/\/taf\/taf\//g, '/taf/').replace(/\/{2,}/g, '/');
-
-  // 3) assemble avec l’origin (filesBaseUrl)
-  const base = this.filesBaseUrl.replace(/\/+$/, '');  // pas de trailing /
-  // encodeURI n’encode pas '/', c’est ce qu’on veut
-  return base + encodeURI(clean);
-}
 }

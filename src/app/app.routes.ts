@@ -15,16 +15,21 @@ export const routes: Routes = [
       }
     ],
   },
-  {
-    path: "home",
-    component: HomeComponent,
-    children: [
-      {
-        path: "",
-        loadChildren: () => import("./home/home.module").then((m) => m.HomeModule)
-      }
-    ],
-    canActivate: [AuthGuard]
-  },
-
+  // {
+  //   path: "home",
+  //   component: HomeComponent,
+  //   children: [
+  //     {
+  //       path: "",
+  //       loadChildren: () => import("./home/home.module").then((m) => m.HomeModule)
+  //     }
+  //   ],
+  //   canActivate: [AuthGuard]
+  // },
+{
+  path: "home",
+  component: HomeComponent,
+  loadChildren: () => import("./home/home.module").then(m => m.HomeModule),
+  canActivate: [AuthGuard]
+},
 ];
