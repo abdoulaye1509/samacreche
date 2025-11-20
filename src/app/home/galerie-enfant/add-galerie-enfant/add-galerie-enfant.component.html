@@ -1,121 +1,103 @@
-<div class="modal-header" data-bs-theme="ligth">
-      <h1 class="modal-title fs-5">Ajouter galerie_enfant</h1>
-      <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+<div class="modal-header" data-bs-theme="light">
+  <h1 class="modal-title fs-5">Ajouter des photos à la galerie</h1>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" #fGalerie="ngForm" class="row g-3">
+
+    <!-- Enfant : affiché SEULEMENT si l'id n'est pas fourni par le parent -->
+    <div class="col-12 col-md-6" *ngIf="!id_enfant">
+      <label class="form-label">Enfant</label>
+
+      <ng-select
+        [items]="enfants"
+        bindLabel="full_name"
+        bindValue="id_enfant"
+        placeholder="Sélectionner un enfant"
+        [clearable]="true"
+        [(ngModel)]="selectedIdEnfant"
+        [ngModelOptions]="{standalone:true}"
+        [loading]="loading_enfants"
+        notFoundText="Aucun enfant"
+      >
+      </ng-select>
+
+      <div class="invalid-feedback d-block" *ngIf="submitted && !selectedIdEnfant">
+        Veuillez choisir un enfant.
+      </div>
     </div>
-    <div class="modal-body">
-      <form [formGroup]="reactiveForm_add_galerie_enfant" 
-            (ngSubmit)="onSubmit_add_galerie_enfant()" 
-            #form_add_galerie_enfant="ngForm" 
-            class="row">
-        <!-- Erreur : La clé étrangère id_enfant de la table galerie_enfant n'est pas référencée -->
 
-            <!-- Champ Url Image -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="url_image">Url Image</label>
-              <input id="url_image" class="form-control" 
-                     type="text" 
-                     formControlName="url_image" 
-                     placeholder="Url Image"  
-                     [ngClass]="{ 'is-invalid': submitted && f.url_image.errors }"/>
-              @if (submitted && f.url_image.errors) {
-                <div class="invalid-feedback">
-                  @if (f.url_image.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Date Image -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="date_image">Date Image</label>
-              <input id="date_image" class="form-control" 
-                     type="text" 
-                     formControlName="date_image" 
-                     placeholder="Date Image"  
-                     [ngClass]="{ 'is-invalid': submitted && f.date_image.errors }"/>
-              @if (submitted && f.date_image.errors) {
-                <div class="invalid-feedback">
-                  @if (f.date_image.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_at">Created At</label>
-              <input id="created_at" class="form-control" 
-                     type="text" 
-                     formControlName="created_at" 
-                     placeholder="Created At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
-              @if (submitted && f.created_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_at">Updated At</label>
-              <input id="updated_at" class="form-control" 
-                     type="text" 
-                     formControlName="updated_at" 
-                     placeholder="Updated At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
-              @if (submitted && f.updated_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_by">Created By</label>
-              <input id="created_by" class="form-control" 
-                     type="text" 
-                     formControlName="created_by" 
-                     placeholder="Created By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
-              @if (submitted && f.created_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_by">Updated By</label>
-              <input id="updated_by" class="form-control" 
-                     type="text" 
-                     formControlName="updated_by" 
-                     placeholder="Updated By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
-              @if (submitted && f.updated_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-      </form>
+    <!-- Date par défaut (copiée sur chaque image ajoutée) -->
+    <div class="col-12 col-md-6">
+      <label class="form-label">Date par défaut des photos</label>
+      <input class="form-control" type="date" [(ngModel)]="dateParDefaut" [ngModelOptions]="{standalone: true}">
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary m-2" [disabled]="loading_add_galerie_enfant || loading_get_details_add_galerie_enfant_form"
-      (click)="form_add_galerie_enfant.ngSubmit.emit()">
-      {{ loading_add_galerie_enfant ? "En cours ..." : "Valider" }}
-      </button>
-      <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
+
+    <!-- Sélection fichiers -->
+    <div class="col-12">
+      <label class="form-label d-block">Photos</label>
+
+      <div class="d-flex align-items-center gap-3">
+        <div class="cam-card" (click)="fileInput.click()">
+          <i class="bi bi-camera fs-2"></i>
+        </div>
+
+        <div class="d-flex flex-column gap-2">
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="fileInput.click()">
+            <i class="bi bi-upload me-1"></i> Choisir des photos
+          </button>
+          <button type="button" class="btn btn-outline-danger btn-sm" (click)="clearAll()" [disabled]="!items.length">
+            <i class="bi bi-x-circle me-1"></i> Tout retirer
+          </button>
+          <div class="small text-muted">
+            {{maxFiles}} fichiers max, {{maxSizeMb}} Mo par fichier (JPG/PNG/WEBP/GIF).
+          </div>
+        </div>
+      </div>
+
+      <input type="file" class="d-none" accept="image/*" multiple #fileInput (change)="onFilesSelected($event)">
+      <div class="invalid-feedback d-block mt-2" *ngIf="globalError">{{ globalError }}</div>
     </div>
+
+    <!-- Grille de prévisualisation -->
+    <div class="col-12" *ngIf="items.length">
+      <div class="row g-3">
+        <div class="col-12 col-sm-6 col-md-4" *ngFor="let it of items; let i = index">
+          <div class="card h-100">
+            <img [src]="it.previewUrl" class="card-img-top" [alt]="it.file.name" />
+            <div class="card-body">
+              <div class="fw-semibold text-truncate">{{ it.file.name }}</div>
+              <div class="small text-muted">{{ (it.file.size/1024/1024) | number:'1.2-2' }} Mo</div>
+
+              <div class="mt-2">
+                <label class="form-label small mb-1">Date de la photo</label>
+                <input class="form-control" type="date" [(ngModel)]="it.date_image" [ngModelOptions]="{standalone: true}">
+              </div>
+
+              <div class="alert alert-warning py-1 px-2 mt-2 mb-0" *ngIf="it.error">
+                {{ it.error }}
+              </div>
+            </div>
+
+            <div class="card-footer bg-transparent d-flex justify-content-between">
+              <span class="small text-muted" *ngIf="!it.error">Prêt</span>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="remove(i)">
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()" [disabled]="loading">Fermer</button>
+  <button type="button" class="btn btn-primary m-2"
+          [disabled]="loading || !canSubmit" (click)="submitted = true; fGalerie.ngSubmit.emit()">
+    {{ loading ? 'En cours ...' : 'Valider' }}
+  </button>
+</div>

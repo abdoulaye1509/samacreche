@@ -1,84 +1,149 @@
-<!-- entete -->
-    <div class=" card p-3 position-sticky top-0 z-1">
-    <div class="d-flex align-items-center justify-content-between mb-1">
-      <div class="fs-4 fw-bold">
-        GalerieEnfants {{list.length==les_galerie_enfants.length?list.length:list.length + "/" + les_galerie_enfants.length}}
-      </div>
-      <div class="d-flex">
-        <button class="btn btn-primary" (click)="openModal_add_galerie_enfant()"><i class="bi bi-plus-square-dotted"></i> GalerieEnfant</button>
-      </div>
+<!-- entête -->
+<div class="card p-3 position-sticky top-0 z-1">
+  <div class="d-flex align-items-center justify-content-between mb-1">
+    <div class="fs-4 fw-bold">
+      Galerie
+      <span *ngIf="totalPhotos > 0" class="text-muted">
+        • {{ totalPhotos }} photo{{ totalPhotos>1 ? 's' : '' }}
+        • {{ groups.length }} date{{ groups.length>1 ? 's' : '' }}
+      </span>
     </div>
-    <div class="d-flex gap-1 justify-content-end">
-      <ng-select [multiple]="true" [closeOnSelect]="false" placeholder="Rechercher ici ..." notFoundText="Aucun résultat" class="no-limit" [(ngModel)]="filter.text" (search)="filter_change($event)" (change)="filter_change()"
-        style="min-width: 400px;">
-        <!-- <ng-option disabled>Zones</ng-option>
-        @for (let zone of donnees_select.zone) {
-          <ng-option [value]="'zone_'+zone.id_zone">
-            {{ zone.nom }}
-          </ng-option>
-        }
 
-        <ng-option disabled>Domaines</ng-option>
-        @for (let domaine of donnees_select.domaine) {
-          <ng-option [value]="'domaine_'+domaine.id_domaine">
-            {{ domaine.nom }}
-          </ng-option>
-        }-->
-      </ng-select>
+    <div class="d-flex">
+      <button class="btn btn-primary" (click)="openModal_add_galerie_enfant()">
+        <i class="bi bi-plus-square-dotted"></i>
+        Ajouter des photos
+      </button>
     </div>
   </div>
-  <!-- Liste des éléments sous forme de tableau -->
-  <div class="table-responsive">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">id_galerie_enfant</th>
-<th scope="col">url_image</th>
-<th scope="col">date_image</th>
-<th scope="col">id_enfant</th>
-<th scope="col">created_at</th>
-<th scope="col">updated_at</th>
-<th scope="col">created_by</th>
-<th scope="col">updated_by</th><th scope="col">actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Affichage du message de chargement -->
-        @if (loading_get_galerie_enfant) {
-          <tr>
-            <td colspan="9" class="text-center">
-              <div class="spinner-border" role="status">
-                <span class="visually-hidden">Chargement...</span>
-              </div>
-            </td>
-          </tr>
-        }
-        <!-- Affichage du message lorsqu'il n'y a pas d'éléments -->
-        @if (list.length == 0) {
-          <tr>
-            <td colspan="9" class="text-center">
-              <div class="alert alert-info" role="alert">
-                Aucune donnée trouvée.
-              </div>
-            </td>
-          </tr>
-        }
-        <!-- Boucle pour afficher chaque élément de la liste -->
-        @for (one_galerie_enfant of list; track one_galerie_enfant) {
-          <tr>
-            <td>{{one_galerie_enfant.id_galerie_enfant}}</td>
-<td>{{one_galerie_enfant.url_image}}</td>
-<td>{{one_galerie_enfant.date_image}}</td>
-<td>{{one_galerie_enfant.id_enfant}}</td>
-<td>{{one_galerie_enfant.created_at}}</td>
-<td>{{one_galerie_enfant.updated_at}}</td>
-<td>{{one_galerie_enfant.created_by}}</td>
-<td>{{one_galerie_enfant.updated_by}}</td><td>
-    <i style="cursor: pointer;" class="bi bi-pencil-square me-2" (click)="openModal_edit_galerie_enfant(one_galerie_enfant)"></i>
-    <i style="cursor: pointer;" class="bi bi-trash" (click)="delete_galerie_enfant(one_galerie_enfant)"></i>
-</td>
-          </tr>
-        }
-      </tbody>
-    </table>
+
+  <div class="d-flex gap-1 justify-content-end">
+    <ng-select
+      [multiple]="true"
+      [closeOnSelect]="false"
+      placeholder="Rechercher (date: 2025-11-10, nom, id…)"
+      notFoundText="Aucun résultat"
+      class="no-limit"
+      [(ngModel)]="filter.text"
+      (search)="filter_change($event)"
+      (change)="filter_change()"
+      style="min-width: 400px;">
+    </ng-select>
   </div>
+</div>
+
+<!-- état : chargement -->
+<div *ngIf="loading_get_galerie_enfant" class="text-center py-5">
+  <div class="spinner-border" role="status"></div>
+  <div class="mt-2">Chargement…</div>
+</div>
+
+<!-- état : vide -->
+<div *ngIf="!loading_get_galerie_enfant && totalPhotos === 0" class="text-center text-secondary py-5">
+  <i class="bi bi-images fs-1 d-block mb-2"></i>
+  Aucune photo trouvée.
+</div>
+
+<!-- groupes par date (cartes col-6) -->
+<div *ngIf="!loading_get_galerie_enfant && totalPhotos > 0" class="row g-4">
+  <div class="col-12 col-md-6" *ngFor="let g of groups; trackBy: trackByGroup">
+    <div class="card border-0 shadow-sm h-100">
+
+      <div class="card-body p-2">
+        <div [id]="g.carouselId" class="carousel slide" data-bs-ride="false">
+          <div class="carousel-inner rounded-3 overflow-hidden shadow-sm">
+            <div class="carousel-item" *ngFor="let it of g.items; let i = index; trackBy: trackByPhoto"
+                 [class.active]="i === 0">
+              <img
+                [src]="api.resolveFileUrl(it.url_image)"
+                (error)="$any($event.target).src = api.placeholderLogo"
+                class="d-block w-100 gallery-img-sm"
+                [alt]="'Photo ' + it.id_galerie_enfant"
+                (click)="openViewer(g, i)" />
+
+              <!-- étiquette enfant en mode structure -->
+              <div *ngIf="isStructureMode" class="position-absolute top-0 start-0 m-2">
+                <span class="badge bg-dark-subtle text-dark">
+                  {{ it.prenom_enfant || '' }} {{ it.nom_enfant || '' }}
+                </span>
+              </div>
+
+              <!-- Légende par slide -->
+              <div class="carousel-caption d-block">
+                <div class="caption-chip">
+                  Prise par {{ author(it) }} le {{ g.date | date:'dd/MM/yyyy' }}
+                </div>
+              </div>
+
+              <!-- actions -->
+              <div class="slide-actions d-none d-md-flex gap-2">
+                <button class="btn btn-sm btn-light" (click)="openModal_edit_galerie_enfant(it)">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button class="btn btn-sm btn-light text-danger" (click)="delete_galerie_enfant(it)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button class="carousel-control-prev" type="button"
+                  [attr.data-bs-target]="'#' + g.carouselId" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Précédent</span>
+          </button>
+          <button class="carousel-control-next" type="button"
+                  [attr.data-bs-target]="'#' + g.carouselId" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Suivant</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pied de carte : date + compteur -->
+      <div class="card-footer bg-white border-0 pt-0 px-3 pb-3">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-calendar3 text-primary"></i>
+          <div class="fw-semibold">
+            {{ g.date | date:'EEEE d MMMM yyyy' : undefined : 'fr' }}
+            <span class="text-muted fw-normal">• {{ g.items.length }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox plein écran -->
+<div *ngIf="viewer.open" class="gallery-viewer" (click)="closeViewer()">
+  <div class="viewer-toolbar">
+    <button class="btn btn-light btn-sm" (click)="closeViewer(); $event.stopPropagation()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <button class="nav-btn prev" (click)="prev(); $event.stopPropagation()">
+    <i class="bi bi-chevron-left"></i>
+  </button>
+
+  <img class="viewer-img"
+       [src]="api.resolveFileUrl(viewer.current?.url_image || '')"
+       (error)="$any($event.target).src = api.placeholderLogo"
+       [alt]="'Photo '+(viewer.current?.id_galerie_enfant || '')" />
+
+  <button class="nav-btn next" (click)="next(); $event.stopPropagation()">
+    <i class="bi bi-chevron-right"></i>
+  </button>
+
+  <div class="viewer-caption">
+    <div>
+      <div class="fw-semibold">
+        {{ viewer.group?.date | date:'EEEE d MMMM yyyy' : undefined : 'fr' }}
+      </div>
+      <div class="small text-white-50">
+        #{{ viewer.current?.id_galerie_enfant }} — Prise par {{ author(viewer.current) }}
+      </div>
+    </div>
+  </div>
+</div>

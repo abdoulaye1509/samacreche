@@ -1,70 +1,292 @@
-<!-- add-activite.component.html (simplifié pour NgbModal.open) -->
-<div class="modal-header" data-bs-theme="dark">
-  <h1 class="modal-title fs-5">Remplir le cahier de vie</h1>
-  <button type="button" class="btn-close" (click)="activeModal.dismiss()"></button>
-</div>
+<!-- HEADER (bleu, identique au détail) -->
+<div class="modal-header py-3 bg-primary text-white">
+  <div class="modal-title w-100">
+    <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
 
-<div class="modal-body">
-  <div class="d-flex justify-content-between align-items-center">
-    <div><img src="../../../../assets/images/logo2.png" alt="Logo" class="logo mb-4"></div>
-    <div>
-      Adresse: 8394 Sicap Sacré Cœur 1 <br>
-      Tel: 33 822 21 88 / 77 669 90 88 <br>
-      Ninea 008678403 Rc: SN DKR 2021 B 22185
+      <!-- Gauche : avatar enfant + titre + méta -->
+      <div class="d-flex align-items-center gap-3 min-w-0">
+         <img
+          [src]="child?.photo_enfant ? api.resolveFileUrl(child.photo_enfant) : api.placeholderLogo"
+          (error)="$any($event.target).src = api.placeholderLogo"
+          class="avatar-img rounded-circle object-fit-cover"
+          [alt]="(child?.prenom_enfant || '') + ' ' + (child?.nom_enfant || '')" />
+
+        <div class="min-w-0">
+          <div class="h5 mb-1 text-truncate">
+            Cahier de vie
+            <span class="fw-normal opacity-75">•</span>
+            <span class="fw-semibold">
+              {{ child?.prenom_enfant || 'Nouveau' }}
+              <ng-container *ngIf="child?.nom_enfant"> {{ child.nom_enfant }}</ng-container>
+            </span>
+          </div>
+
+          <div class="small d-flex flex-wrap align-items-center gap-2 text-white-50">
+            <!-- Date -->
+            <span class="d-inline-flex align-items-center gap-1">
+              <i class="bi bi-calendar-date"></i>
+              <ng-container *ngIf="formattedArriveeDate as d; else noDate">
+                {{ d | date:'dd/MM/yyyy' }}
+              </ng-container>
+              <ng-template #noDate>—</ng-template>
+            </span>
+
+            <!-- Heure -->
+            <ng-container *ngIf="formattedArriveeDate as d">
+              <span class="sep">•</span>
+              <span class="d-inline-flex align-items-center gap-1">
+                <i class="bi bi-clock"></i> {{ d | date:'HH:mm' }}
+              </span>
+            </ng-container>
+
+            <!-- Agent connecté -->
+            <ng-container *ngIf="api?.user_connected?.prenom_utilisateur || api?.user_connected?.nom_utilisateur">
+              <span class="sep">•</span>
+              <span class="d-inline-flex align-items-center gap-1">
+                <i class="bi bi-person-badge"></i>
+                {{ api.user_connected?.prenom_utilisateur }} {{ api.user_connected?.nom_utilisateur }}
+              </span>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- (La carte structure reste dans le body) -->
     </div>
   </div>
 
-  <div class="mt-3">
-    Date et heure d'arrivée :
-    <input type="date" [(ngModel)]="date_activite">
-    <input type="time" [(ngModel)]="heure_activite">
-  </div>
+  <button type="button" class="btn-close btn-close-white ms-2" (click)="activeModal?.close()"></button>
+</div>
 
-  <ng-container *ngFor="let one_rubrique of form">
-    <h3 class="mt-4">{{ one_rubrique.titre }}</h3>
-    <div class="table-container">
-      <div class="table-wrapper">
-        <table class="table text-center table-bordered">
-          <thead class="header">
-            <tr>
-              <th>Paramètres</th>
-              <th [attr.colspan]="6">Appréciation</th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let one_ligne of one_rubrique.lignes; let odd=odd; let even=even">
-              <tr class="tr1" [ngClass]="{couleur1: even, couleur2: odd}">
-                <th class="frozen-column" *ngIf="!one_ligne.hide" [attr.rowspan]="one_ligne.rowspan || 2">
-                  {{ one_ligne.titre }}
-                </th>
-                <th *ngFor="let one_option of one_ligne.options">{{ one_option.titre }}</th>
-              </tr>
-              <tr class="tr1" [ngClass]="{couleur1: even, couleur2: odd}">
-                <td *ngFor="let one_option of one_ligne.options">
-                  <ng-container *ngIf="one_option.type==='text'; else radioTpl">
-                    <input class="form-control" type="text"
-                           [(ngModel)]="one_option.value" (change)="form_change()" [name]="one_ligne.name">
-                  </ng-container>
-                  <ng-template #radioTpl>
-                    <div class="form-check form-switch d-flex p-0">
-                      <input class="form-check-input" type="radio" role="switch"
-                             [(ngModel)]="one_ligne.value" [value]="one_option.name"
-                             (change)="form_change()" [name]="one_ligne.name">
-                    </div>
-                  </ng-template>
-                </td>
-              </tr>
-            </ng-container>
-          </tbody>
-        </table>
+<!-- BODY -->
+<div class="modal-body">
+
+  <!-- Carte structure -->
+  <div class="creche-header card shadow-sm mb-3" *ngIf="headerInfo as info">
+    <div class="card-body d-flex align-items-center gap-3 flex-wrap">
+      <img class="creche-logo rounded-3"
+           [src]="api.resolveFileUrl(info.logo_structure) || 'assets/images/logo.png'"
+           alt="Logo crèche" />
+
+      <div class="vr d-none d-md-block"></div>
+
+      <div class="flex-grow-1">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <h5 class="mb-0">{{ info.nom_structure }}</h5>
+          <span class="badge text-bg-primary" *ngIf="info.ninea">NINEA {{ info.ninea }}</span>
+        </div>
+
+        <div class="small text-muted mt-1" *ngIf="info.adresse_structure">
+          <i class="bi bi-geo-alt"></i> {{ info.adresse_structure }}
+        </div>
+
+        <div class="mt-2 d-flex flex-wrap gap-2">
+          <a class="btn btn-sm btn-outline-primary" *ngIf="info.telephone_structure"
+             [href]="'tel:' + info.telephone_structure">
+            <i class="bi bi-telephone"></i> {{ info.telephone_structure }}
+          </a>
+          <a class="btn btn-sm btn-outline-secondary" *ngIf="info.adresse_structure"
+             [href]="toMapsLink(info.adresse_structure)" target="_blank" rel="noopener">
+            <i class="bi bi-map"></i> Itinéraire
+          </a>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- Saisie date/heure -->
+  <div class="mt-3 d-flex gap-2 align-items-center flex-wrap">
+    <label class="me-2 mb-0">Date et heure d'arrivée :</label>
+    <input type="date" class="form-control d-inline-block w-auto" [(ngModel)]="date_activite" />
+    <input type="time" class="form-control d-inline-block w-auto" [(ngModel)]="heure_activite" />
+  </div>
+
+  <!-- Rendu des rubriques -->
+  <ng-container *ngFor="let one_rubrique of form">
+    <ng-container [ngSwitch]="one_rubrique?.lignes?.[0]?.type">
+
+      <!-- Cas spécial : Biberons -->
+      <ng-container *ngSwitchCase="'biberons'">
+        <h3 class="mt-4 d-flex align-items-center gap-2">
+          <i class="bi rubrique-icon" [ngClass]="rubriqueIconClass(one_rubrique.titre)" aria-hidden="true"></i>
+          <span>{{ one_rubrique.titre }}</span>
+        </h3>
+
+        <div class="card shadow-sm mb-3">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="fw-semibold">Prises de biberon</div>
+              <button class="btn btn-sm btn-primary" (click)="addBiberon(one_rubrique)">
+                <i class="bi bi-plus-lg"></i> Ajouter une prise
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th style="width: 140px;">Heure</th>
+                    <th style="width: 220px;">Quantité (ml)</th>
+                    <th style="width: 220px;">Type</th>
+                    <th>Note</th>
+                    <th style="width: 44px;"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let it of one_rubrique.lignes[0].items; let i = index">
+                    <td>
+                      <input type="time" class="form-control" [(ngModel)]="it.heure" />
+                    </td>
+
+                    <td>
+                      <div class="input-group">
+                        <input type="number" class="form-control" [(ngModel)]="it.quantite" min="0" step="10" placeholder="ex: 120" />
+                        <span class="input-group-text">ml</span>
+                      </div>
+                      <div class="d-flex gap-1 mt-1 flex-wrap">
+                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                *ngFor="let q of qPresets"
+                                (click)="it.quantite = q">{{ q }}</button>
+                      </div>
+                    </td>
+
+                    <td>
+                      <select class="form-select" [(ngModel)]="it.type">
+                        <option [ngValue]="null" disabled>Choisir…</option>
+                        <option *ngFor="let t of biberonTypes" [ngValue]="t">{{ t }}</option>
+                      </select>
+                    </td>
+
+                    <td>
+                      <div class="d-flex gap-1 flex-wrap mb-2">
+                        <button type="button"
+                                class="btn btn-outline-secondary btn-sm"
+                                *ngFor="let n of notePresets"
+                                (click)="setNote(it, n)">
+                          {{ n }}
+                        </button>
+                      </div>
+
+                      <div class="input-group">
+                        <select class="form-select" [(ngModel)]="it.note">
+                          <option [ngValue]="null" disabled>Choisir une note…</option>
+                          <option *ngFor="let n of notePresets" [ngValue]="n">{{ n }}</option>
+                          <option [ngValue]="'__AUTRE__'">Autre…</option>
+                        </select>
+                        <input *ngIf="it.note === '__AUTRE__'" type="text" class="form-control"
+                               [(ngModel)]="it.note_libre" placeholder="Préciser (optionnel)">
+                      </div>
+
+                      <small class="text-muted" *ngIf="it.note && it.note !== '__AUTRE__'">
+                        Sélectionné : {{ it.note }}
+                      </small>
+                    </td>
+
+                    <td class="text-end">
+                      <button class="btn btn-sm btn-outline-danger" (click)="removeBiberon(one_rubrique, i)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="!one_rubrique.lignes[0].items?.length">
+                    <td colspan="5" class="text-muted text-center py-4">
+                      Aucune prise pour l’instant. Cliquez sur <b>Ajouter une prise</b>.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Rubriques normales (tableau), avec icône dans le titre + "Temps" en boutons -->
+      <ng-container *ngSwitchDefault>
+        <h3 class="mt-4 d-flex align-items-center gap-2">
+          <i class="bi rubrique-icon" [ngClass]="rubriqueIconClass(one_rubrique.titre)" aria-hidden="true"></i>
+          <span>{{ one_rubrique.titre }}</span>
+        </h3>
+
+        <div class="table-container">
+          <div class="table-wrapper">
+            <table class="table text-center table-bordered">
+              <thead class="header">
+                <tr>
+                  <th>Paramètres</th>
+                  <th [attr.colspan]="6">Appréciation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let one_ligne of one_rubrique.lignes; let odd=odd; let even=even">
+                  <tr class="tr1" [ngClass]="{couleur1: even, couleur2: odd}">
+                    <th class="frozen-column" *ngIf="!one_ligne.hide" [attr.rowspan]="one_ligne.rowspan || 2">
+                      {{ one_ligne.titre }}
+                    </th>
+                    <th *ngFor="let one_option of one_ligne.options">{{ one_option.titre }}</th>
+                  </tr>
+
+                  <tr class="tr1" [ngClass]="{couleur1: even, couleur2: odd}">
+                    <td *ngFor="let one_option of one_ligne.options">
+                      <!-- Ligne TEMPS : gros boutons -->
+                      <ng-container *ngIf="one_ligne.name === 'Temps'; else normalCell">
+                        <div class="d-flex justify-content-center">
+                          <input class="btn-check"
+                                 type="radio"
+                                 [name]="one_ligne.name"
+                                 [id]="one_ligne.name + '_' + one_option.name"
+                                 [(ngModel)]="one_ligne.value"
+                                 [value]="one_option.name" />
+                          <label class="btn btn-sm"
+                                 [ngClass]="tempsBtnClass(one_option.name, one_ligne.value === one_option.name)"
+                                 [for]="one_ligne.name + '_' + one_option.name">
+                            <ng-container [ngSwitch]="one_option.name">
+                              <span *ngSwitchCase="'Bon'">🙂 Bon</span>
+                              <span *ngSwitchCase="'Moyen'">😐 Moyen</span>
+                              <span *ngSwitchCase="'Agité'">😣 Agité</span>
+                              <span *ngSwitchDefault>{{ one_option.titre }}</span>
+                            </ng-container>
+                          </label>
+                        </div>
+                      </ng-container>
+
+                      <!-- Cellule standard -->
+                      <ng-template #normalCell>
+                        <ng-container *ngIf="one_option.type==='text'; else radioTpl">
+                          <input class="form-control" type="text"
+                                 [(ngModel)]="one_option.value"
+                                 (change)="form_change()"
+                                 [name]="one_ligne.name" />
+                        </ng-container>
+                        <ng-template #radioTpl>
+                          <div class="form-check form-switch d-flex p-0 justify-content-center">
+                            <input class="form-check-input" type="radio" role="switch"
+                                   [(ngModel)]="one_ligne.value"
+                                   [value]="one_option.name"
+                                   (change)="form_change()"
+                                   [name]="one_ligne.name" />
+                          </div>
+                        </ng-template>
+                      </ng-template>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+
+    </ng-container>
   </ng-container>
+
 </div>
 
+<!-- FOOTER -->
 <div class="modal-footer">
   <button type="button" class="btn btn-primary m-2" [disabled]="disabled" (click)="valider()">
-    {{ loading_add_activite ? "En cours ..." : "Valider" }}
+    {{ loading_add_activite ? 'En cours ...' : 'Valider' }}
   </button>
   <button type="button" class="btn btn-secondary m-2" (click)="reset()">Vider</button>
 </div>

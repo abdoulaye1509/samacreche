@@ -1,96 +1,180 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { ApiService } from '../../../service/api/api.service';
 import { AddActiviteComponent } from '../add-activite/add-activite.component';
 import { EditActiviteComponent } from '../edit-activite/edit-activite.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DetailActiviteComponent } from '../detail-activite/detail-activite.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ActiviteTafType } from '../taf-type/activite-taf-type';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { DetailActiviteComponent } from '../detail-activite/detail-activite.component';
-import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-list-activite',
-  standalone: true, // Composant autonome
-  imports: [FormsModule, NgSelectModule, RouterLink, DetailActiviteComponent, CommonModule], // Dépendances importées
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, NgSelectModule, DetailActiviteComponent],
   templateUrl: './list-activite.component.html',
   styleUrls: ['./list-activite.component.scss']
 })
 export class ListActiviteComponent implements OnInit {
-  loading_get_activite = false
-  selected_activite: any
-  @Input()
-  id_enfant = 0
-  activite: ActiviteTafType[] = [];
-  constructor(public api: ApiService, private modalService: NgbModal) {
+  @Input() id_enfant = 0;
 
+  loading_get_activite = false;
+  loading_get_activite_structure = false;
+
+  selected_activite: any;
+  activite: ActiviteTafType[] = [];
+
+  /** stocke l'id structure quand dispo */
+  private id_structure: number | null = null;
+
+  /** retry court pour attendre l'hydratation de ApiService après refresh */
+  private structureRetry = 0;
+  private readonly maxRetries = 10;       // ~10 tentatives
+  private readonly retryDelayMs = 250;    // 250 ms entre tentatives
+
+  constructor(public api: ApiService, private modalService: NgbModal) {
+    // Garantit que la liste existe pour le template dès le premier rendu
+    if (!Array.isArray(this.api.les_activites_structures)) {
+      this.api.les_activites_structures = [];
+    }
   }
 
   ngOnInit(): void {
-    // console.log("id_enfant =",this.id_enfant)
-    this.get_activite();
+    this.get_activite();             // par enfant
+    this.initStructureThenLoad();    // par structure (avec retry si besoin)
   }
-  get_activite() {
-    let params = { id_enfant: this.id_enfant }// les conditions à mettre ici
-    console.log("params =", params)
+
+  /** ————————————  INIT STRUCTURE + CHARGEMENT  ———————————— */
+  private initStructureThenLoad(): void {
+    this.id_structure = this.resolveIdStructure();
+
+    if (!this.id_structure) {
+      // ApiService pas encore hydraté (ex: refresh) → on retry un court moment
+      if (this.structureRetry++ < this.maxRetries) {
+        setTimeout(() => this.initStructureThenLoad(), this.retryDelayMs);
+      }
+      return;
+    }
+
+    // id disponible → on charge
+    this.get_activite_structure();
+  }
+
+  /** Récupère un id_structure de façon safe (user_connected -> token -> localStorage) */
+  private resolveIdStructure(): number | null {
+    const fromUser = this.api?.user_connected?.id_structure;
+    if (fromUser) return fromUser;
+
+    const fromToken = this.api?.token?.user_connected?.id_structure;
+    if (fromToken) return fromToken;
+
+    try {
+      const raw = localStorage.getItem('token');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return parsed?.user_connected?.id_structure ?? null;
+      }
+    } catch {
+      /* no-op */
+    }
+
+    return null;
+  }
+
+  /** ————————————  APPELS API  ———————————— */
+  get_activite(): void {
+    if (!this.id_enfant) return;
+    const params = { 'a.id_enfant': this.id_enfant };
+
     this.loading_get_activite = true;
-    this.api.taf_post_object("activite/get", params , (reponse: any) => {
-      //when success
-      if (reponse.status) {
-        this.api.les_activites = reponse.data
-        console.log("les_activites =", this.api.les_activites)
-        console.log("Opération effectuée avec succés sur la table activite. Réponse= ", reponse);
-      } else {
-        console.log("L\'opération sur la table activite a échoué. Réponse= ", reponse);
-      }
-      this.loading_get_activite = false;
-    },
-      (error: any) => {
-        //when error
+    this.api.taf_post_object(
+      'activite/get',
+      params,
+      (res: any) => {
         this.loading_get_activite = false;
-        console.log("Erreur inconnue! ", error);
-      })
-  }
- 
-  openModal_add_activite() {
-    const options = { centered: true, scrollable: true, size: 'xl', backdrop: 'static' as const };
-    const modalRef = this.modalService.open(AddActiviteComponent, options);
-    modalRef.componentInstance.id_enfant = this.id_enfant;            // ← important
-    modalRef.result.then((result: any) => { if (result?.status) this.get_activite(); });
+        if (res?.status) {
+          this.api.les_activites = res.data || [];
+        }
+      },
+      () => (this.loading_get_activite = false)
+    );
   }
 
-  openModal_edit_activite(one_activite: any) {
-    let options: any = {
+  get_activite_structure(): void {
+    if (!this.id_structure) return;
+
+    this.loading_get_activite_structure = true;
+    this.api.taf_post_object(
+      'activite/get_activite_structure',
+      { 'a.id_structure': this.id_structure },
+      (res: any) => {
+        this.loading_get_activite_structure = false;
+        if (res?.status) {
+          this.api.les_activites_structures = res.data || [];
+        }
+      },
+      () => (this.loading_get_activite_structure = false)
+    );
+  }
+
+  /** ————————————  MODALS  ———————————— */
+  openModal_add_activite(): void {
+    const modalRef = this.modalService.open(AddActiviteComponent, {
       centered: true,
       scrollable: true,
-      size: "xl"//'sm' | 'lg' | 'xl' | string
-    }
-    const modalRef = this.modalService.open(EditActiviteComponent, { ...options, backdrop: 'static', })
+      size: 'xl',
+      backdrop: 'static'
+    });
+
+    modalRef.componentInstance.id_enfant = this.id_enfant;
+
+    modalRef.result.then((result: any) => {
+      if (result?.status) {
+        this.get_activite();
+        this.get_activite_structure();
+      }
+    }).catch(() => { /* dismiss */ });
+  }
+
+  openModal_edit_activite(one_activite: any): void {
+    const modalRef = this.modalService.open(EditActiviteComponent, {
+      centered: true,
+      scrollable: true,
+      size: 'xl',
+      backdrop: 'static'
+    });
+
     modalRef.componentInstance.activite_to_edit = one_activite;
-    modalRef.result.then((result: any) => {
-      console.log('Modal closed with:', result);
-      if (result?.status) {
-        this.get_activite()
-      } else {
 
+    modalRef.result.then((result: any) => {
+      if (result?.status) {
+        this.get_activite();
+        this.get_activite_structure();
       }
-    })
+    }).catch(() => { /* dismiss */ });
   }
-  openModal_details_activite(one_activite: any) {
-    let options: any = {
+
+  openModal_details_activite(one_activite: any): void {
+    const modalRef = this.modalService.open(DetailActiviteComponent, {
       centered: true,
       scrollable: true,
-      size: "xl"//'sm' | 'lg' | 'xl' | string
-    }
-    const modalRef = this.modalService.open(DetailActiviteComponent, { ...options, backdrop: 'static', })
-    modalRef.componentInstance.selected_activite = one_activite;
-    modalRef.result.then((result: any) => {
-      console.log('Modal closed with:', result);
-      if (result?.status) {
-        this.get_activite()
-      } else {
+      size: 'xl',
+      backdrop: 'static'
+    });
 
+    modalRef.componentInstance.selected_activite = one_activite;
+
+    modalRef.result.then((result: any) => {
+      if (result?.status) {
+        this.get_activite();
+        this.get_activite_structure();
       }
-    })
+    }).catch(() => { /* dismiss */ });
   }
+
+  /** ————————————  UTILS  ———————————— */
+  trackById = (_: number, item: any) => item?.id_activite ?? _;
 }

@@ -196,7 +196,7 @@ export class ApiService {
       ]
     }
   ];
- form: any[] = [
+  form: any[] = [
     {
       titre: "Arrivée",
       lignes: [{
@@ -262,67 +262,93 @@ export class ApiService {
             { name: "Fruits", titre: "Fruits", value: "" },
           ]
         },
-        {
-          name: "Aliments_du_goûter",
-          titre: "Biberons",
-          value: "",
-          rowspan: 4,
-          options: [
-            { name: "1", titre: "Première prise", value: "", type: "text" },
-            { name: "2", titre: "Deuxième prise", value: "", type: "text" },
-            { name: "3", titre: "Troixième prise", value: "", type: "text" },
-            { name: "3", titre: "Quatrième prise", value: "", type: "text" },
-          ]
-        },
-        {
-          name: "Aliments_du_goûter",
-          titre: "Biberons",
-          value: "",
-          hide: true,
-          options: [
-            { name: "1", titre: "Quantités bues", value: "", type: "text" },
-            { name: "2", titre: "Quantités bues", value: "", type: "text" },
-            { name: "3", titre: "Quantités bues", value: "", type: "text" },
-            { name: "3", titre: "Quantités bues", value: "", type: "text" },
-          ]
-        },
+       
+       
+      ]
+    },
+    // ⬇️ NOUVELLE RUBRIQUE AU NIVEAU RACINE
+  {
+    titre: "Biberons",
+    lignes: [
+      {
+        type: "biberons",    // clé utilisée par ton ngIf spécial
+        name: "biberons",
+        items: []            // chaque item: { heure: "14:30", quantite: 120, type: "Lait infantile", note: "" }
+      }
+    ]
+  },
+
+    // {
+    //   titre: "Repos",
+    //   lignes: [
+    //     {
+    //       name: "Temps",
+    //       titre: "Temps",
+    //       value: "",
+    //       options: [
+    //         { name: "Bon", titre: "Bon", value: "", type: "text" },
+    //         { name: "Moyen", titre: "Moyen", value: "", type: "text" },
+    //         { name: "Agité", titre: "Agité", value: "", type: "text" }
+    //       ]
+    //     },
+    //     {
+    //       name: "Matin",
+    //       titre: "Matin",
+    //       value: "",
+    //       options: [
+    //         { name: "Bon", titre: "Bon", value: "" },
+    //         { name: "Moyen", titre: "Moyen", value: "" },
+    //         { name: "Agité", titre: "Agité", value: "" }
+    //       ]
+    //     },
+    //     {
+    //       name: "Après_midi",
+    //       titre: "Après-midi",
+    //       value: "",
+    //       options: [
+    //         { name: "Bon", titre: "Bon", value: "" },
+    //         { name: "Moyen", titre: "Moyen", value: "" },
+    //         { name: "Agité", titre: "Agité", value: "" }
+    //       ]
+    //     },
+    //   ]
+    // },
+    {
+  titre: "Repos",
+  lignes: [
+    {
+      name: "Temps",
+      titre: "Temps",
+      value: "",
+      options: [
+        { name: "Bon",   titre: "Bon",   value: "" },
+        { name: "Moyen", titre: "Moyen", value: "" },
+        { name: "Agité", titre: "Agité", value: "" }
       ]
     },
     {
-      titre: "Repos",
-      lignes: [
-        {
-          name: "Temps",
-          titre: "Temps",
-          value: "",
-          options: [
-            { name: "Bon", titre: "Bon", value: "", type: "text" },
-            { name: "Moyen", titre: "Moyen", value: "", type: "text" },
-            { name: "Agité", titre: "Agité", value: "", type: "text" }
-          ]
-        },
-        {
-          name: "Matin",
-          titre: "Matin",
-          value: "",
-          options: [
-            { name: "Bon", titre: "Bon", value: "" },
-            { name: "Moyen", titre: "Moyen", value: "" },
-            { name: "Agité", titre: "Agité", value: "" }
-          ]
-        },
-        {
-          name: "Après_midi",
-          titre: "Après-midi",
-          value: "",
-          options: [
-            { name: "Bon", titre: "Bon", value: "" },
-            { name: "Moyen", titre: "Moyen", value: "" },
-            { name: "Agité", titre: "Agité", value: "" }
-          ]
-        },
+      name: "Matin",
+      titre: "Matin",
+      value: "",
+      options: [
+        { name: "Bon",   titre: "Bon",   value: "" },
+        { name: "Moyen", titre: "Moyen", value: "" },
+        { name: "Agité", titre: "Agité", value: "" }
       ]
     },
+    {
+      name: "Après_midi",
+      titre: "Après-midi",
+      value: "",
+      options: [
+        { name: "Bon",   titre: "Bon",   value: "" },
+        { name: "Moyen", titre: "Moyen", value: "" },
+        { name: "Agité", titre: "Agité", value: "" }
+      ]
+    },
+  ]
+},
+
     {
       titre: "Repas",
       lignes: [
@@ -534,301 +560,322 @@ export class ApiService {
       ]
     },
   ]
-   formV2 = {
-  version: 2,
-  sections: [
-    {
-      id: "arrival",
-      title: "Arrivée",
-      fields: [
-        { id: "accompagnateur", label: "Accompagnateur", type: "select",
-          options: [
-            { value: "papa", label: "Papa" },
-            { value: "maman", label: "Maman" },
-            { value: "nounou", label: "Nounou" }
-          ],
-          required: true
-        },
-        { id: "humeur_arrivee", label: "Humeur à l’arrivée", type: "select",
-          options: [
-            { value: "joyeuse", label: "Joyeuse" },
-            { value: "calme", label: "Calme" },
-            { value: "maussade", label: "Maussade" },
-            { value: "fatigue", label: "Fatigué·e" }
-          ]
-        },
-        { id: "commentaire_arrivee", label: "Commentaire", type: "textarea", maxLength: 500 }
-      ]
-    },
+  formV2 = {
+    version: 2,
+    sections: [
+      {
+        id: "arrival",
+        title: "Arrivée",
+        fields: [
+          {
+            id: "accompagnateur", label: "Accompagnateur", type: "select",
+            options: [
+              { value: "papa", label: "Papa" },
+              { value: "maman", label: "Maman" },
+              { value: "nounou", label: "Nounou" }
+            ],
+            required: true
+          },
+          {
+            id: "humeur_arrivee", label: "Humeur à l’arrivée", type: "select",
+            options: [
+              { value: "joyeuse", label: "Joyeuse" },
+              { value: "calme", label: "Calme" },
+              { value: "maussade", label: "Maussade" },
+              { value: "fatigue", label: "Fatigué·e" }
+            ]
+          },
+          { id: "commentaire_arrivee", label: "Commentaire", type: "textarea", maxLength: 500 }
+        ]
+      },
 
-    {
-      id: "meals",
-      title: "Repas",
-      fields: [
-        { id: "dejeuner_appreciation", label: "Déjeuner", type: "select",
-          options: [
-            { value: "bon", label: "Bon" },
-            { value: "moyen", label: "Moyen" },
-            { value: "peu", label: "Mange peu" }
-          ]
-        },
-        { id: "gouter_appreciation", label: "Goûter", type: "select",
-          options: [
-            { value: "bon", label: "Bon" },
-            { value: "moyen", label: "Moyen" },
-            { value: "peu", label: "Mange peu" }
-          ]
-        },
-        { id: "collation_type", label: "Collation", type: "select",
-          options: [
-            { value: "bouillie", label: "Bouillie" },
-            { value: "cereales", label: "Céréales" },
-            { value: "autre", label: "Autre" }
-          ]
-        },
-        { id: "aliments_gouter", label: "Aliments du goûter", type: "multiselect",
-          options: [
-            { value: "yaourt", label: "Yaourt" },
-            { value: "compote", label: "Compote" },
-            { value: "fruits", label: "Fruits" }
-          ]
-        }
-      ]
-    },
+      {
+        id: "meals",
+        title: "Repas",
+        fields: [
+          {
+            id: "dejeuner_appreciation", label: "Déjeuner", type: "select",
+            options: [
+              { value: "bon", label: "Bon" },
+              { value: "moyen", label: "Moyen" },
+              { value: "peu", label: "Mange peu" }
+            ]
+          },
+          {
+            id: "gouter_appreciation", label: "Goûter", type: "select",
+            options: [
+              { value: "bon", label: "Bon" },
+              { value: "moyen", label: "Moyen" },
+              { value: "peu", label: "Mange peu" }
+            ]
+          },
+          {
+            id: "collation_type", label: "Collation", type: "select",
+            options: [
+              { value: "bouillie", label: "Bouillie" },
+              { value: "cereales", label: "Céréales" },
+              { value: "autre", label: "Autre" }
+            ]
+          },
+          {
+            id: "aliments_gouter", label: "Aliments du goûter", type: "multiselect",
+            options: [
+              { value: "yaourt", label: "Yaourt" },
+              { value: "compote", label: "Compote" },
+              { value: "fruits", label: "Fruits" }
+            ]
+          }
+        ]
+      },
 
-    {
-      id: "bottles",
-      title: "Biberons",
-      fields: [
-        {
-          id: "biberons",
-          type: "repeater", min: 0, max: 6,   // 0..6 prises
-          itemLabel: "Prise",
-          itemFields: [
-            { id: "heure", label: "Heure", type: "time", required: true },
-            { id: "quantite_ml", label: "Quantité (ml)", type: "number", min: 0, max: 400, step: 10 },
-            { id: "type", label: "Type", type: "select",
-              options: [
-                { value: "maternel", label: "Lait maternel" },
-                { value: "formule", label: "Lait infantile" },
-                { value: "eau", label: "Eau" }
-              ]
-            },
-            { id: "termine", label: "Terminé", type: "checkbox" }
-          ]
-        }
-      ]
-    },
+      {
+        id: "bottles",
+        title: "Biberons",
+        fields: [
+          {
+            id: "biberons",
+            type: "repeater", min: 0, max: 6,   // 0..6 prises
+            itemLabel: "Prise",
+            itemFields: [
+              { id: "heure", label: "Heure", type: "time", required: true },
+              { id: "quantite_ml", label: "Quantité (ml)", type: "number", min: 0, max: 400, step: 10 },
+              {
+                id: "type", label: "Type", type: "select",
+                options: [
+                  { value: "maternel", label: "Lait maternel" },
+                  { value: "formule", label: "Lait infantile" },
+                  { value: "eau", label: "Eau" }
+                ]
+              },
+              { id: "termine", label: "Terminé", type: "checkbox" }
+            ]
+          }
+        ]
+      },
 
-    {
-      id: "nap",
-      title: "Repos / Sieste",
-      fields: [
-        { id: "qualite_global", label: "Qualité générale", type: "select",
-          options: [
-            { value: "bon", label: "Bon" },
-            { value: "moyen", label: "Moyen" },
-            { value: "agite", label: "Agité" }
-          ]
-        },
-        {
-          id: "siestes",
-          type: "repeater", min: 0, max: 4,
-          itemLabel: "Sieste",
-          itemFields: [
-            { id: "debut", label: "Début", type: "time" },
-            { id: "fin", label: "Fin", type: "time" },
-            { id: "qualite", label: "Qualité", type: "select",
-              options: [
-                { value: "bon", label: "Bon" },
-                { value: "moyen", label: "Moyen" },
-                { value: "agite", label: "Agité" }
-              ]
-            }
-          ]
-        }
-      ]
-    },
+      {
+        id: "nap",
+        title: "Repos / Sieste",
+        fields: [
+          {
+            id: "qualite_global", label: "Qualité générale", type: "select",
+            options: [
+              { value: "bon", label: "Bon" },
+              { value: "moyen", label: "Moyen" },
+              { value: "agite", label: "Agité" }
+            ]
+          },
+          {
+            id: "siestes",
+            type: "repeater", min: 0, max: 4,
+            itemLabel: "Sieste",
+            itemFields: [
+              { id: "debut", label: "Début", type: "time" },
+              { id: "fin", label: "Fin", type: "time" },
+              {
+                id: "qualite", label: "Qualité", type: "select",
+                options: [
+                  { value: "bon", label: "Bon" },
+                  { value: "moyen", label: "Moyen" },
+                  { value: "agite", label: "Agité" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
 
-    {
-      id: "hygiene",
-      title: "Changes & Hygiène",
-      fields: [
-        {
-          id: "changes",
-          type: "repeater", min: 0, max: 12,
-          itemLabel: "Change",
-          itemFields: [
-            { id: "heure", label: "Heure", type: "time" },
-            { id: "type", label: "Type", type: "multiselect",
-              options: [
-                { value: "urines", label: "Urines" },
-                { value: "selles", label: "Selles" }
-              ]
-            },
-            { id: "note", label: "Note", type: "text", maxLength: 120 }
-          ]
-        },
-        { id: "observations_hygiene", label: "Observations", type: "textarea", maxLength: 400 }
-      ]
-    },
+      {
+        id: "hygiene",
+        title: "Changes & Hygiène",
+        fields: [
+          {
+            id: "changes",
+            type: "repeater", min: 0, max: 12,
+            itemLabel: "Change",
+            itemFields: [
+              { id: "heure", label: "Heure", type: "time" },
+              {
+                id: "type", label: "Type", type: "multiselect",
+                options: [
+                  { value: "urines", label: "Urines" },
+                  { value: "selles", label: "Selles" }
+                ]
+              },
+              { id: "note", label: "Note", type: "text", maxLength: 120 }
+            ]
+          },
+          { id: "observations_hygiene", label: "Observations", type: "textarea", maxLength: 400 }
+        ]
+      },
 
-    {
-      id: "activities",
-      title: "Activités",
-      fields: [
-        { id: "activites_matin", label: "Matin", type: "tags",
-          options: [
-            { value: "peinture_collage", label: "Peinture/Collage" },
-            { value: "pate_modeler", label: "Pâte à modeler/sel" },
-            { value: "transvasement", label: "Transvasement" },
-            { value: "jeux_eau", label: "Jeux d’eau" },
-            { value: "jeux_libres", label: "Jeux libres" },
-            { value: "jardin", label: "Jardin" },
-            { value: "cuisine", label: "Atelier cuisine" },
-            { value: "motricite", label: "Motricité" },
-            { value: "musique", label: "Musique" },
-            { value: "conte", label: "Lecture de conte" }
-          ]
-        },
-        { id: "activites_apm", label: "Après-midi", type: "tags", optionsFrom: "activites_matin" },
-        { id: "commentaire_activites", label: "Commentaire", type: "textarea", maxLength: 400 }
-      ]
-    },
+      {
+        id: "activities",
+        title: "Activités",
+        fields: [
+          {
+            id: "activites_matin", label: "Matin", type: "tags",
+            options: [
+              { value: "peinture_collage", label: "Peinture/Collage" },
+              { value: "pate_modeler", label: "Pâte à modeler/sel" },
+              { value: "transvasement", label: "Transvasement" },
+              { value: "jeux_eau", label: "Jeux d’eau" },
+              { value: "jeux_libres", label: "Jeux libres" },
+              { value: "jardin", label: "Jardin" },
+              { value: "cuisine", label: "Atelier cuisine" },
+              { value: "motricite", label: "Motricité" },
+              { value: "musique", label: "Musique" },
+              { value: "conte", label: "Lecture de conte" }
+            ]
+          },
+          { id: "activites_apm", label: "Après-midi", type: "tags", optionsFrom: "activites_matin" },
+          { id: "commentaire_activites", label: "Commentaire", type: "textarea", maxLength: 400 }
+        ]
+      },
 
-    {
-      id: "menu",
-      title: "Composition des repas",
-      fields: [
-        { id: "poissons", label: "Poisson", type: "multiselect",
-          options: [
-            { value: "lotte", label: "Lotte" },
-            { value: "cabillaud", label: "Cabillaud" },
-            { value: "turbo", label: "Turbot" },
-            { value: "espadon", label: "Espadon" }
-          ]
-        },
-        { id: "viandes", label: "Viandes", type: "multiselect",
-          options: [
-            { value: "boeuf", label: "Bœuf" },
-            { value: "veau", label: "Veau" },
-            { value: "mouton", label: "Mouton" },
-            { value: "poulet", label: "Poulet" },
-            { value: "jambon_dinde", label: "Jambon de dinde" },
-            { value: "nuggets_poulet", label: "Nuggets de poulet" }
-          ]
-        },
-        { id: "preparations", label: "Préparation", type: "multiselect",
-          options: [
-            { value: "gratin_dauphinois", label: "Gratin dauphinois" },
-            { value: "raviolis", label: "Raviolis" },
-            { value: "hachis_parmentier", label: "Hachis Parmentier" },
-            { value: "ratatouille", label: "Ratatouille" },
-            { value: "pates_bolognaise", label: "Pâtes bolognaise" }
-          ]
-        },
-        { id: "feculents", label: "Féculents", type: "multiselect",
-          options: [
-            { value: "riz", label: "Riz" },
-            { value: "polenta", label: "Polenta" },
-            { value: "pates", label: "Pâtes" },
-            { value: "couscous", label: "Couscous" }
-          ]
-        },
-        { id: "legumes_secs", label: "Légumineuses", type: "multiselect",
-          options: [
-            { value: "haricots_blancs", label: "Haricots blancs" },
-            { value: "niebes", label: "Niébés" },
-            { value: "lentilles", label: "Lentilles" }
-          ]
-        },
-        { id: "yaourts", label: "Yaourts", type: "multiselect",
-          options: [
-            { value: "chocolat", label: "Chocolat" },
-            { value: "vanille", label: "Vanille" },
-            { value: "fraise", label: "Fraise" },
-            { value: "nature", label: "Nature" }
-          ]
-        },
-        { id: "compotes", label: "Compotes", type: "multiselect",
-          options: [
-            { value: "pomme", label: "Pomme" },
-            { value: "poire", label: "Poire" },
-            { value: "banane", label: "Banane" },
-            { value: "abricot", label: "Abricot" },
-            { value: "mangue", label: "Mangue" },
-            { value: "melon", label: "Melon" }
-          ]
-        },
-        { id: "fruits_frais", label: "Fruits frais", type: "multiselect",
-          options: [
-            { value: "pomme", label: "Pomme" },
-            { value: "banane", label: "Banane" },
-            { value: "poire", label: "Poire" },
-            { value: "melon", label: "Melon" },
-            { value: "papaye", label: "Papaye" },
-            { value: "pasteque", label: "Pastèque" },
-            { value: "orange", label: "Orange" },
-            { value: "clementine", label: "Clémentine" },
-            { value: "raisin", label: "Raisin" }
-          ]
-        },
-        { id: "legumes", label: "Légumes", type: "multiselect",
-          options: [
-            { value: "ecrase", label: "Écrasé" },
-            { value: "morceaux", label: "Morceaux" },
-            { value: "mouline", label: "Mouliné" },
-            { value: "betterave", label: "Betteraves rouges" },
-            { value: "brocoli", label: "Brocolis" },
-            { value: "carotte", label: "Carottes" },
-            { value: "chou_blanc", label: "Chou blanc" },
-            { value: "chou_fleur", label: "Chou-fleur" },
-            { value: "courges", label: "Courges" },
-            { value: "courgette", label: "Courgettes" },
-            { value: "epinard", label: "Épinards" },
-            { value: "haricot_vert", label: "Haricots verts" },
-            { value: "navet", label: "Navets" },
-            { value: "patate_douce", label: "Patates douces" },
-            { value: "petit_pois", label: "Petits pois" },
-            { value: "poireau", label: "Poireaux" },
-            { value: "pomme_de_terre", label: "Pommes de terre" },
-            { value: "aubergine", label: "Aubergines" },
-            { value: "tomate", label: "Tomates" }
-          ]
-        }
-      ]
-    },
+      {
+        id: "menu",
+        title: "Composition des repas",
+        fields: [
+          {
+            id: "poissons", label: "Poisson", type: "multiselect",
+            options: [
+              { value: "lotte", label: "Lotte" },
+              { value: "cabillaud", label: "Cabillaud" },
+              { value: "turbo", label: "Turbot" },
+              { value: "espadon", label: "Espadon" }
+            ]
+          },
+          {
+            id: "viandes", label: "Viandes", type: "multiselect",
+            options: [
+              { value: "boeuf", label: "Bœuf" },
+              { value: "veau", label: "Veau" },
+              { value: "mouton", label: "Mouton" },
+              { value: "poulet", label: "Poulet" },
+              { value: "jambon_dinde", label: "Jambon de dinde" },
+              { value: "nuggets_poulet", label: "Nuggets de poulet" }
+            ]
+          },
+          {
+            id: "preparations", label: "Préparation", type: "multiselect",
+            options: [
+              { value: "gratin_dauphinois", label: "Gratin dauphinois" },
+              { value: "raviolis", label: "Raviolis" },
+              { value: "hachis_parmentier", label: "Hachis Parmentier" },
+              { value: "ratatouille", label: "Ratatouille" },
+              { value: "pates_bolognaise", label: "Pâtes bolognaise" }
+            ]
+          },
+          {
+            id: "feculents", label: "Féculents", type: "multiselect",
+            options: [
+              { value: "riz", label: "Riz" },
+              { value: "polenta", label: "Polenta" },
+              { value: "pates", label: "Pâtes" },
+              { value: "couscous", label: "Couscous" }
+            ]
+          },
+          {
+            id: "legumes_secs", label: "Légumineuses", type: "multiselect",
+            options: [
+              { value: "haricots_blancs", label: "Haricots blancs" },
+              { value: "niebes", label: "Niébés" },
+              { value: "lentilles", label: "Lentilles" }
+            ]
+          },
+          {
+            id: "yaourts", label: "Yaourts", type: "multiselect",
+            options: [
+              { value: "chocolat", label: "Chocolat" },
+              { value: "vanille", label: "Vanille" },
+              { value: "fraise", label: "Fraise" },
+              { value: "nature", label: "Nature" }
+            ]
+          },
+          {
+            id: "compotes", label: "Compotes", type: "multiselect",
+            options: [
+              { value: "pomme", label: "Pomme" },
+              { value: "poire", label: "Poire" },
+              { value: "banane", label: "Banane" },
+              { value: "abricot", label: "Abricot" },
+              { value: "mangue", label: "Mangue" },
+              { value: "melon", label: "Melon" }
+            ]
+          },
+          {
+            id: "fruits_frais", label: "Fruits frais", type: "multiselect",
+            options: [
+              { value: "pomme", label: "Pomme" },
+              { value: "banane", label: "Banane" },
+              { value: "poire", label: "Poire" },
+              { value: "melon", label: "Melon" },
+              { value: "papaye", label: "Papaye" },
+              { value: "pasteque", label: "Pastèque" },
+              { value: "orange", label: "Orange" },
+              { value: "clementine", label: "Clémentine" },
+              { value: "raisin", label: "Raisin" }
+            ]
+          },
+          {
+            id: "legumes", label: "Légumes", type: "multiselect",
+            options: [
+              { value: "ecrase", label: "Écrasé" },
+              { value: "morceaux", label: "Morceaux" },
+              { value: "mouline", label: "Mouliné" },
+              { value: "betterave", label: "Betteraves rouges" },
+              { value: "brocoli", label: "Brocolis" },
+              { value: "carotte", label: "Carottes" },
+              { value: "chou_blanc", label: "Chou blanc" },
+              { value: "chou_fleur", label: "Chou-fleur" },
+              { value: "courges", label: "Courges" },
+              { value: "courgette", label: "Courgettes" },
+              { value: "epinard", label: "Épinards" },
+              { value: "haricot_vert", label: "Haricots verts" },
+              { value: "navet", label: "Navets" },
+              { value: "patate_douce", label: "Patates douces" },
+              { value: "petit_pois", label: "Petits pois" },
+              { value: "poireau", label: "Poireaux" },
+              { value: "pomme_de_terre", label: "Pommes de terre" },
+              { value: "aubergine", label: "Aubergines" },
+              { value: "tomate", label: "Tomates" }
+            ]
+          }
+        ]
+      },
 
-    {
-      id: "health",
-      title: "Santé",
-      fields: [
-        { id: "temperature", label: "Température (°C)", type: "number", min: 34, max: 42, step: 0.1 },
-        {
-          id: "medications",
-          type: "repeater", min: 0, max: 6,
-          itemLabel: "Médicament",
-          itemFields: [
-            { id: "nom", label: "Nom", type: "text" },
-            { id: "dose", label: "Dose (mg/ml)", type: "text" },
-            { id: "heure", label: "Heure", type: "time" }
-          ]
-        },
-        { id: "incident", label: "Incident / blessure", type: "textarea", maxLength: 500 }
-      ]
-    },
+      {
+        id: "health",
+        title: "Santé",
+        fields: [
+          { id: "temperature", label: "Température (°C)", type: "number", min: 34, max: 42, step: 0.1 },
+          {
+            id: "medications",
+            type: "repeater", min: 0, max: 6,
+            itemLabel: "Médicament",
+            itemFields: [
+              { id: "nom", label: "Nom", type: "text" },
+              { id: "dose", label: "Dose (mg/ml)", type: "text" },
+              { id: "heure", label: "Heure", type: "time" }
+            ]
+          },
+          { id: "incident", label: "Incident / blessure", type: "textarea", maxLength: 500 }
+        ]
+      },
 
-    {
-      id: "media_notes",
-      title: "Médias & Remarques",
-      fields: [
-        { id: "photos", label: "Photos", type: "file[]", accept: "image/*" },
-        { id: "videos", label: "Vidéos", type: "file[]", accept: "video/*" },
-        { id: "note_generale", label: "Note générale", type: "textarea", maxLength: 1000 }
-      ]
-    }
-  ]
-} as const;
+      {
+        id: "media_notes",
+        title: "Médias & Remarques",
+        fields: [
+          { id: "photos", label: "Photos", type: "file[]", accept: "image/*" },
+          { id: "videos", label: "Vidéos", type: "file[]", accept: "video/*" },
+          { id: "note_generale", label: "Note générale", type: "textarea", maxLength: 1000 }
+        ]
+      }
+    ]
+  } as const;
+  les_activites_structures: any;
 
   constructor(private http: HttpClient, private route: Router, private idb: IdbService) { }
   // sauvegardes

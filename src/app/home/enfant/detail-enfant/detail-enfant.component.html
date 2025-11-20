@@ -181,9 +181,11 @@
       </ng-template>
     </div>
   </div>
-<br><br>
+<br><br><br>
   <!-- Les activités -->
   <app-list-activite *ngIf="id_enfant!=0" [id_enfant]="id_enfant"></app-list-activite>
+  <br><br><br>
+  <app-list-galerie-enfant *ngIf="id_enfant!=0" [id_enfant]="id_enfant"></app-list-galerie-enfant>
 </ng-container>
 
 <ng-template #emptyTpl>

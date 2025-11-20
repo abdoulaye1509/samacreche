@@ -110,3 +110,27 @@ td {
     width: 150px; /* Ajustez la taille selon vos besoins */
     height: auto;
   }
+
+
+  .creche-logo     { width: 84px;  height: 84px;  object-fit: cover; }
+.creche-logo-sm  { width: 72px;  height: 72px;  object-fit: cover; }
+.creche-logo-xl  { width: 110px; height: 110px; object-fit: cover; }
+
+.creche-header { border: 1px solid rgba(0,0,0,.06); }
+.creche-sheet  { border: 1px solid rgba(0,0,0,.06); }
+
+.vr { width: 1px; background: rgba(0,0,0,.08); align-self: stretch; }
+
+@media print {
+  .creche-header, .creche-sheet { box-shadow: none !important; border-color: #000 !important; }
+  .btn, a.btn { display: none !important; } // on masque les boutons à l’impression
+}
+
+
+.avatar-img { width: 44px; height: 44px; }
+.object-fit-cover { object-fit: cover; }
+.sep { opacity: .6; margin: 0 .25rem; }
+
+@media (max-width: 576px) {
+  .avatar-img { width: 38px; height: 38px; }
+}

@@ -1,23 +1,103 @@
-<div class="modal-header">
-  <h5 class="modal-title">
-    Cahier de vie • C°{{ selected_activite?.id_activite }}
-  </h5>
-  <button type="button" class="btn-close" (click)="activeModal?.close()"></button>
-</div>
+<!-- HEADER (bleu, identique à add) -->
+<div class="modal-header py-3 bg-primary text-white">
+  <div class="modal-title w-100">
+    <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
 
-<div class="modal-body">
-  <div class="d-flex justify-content-between align-items-center">
-    <div><img src="../../../../assets/images/logo.png" alt="Logo" class="logo mb-4"></div>
-    <div>
-      <!-- Crèche:{{selected_activite.nom_structure}} -->
-      <div>Crèche : {{ selected_activite?.nom_structure }}</div>
-      <div>Adresse : {{ selected_activite?.adresse_structure }}</div>
-      <div>Téléphone : {{ selected_activite?.telephone_structure }}</div>
-      <div>Ninea : {{ selected_activite?.ninea }}</div>
+      <!-- Gauche : avatar enfant + titre + méta -->
+      <div class="d-flex align-items-center gap-3 min-w-0">
+        <img
+          [src]="selected_activite?.photo_enfant ? api.resolveFileUrl(selected_activite.photo_enfant) : api.placeholderLogo"
+          (error)="$any($event.target).src = api.placeholderLogo"
+          class="avatar-img rounded-circle object-fit-cover"
+          [alt]="(selected_activite?.prenom_enfant || '') + ' ' + (selected_activite?.nom_enfant || '')" />
 
+        <div class="min-w-0">
+          <div class="h5 mb-1 text-truncate">
+            Cahier de vie
+            <span class="fw-normal opacity-75">•</span>
+            <span class="fw-semibold">
+              {{ selected_activite?.prenom_enfant }} {{ selected_activite?.nom_enfant }}
+            </span>
+            <span class="badge bg-light text-dark align-middle ms-2"
+                  *ngIf="selected_activite?.id_activite">C°{{ selected_activite.id_activite }}</span>
+          </div>
+
+          <div class="small d-flex flex-wrap align-items-center gap-2 text-white-50">
+            <!-- Date -->
+            <span class="d-inline-flex align-items-center gap-1">
+              <i class="bi bi-calendar-date"></i>
+              <ng-container *ngIf="formattedArriveeDate as d; else onlyDate">
+                {{ d | date:'dd/MM/yyyy' }}
+              </ng-container>
+              <ng-template #onlyDate>
+                {{ selected_activite?.date_activite | date:'dd/MM/yyyy' }}
+              </ng-template>
+            </span>
+
+            <!-- Heure -->
+            <ng-container *ngIf="formattedArriveeDate as d">
+              <span class="sep">•</span>
+              <span class="d-inline-flex align-items-center gap-1">
+                <i class="bi bi-clock"></i> {{ d | date:'HH:mm' }}
+              </span>
+            </ng-container>
+
+            <!-- Agent -->
+            <ng-container *ngIf="selected_activite?.prenom_utilisateur || selected_activite?.nom_utilisateur">
+              <span class="sep">•</span>
+              <span class="d-inline-flex align-items-center gap-1">
+                <i class="bi bi-person-badge"></i>
+                {{ selected_activite?.prenom_utilisateur }} {{ selected_activite?.nom_utilisateur }}
+              </span>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- (La carte structure reste dans le body, comme pour add) -->
     </div>
   </div>
 
+  <button type="button" class="btn-close btn-close-white ms-2" (click)="activeModal?.close()"></button>
+</div>
+
+<!-- BODY -->
+<div class="modal-body">
+
+  <!-- Carte crèche (comme add) -->
+  <div class="creche-header card shadow-sm mb-3" *ngIf="selected_activite">
+    <div class="card-body d-flex align-items-center gap-3 flex-wrap">
+      <img class="creche-logo rounded-3"
+           [src]="api.resolveFileUrl(selected_activite.logo_structure) || 'assets/images/logo.png'"
+           alt="Logo crèche" />
+
+      <div class="vr d-none d-md-block"></div>
+
+      <div class="flex-grow-1">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <h5 class="mb-0">{{ selected_activite.nom_structure }}</h5>
+          <span class="badge text-bg-primary" *ngIf="selected_activite.ninea">NINEA {{ selected_activite.ninea }}</span>
+        </div>
+
+        <div class="small text-muted mt-1" *ngIf="selected_activite.adresse_structure">
+          <i class="bi bi-geo-alt"></i> {{ selected_activite.adresse_structure }}
+        </div>
+
+        <div class="mt-2 d-flex flex-wrap gap-2">
+          <a class="btn btn-sm btn-outline-primary" *ngIf="selected_activite.telephone_structure"
+             [href]="'tel:' + selected_activite.telephone_structure">
+            <i class="bi bi-telephone"></i> {{ selected_activite.telephone_structure }}
+          </a>
+          <a class="btn btn-sm btn-outline-secondary" *ngIf="selected_activite?.adresse_structure"
+             [href]="toMapsLink(selected_activite.adresse_structure)" target="_blank" rel="noopener">
+            <i class="bi bi-map"></i> Itinéraire
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Date/Heure rappel -->
   <div class="mb-3">
     Date et heure d'arrivée :
     <ng-container *ngIf="formattedArriveeDate as d; else dateOnly">
@@ -28,44 +108,117 @@
     </ng-template>
   </div>
 
-  <ng-container *ngFor="let one_rubrique of form">
-    <h3 class="mt-4">{{ one_rubrique.titre }}</h3>
-    <div class="table-container">
-      <div class="table-wrapper">
-        <table class="table text-center table-bordered">
-          <thead class="header">
-            <tr>
-              <th>Paramètres</th>
-              <th [attr.colspan]="6">Appréciation</th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let one_ligne of one_rubrique.lignes; let odd=odd; let even=even">
-              <tr class="tr1" [ngClass]="{couleur1: even, couleur2: odd}">
-                <th class="frozen-column" *ngIf="!one_ligne.hide" [attr.rowspan]="one_ligne.rowspan || 2">
-                  {{ one_ligne.titre }}
-                </th>
-                <th *ngFor="let one_option of one_ligne.options">{{ one_option.titre }}</th>
-              </tr>
-              <tr class="tr1" [ngClass]="{couleur1: even, couleur2: odd}">
-                <td *ngFor="let one_option of one_ligne.options">
-                  <ng-container *ngIf="one_option.type==='text'; else radioTpl">
-                    <input class="form-control" type="text" [ngModel]="one_option.value" disabled>
-                  </ng-container>
-                  <ng-template #radioTpl>
-                    <div class="form-check form-switch d-flex p-0">
-                      <input class="form-check-input" type="radio" role="switch" [ngModel]="one_ligne.value"
-                        [value]="one_option.name" disabled>
-                    </div>
-                  </ng-template>
-                </td>
-              </tr>
-            </ng-container>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <!-- RUBRIQUES (lecture seule) -->
+  <ng-container *ngFor="let rubrique of form">
+    <ng-container [ngSwitch]="getRubriqueType(rubrique)">
+
+      <!-- === BIBERONS (nouveau/ancien schéma) === -->
+      <ng-container *ngSwitchCase="'biberons'">
+        <h3 class="mt-4 d-flex align-items-center gap-2">
+          <i class="bi rubrique-icon" [ngClass]="rubriqueIconClass(rubrique?.titre || 'Biberons')" aria-hidden="true"></i>
+          <span>{{ rubrique?.titre || 'Biberons' }}</span>
+        </h3>
+
+        <div class="card shadow-sm mb-3">
+          <div class="card-body table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th style="width:140px">Heure</th>
+                  <th style="width:180px">Quantité</th>
+                  <th style="width:220px">Type</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let it of extractBiberons(rubrique)">
+                  <td>{{ it?.heure || '—' }}</td>
+                  <td>
+                    <ng-container *ngIf="it?.quantite; else noQty">
+                      {{ it.quantite }} <span>ml</span>
+                    </ng-container>
+                    <ng-template #noQty>—</ng-template>
+                  </td>
+                  <td>{{ it?.type || '—' }}</td>
+                  <td>
+                    <ng-container *ngIf="it?.note && it.note !== '__AUTRE__'; else noteLibre">
+                      {{ it.note }}
+                    </ng-container>
+                    <ng-template #noteLibre>
+                      {{ it?.note_libre || '—' }}
+                    </ng-template>
+                  </td>
+                </tr>
+
+                <tr *ngIf="!extractBiberons(rubrique)?.length">
+                  <td colspan="4" class="text-muted text-center py-3">
+                    Aucune prise enregistrée.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- === Par défaut : tableau (icône + badges pour "Temps") === -->
+      <ng-container *ngSwitchDefault>
+        <h3 class="mt-4 d-flex align-items-center gap-2">
+          <i class="bi rubrique-icon" [ngClass]="rubriqueIconClass(rubrique?.titre)" aria-hidden="true"></i>
+          <span>{{ rubrique.titre }}</span>
+        </h3>
+
+        <div class="table-container">
+          <div class="table-wrapper">
+            <table class="table text-center table-bordered">
+              <thead class="header">
+                <tr>
+                  <th>Paramètres</th>
+                  <th [attr.colspan]="6">Appréciation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let one_ligne of rubrique.lignes; let odd=odd; let even=even">
+                  <tr class="tr1" [ngClass]="{couleur1: even, couleur2: odd}">
+                    <th class="frozen-column" *ngIf="!one_ligne.hide" [attr.rowspan]="one_ligne.rowspan || 2">
+                      {{ one_ligne.titre }}
+                    </th>
+                    <th *ngFor="let one_option of one_ligne.options">{{ one_option.titre }}</th>
+                  </tr>
+
+                  <tr class="tr1" [ngClass]="{couleur1: even, couleur2: odd}">
+                    <td *ngFor="let one_option of one_ligne.options">
+                      <!-- Ligne TEMPS : badge couleur -->
+                      <ng-container *ngIf="one_ligne.name === 'Temps'; else readCell">
+                        <span class="badge" [ngClass]="tempsBadgeClass(one_ligne.value)">
+                          {{ labelTemps(one_ligne.value) }}
+                        </span>
+                      </ng-container>
+
+                      <!-- Cellule lecture seule -->
+                      <ng-template #readCell>
+                        <ng-container *ngIf="one_option.type === 'text'; else radioView">
+                          <span class="form-control-plaintext">
+                            {{ one_option.value || '—' }}
+                          </span>
+                        </ng-container>
+                        <ng-template #radioView>
+                          <i class="bi"
+                             [ngClass]="one_ligne.value === one_option.name ? 'bi-check-circle-fill text-success' : 'bi-circle text-muted'"></i>
+                        </ng-template>
+                      </ng-template>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+
+    </ng-container>
   </ng-container>
+
 </div>
 
 <div class="modal-footer">

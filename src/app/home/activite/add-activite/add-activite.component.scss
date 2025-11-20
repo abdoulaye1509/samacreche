@@ -110,3 +110,32 @@ td {
     width: 150px; /* Ajustez la taille selon vos besoins */
     height: auto;
   }
+  
+
+/* HEADER */
+.avatar-img { width: 44px; height: 44px; object-fit: cover; }
+.object-fit-cover { object-fit: cover; }
+.sep { opacity: .6; margin: 0 .25rem; }
+
+/* Carte structure */
+.creche-logo { width: 84px; height: 84px; object-fit: cover; }
+.vr { width: 1px; background: rgba(0,0,0,.08); align-self: stretch; }
+
+.creche-header { border: 1px solid rgba(0,0,0,.06); }
+@media print {
+  .creche-header { box-shadow: none !important; border-color: #000 !important; }
+  .btn, a.btn { display: none !important; }
+}
+
+/* Tableau existant (tes styles) */
+.form-switch .form-check-input { margin: auto !important; width: 4em !important; }
+.form-check-input { height: 2em !important; }
+tbody, td, tfoot, th, thead, tr { min-width: 200px; background: none; vertical-align: middle; }
+td { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.table { border: .2px solid rgba(0,0,0,.64); }
+.couleur1 { background-color: #fff; }
+.couleur2 { background-color: #f6f9ff; }
+.frozen-column { position: sticky; left: 0; z-index: 1; }
+.header { position: sticky; top: 0; background-color: #f5f5f5; z-index: 3; }
+.table-container { max-height: 800px; overflow-y: auto; position: relative; }
+

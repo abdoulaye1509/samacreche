@@ -6,11 +6,12 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap'; // facultatif si pa
 import { ApiService } from '../../../service/api/api.service';
 import { Location } from '@angular/common';
 import { ListActiviteComponent } from "../../activite/list-activite/list-activite.component";
+import { ListGalerieEnfantComponent } from '../../galerie-enfant/list-galerie-enfant/list-galerie-enfant.component';
 @Component({
   selector: 'app-detail-enfant',
   standalone: true,
   // Assurez-vous d'importer tous les modules et pipes nécessaires pour le template
-  imports: [CommonModule, FormsModule, DatePipe, SlicePipe, UpperCasePipe, ListActiviteComponent],
+  imports: [CommonModule, FormsModule, DatePipe, SlicePipe, UpperCasePipe, ListActiviteComponent, ListGalerieEnfantComponent],
   templateUrl: './detail-enfant.component.html',
   styleUrls: ['./detail-enfant.component.scss']
 })
@@ -19,7 +20,6 @@ export class DetailEnfantComponent implements OnInit {
   enfant: any = null;
   parents: any[] = [];
   id_enfant = 0;
-
   // 🆕 État de l'onglet actif
   activeTab: 'info' | 'parents' = 'info';
 

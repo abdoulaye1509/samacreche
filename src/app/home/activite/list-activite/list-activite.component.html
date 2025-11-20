@@ -1,40 +1,43 @@
-<div class="d-flex justify-content-between">
-  <h1 class="m-0">Les cahiers de vie - {{api.les_activites.length}}</h1>
+<div class="d-flex justify-content-between align-items-center">
+  <h1 class="m-0">
+    Les cahiers de vie - {{ (api.les_activites_structures?.length ?? 0) }}
+  </h1>
+
   <div class="d-flex">
-    <button class="btn btn-primary" (click)="openModal_add_activite()" *ngIf="api.can('activite.add')">
+    <button class="btn btn-primary"
+            (click)="openModal_add_activite()"
+            *ngIf="api.can('activite.add')">
       Ajouter un cahier de vie
     </button>
-
   </div>
 </div>
+
 <br>
-@if (loading_get_activite) {
-<h1 class="m-5 p-5 text-center">
-  Chargement en cours ...
-</h1>
-}@else if (api.les_activites.length==0) {
-<h1 class="m-5 p-5 text-center">
-  Pas d'activités pour cet enfant
-</h1>
+
+<!-- États de chargement / vide (Angular v17 @if) -->
+@if (loading_get_activite || loading_get_activite_structure) {
+  <h1 class="m-5 p-5 text-center">Chargement en cours ...</h1>
+} @else if ((api.les_activites_structures?.length ?? 0) === 0) {
+  <h1 class="m-5 p-5 text-center">Pas d'activités pour cet enfant</h1>
 }
-<!-- list -->
-<div class="row">
-  <div class="col-12 col-lg-4 clique" *ngFor="let one_activite of api.les_activites"
-    (click)="openModal_details_activite(one_activite)">
-    <div class="card">
+
+<!-- Liste -->
+<div class="row" *ngIf="api.les_activites_structures as activites">
+  <div class="col-12 col-lg-4 clique"
+       *ngFor="let one_activite of activites; trackBy: trackById"
+       (click)="openModal_details_activite(one_activite)">
+    <div class="card h-100">
       <div class="card-title">
         <div class="d-flex justify-content-between">
-          <h1 class="ms-3">
-            {{"C°" +one_activite.id_activite}}
-          </h1>
-          <h1 class="me-3">
-            {{one_activite.date_activite|date:"dd-MM-YYYY"}}
+          <h1 class="ms-3 mb-0">C°{{ one_activite.id_activite }}</h1>
+          <h1 class="me-3 mb-0">
+            {{ one_activite.date_activite | date:'dd-MM-yyyy' }}
           </h1>
         </div>
       </div>
       <div class="card-body">
-        <p>
-          {{one_activite.prenom_utilisateur+" "+one_activite.nom_utilisateur}}
+        <p class="mb-0">
+          {{ (one_activite.prenom_utilisateur || '') + ' ' + (one_activite.nom_utilisateur || '') }}
         </p>
       </div>
     </div>

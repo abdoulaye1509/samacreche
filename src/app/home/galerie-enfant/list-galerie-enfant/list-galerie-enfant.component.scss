@@ -1,0 +1,20 @@
+.gallery-img-sm { height: 240px; object-fit: cover; cursor: zoom-in; }
+.caption-chip {
+  display: inline-block; background: rgba(0,0,0,.55); color: #fff;
+  padding: .35rem .6rem; border-radius: .5rem; backdrop-filter: blur(2px);
+  font-size: .95rem;
+}
+.slide-actions { position: absolute; top: .5rem; right: .5rem; }
+.gallery-viewer { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: grid; place-items: center; z-index: 1055; }
+.viewer-img { max-width: 92vw; max-height: 86vh; object-fit: contain; }
+.nav-btn {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.25);
+  color: #fff; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.5rem;
+}
+.nav-btn:hover { background: rgba(255,255,255,.2); }
+.nav-btn.prev { left: 24px; }
+.nav-btn.next { right: 24px; }
+.viewer-toolbar { position: fixed; top: 16px; right: 16px; }
+.viewer-caption { position: fixed; bottom: 16px; left: 16px; right: 16px; color: #fff; }

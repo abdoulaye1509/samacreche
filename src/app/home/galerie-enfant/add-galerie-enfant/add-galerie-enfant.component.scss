@@ -1,0 +1,5 @@
+.cam-card {
+  width: 72px; height: 72px; border: 2px dashed #ced4da;
+  border-radius: .5rem; display:grid; place-items:center; cursor:pointer;
+}
+.card-img-top { aspect-ratio: 1/1; object-fit: cover; }
