@@ -1,0 +1,12 @@
+.color-input { width: 3rem; padding: .2rem; }
+.shadow-xs { box-shadow: 0 2px 10px rgba(0,0,0,.04); }
+
+/* micro-animations */
+:host ::ng-deep .form-control,
+:host ::ng-deep ng-select {
+  transition: box-shadow .2s ease, transform .05s ease;
+}
+:host ::ng-deep .form-control:focus,
+:host ::ng-deep ng-select.ng-select-focused .ng-select-container {
+  box-shadow: 0 0 0 .2rem rgba(79,70,229,.15);
+}

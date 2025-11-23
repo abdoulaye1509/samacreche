@@ -145,7 +145,7 @@ export class AddGalerieEnfantComponent implements OnInit, OnDestroy {
 
     const created_by = this.api.user_connected?.id_utilisateur || this.api.token?.user_connected?.id_utilisateur;
     const id_structure = this.api.user_connected?.id_structure || this.api.token?.user_connected?.id_structure;
-
+    console.log("created_by=", created_by, " id_structure=", id_structure);
     const payload: any = {
       id_enfant: effectiveId,
       created_by,

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -18,52 +18,63 @@ import { ActiviteTafType } from '../taf-type/activite-taf-type';
   templateUrl: './list-activite.component.html',
   styleUrls: ['./list-activite.component.scss']
 })
-export class ListActiviteComponent implements OnInit {
+export class ListActiviteComponent implements OnInit, OnChanges {
   @Input() id_enfant = 0;
 
   loading_get_activite = false;
   loading_get_activite_structure = false;
-
-  selected_activite: any;
-  activite: ActiviteTafType[] = [];
 
   /** stocke l'id structure quand dispo */
   private id_structure: number | null = null;
 
   /** retry court pour attendre l'hydratation de ApiService après refresh */
   private structureRetry = 0;
-  private readonly maxRetries = 10;       // ~10 tentatives
-  private readonly retryDelayMs = 250;    // 250 ms entre tentatives
+  private readonly maxRetries = 10;
+  private readonly retryDelayMs = 250;
 
   constructor(public api: ApiService, private modalService: NgbModal) {
-    // Garantit que la liste existe pour le template dès le premier rendu
-    if (!Array.isArray(this.api.les_activites_structures)) {
-      this.api.les_activites_structures = [];
+    // évite les erreurs template au premier rendu
+    if (!Array.isArray(this.api.les_activites)) this.api.les_activites = [];
+    if (!Array.isArray(this.api.les_activites_structures)) this.api.les_activites_structures = [];
+  }
+
+  // ---- helpers de mode / états ----
+  get isStructureMode(): boolean { return !this.id_enfant; }
+  get isLoading(): boolean {
+    return this.isStructureMode ? this.loading_get_activite_structure : this.loading_get_activite;
+  }
+  get listActivites(): any[] {
+    return this.isStructureMode ? (this.api.les_activites_structures || []) : (this.api.les_activites || []);
+  }
+  get total(): number { return this.listActivites.length; }
+
+  ngOnInit(): void {
+    if (this.isStructureMode) this.initStructureThenLoad();
+    else this.get_activite();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['id_enfant'] && !changes['id_enfant'].firstChange) {
+      if (this.isStructureMode) this.initStructureThenLoad();
+      else this.get_activite();
     }
   }
 
-  ngOnInit(): void {
-    this.get_activite();             // par enfant
-    this.initStructureThenLoad();    // par structure (avec retry si besoin)
-  }
-
-  /** ————————————  INIT STRUCTURE + CHARGEMENT  ———————————— */
+  /** ——— INIT STRUCTURE + LOAD ——— */
   private initStructureThenLoad(): void {
     this.id_structure = this.resolveIdStructure();
 
     if (!this.id_structure) {
-      // ApiService pas encore hydraté (ex: refresh) → on retry un court moment
       if (this.structureRetry++ < this.maxRetries) {
         setTimeout(() => this.initStructureThenLoad(), this.retryDelayMs);
       }
       return;
     }
-
-    // id disponible → on charge
+    this.structureRetry = 0;
     this.get_activite_structure();
   }
 
-  /** Récupère un id_structure de façon safe (user_connected -> token -> localStorage) */
+  /** récupère id_structure de façon safe (user -> token -> localStorage) */
   private resolveIdStructure(): number | null {
     const fromUser = this.api?.user_connected?.id_structure;
     if (fromUser) return fromUser;
@@ -77,29 +88,26 @@ export class ListActiviteComponent implements OnInit {
         const parsed = JSON.parse(raw);
         return parsed?.user_connected?.id_structure ?? null;
       }
-    } catch {
-      /* no-op */
-    }
-
+    } catch {}
     return null;
   }
 
-  /** ————————————  APPELS API  ———————————— */
+  /** ——— APPELS API ——— */
   get_activite(): void {
     if (!this.id_enfant) return;
-    const params = { 'a.id_enfant': this.id_enfant };
-
     this.loading_get_activite = true;
+
+    // ⚠️ côté backend, assure-toi que la clé supportée est bien "a.id_enfant" OU "id_enfant"
+    const params = { 'a.id_enfant': this.id_enfant };
     this.api.taf_post_object(
       'activite/get',
       params,
       (res: any) => {
         this.loading_get_activite = false;
-        if (res?.status) {
-          this.api.les_activites = res.data || [];
-        }
+        if (res?.status) this.api.les_activites = res.data || [];
+        else this.api.les_activites = [];
       },
-      () => (this.loading_get_activite = false)
+      () => { this.loading_get_activite = false; this.api.les_activites = []; }
     );
   }
 
@@ -112,69 +120,47 @@ export class ListActiviteComponent implements OnInit {
       { 'a.id_structure': this.id_structure },
       (res: any) => {
         this.loading_get_activite_structure = false;
-        if (res?.status) {
-          this.api.les_activites_structures = res.data || [];
-        }
+        if (res?.status) this.api.les_activites_structures = res.data || [];
+        else this.api.les_activites_structures = [];
       },
-      () => (this.loading_get_activite_structure = false)
+      () => { this.loading_get_activite_structure = false; this.api.les_activites_structures = []; }
     );
   }
 
-  /** ————————————  MODALS  ———————————— */
+  /** ——— MODALS ——— */
   openModal_add_activite(): void {
     const modalRef = this.modalService.open(AddActiviteComponent, {
-      centered: true,
-      scrollable: true,
-      size: 'xl',
-      backdrop: 'static'
+      centered: true, scrollable: true, size: 'xl', backdrop: 'static'
     });
-
     modalRef.componentInstance.id_enfant = this.id_enfant;
 
     modalRef.result.then((result: any) => {
-      if (result?.status) {
-        this.get_activite();
-        this.get_activite_structure();
-      }
-    }).catch(() => { /* dismiss */ });
+      if (result?.status) this.isStructureMode ? this.get_activite_structure() : this.get_activite();
+    }).catch(() => {});
   }
 
   openModal_edit_activite(one_activite: any): void {
     const modalRef = this.modalService.open(EditActiviteComponent, {
-      centered: true,
-      scrollable: true,
-      size: 'xl',
-      backdrop: 'static'
+      centered: true, scrollable: true, size: 'xl', backdrop: 'static'
     });
-
     modalRef.componentInstance.activite_to_edit = one_activite;
 
     modalRef.result.then((result: any) => {
-      if (result?.status) {
-        this.get_activite();
-        this.get_activite_structure();
-      }
-    }).catch(() => { /* dismiss */ });
+      if (result?.status) this.isStructureMode ? this.get_activite_structure() : this.get_activite();
+    }).catch(() => {});
   }
 
   openModal_details_activite(one_activite: any): void {
     const modalRef = this.modalService.open(DetailActiviteComponent, {
-      centered: true,
-      scrollable: true,
-      size: 'xl',
-      backdrop: 'static'
+      centered: true, scrollable: true, size: 'xl', backdrop: 'static'
     });
-
     modalRef.componentInstance.selected_activite = one_activite;
 
     modalRef.result.then((result: any) => {
-      if (result?.status) {
-        this.get_activite();
-        this.get_activite_structure();
-      }
-    }).catch(() => { /* dismiss */ });
+      if (result?.status) this.isStructureMode ? this.get_activite_structure() : this.get_activite();
+    }).catch(() => {});
   }
 
-  /** ————————————  UTILS  ———————————— */
+  /** ——— UTILS ——— */
   trackById = (_: number, item: any) => item?.id_activite ?? _;
 }

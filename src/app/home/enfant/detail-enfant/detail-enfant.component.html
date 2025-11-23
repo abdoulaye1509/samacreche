@@ -16,54 +16,80 @@
   <button *ngIf="activeModal" type="button" class="btn-close" (click)="activeModal.close()"></button>
 </div>
 
+<!-- état : chargement -->
 <div *ngIf="loading_get_enfant" class="text-center text-secondary py-5">
   <div class="spinner-border" role="status"></div>
   <div class="mt-2">Chargement…</div>
 </div>
 
 <ng-container *ngIf="!loading_get_enfant && enfant; else emptyTpl">
+
+  <!-- Sommaire collant (visible quand les données sont prêtes) -->
+  <nav class="card subnav sticky-top z-1 mb-3" style="top: 70px;" aria-label="Sommaire enfant">
+    <div class="card-body p-2">
+      <ul class="nav nav-pills gap-2 flex-wrap">
+        <li class="nav-item">
+          <a class="nav-link" href="#infos">
+            <i class="bi bi-person-lines-fill me-1"></i> Infos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#activites">
+            <i class="bi bi-journal-text me-1"></i> Cahiers de vie
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#galerie">
+            <i class="bi bi-images me-1"></i> Galerie photos
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Ancre Infos (avant le bloc des onglets pour un scroll parfait) -->
+  <span id="infos" class="anchor-offset"></span>
+
+  <!-- Onglets Infos / Parents (inchangés sur le fond) -->
   <ul class="nav nav-tabs tabs-custom mb-4" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link" [class.active]="activeTab === 'info'" (click)="activeTab = 'info'" type="button"
-        role="tab">
+      <button class="nav-link" [class.active]="activeTab === 'info'" (click)="activeTab = 'info'" type="button" role="tab">
         <i class="bi bi-person-fill me-1"></i> Informations de l’enfant
       </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" [class.active]="activeTab === 'parents'" (click)="activeTab = 'parents'" type="button"
-        role="tab">
+      <button class="nav-link" [class.active]="activeTab === 'parents'" (click)="activeTab = 'parents'" type="button" role="tab">
         <i class="bi bi-people-fill me-1"></i> Parents / Tuteurs
-        <span class="badge rounded-pill ms-2" [ngClass]="parents?.length ? 'text-bg-primary' : 'text-bg-secondary'">{{
-          parents?.length || 0 }}</span>
+        <span class="badge rounded-pill ms-2" [ngClass]="parents?.length ? 'text-bg-primary' : 'text-bg-secondary'">
+          {{ parents?.length || 0 }}
+        </span>
       </button>
     </li>
   </ul>
 
   <div class="tab-content">
+    <!-- Onglet Infos -->
     <div class="tab-pane fade show" [class.active]="activeTab === 'info'" role="tabpanel">
-      <div class="card p-3 border-0 anim-container">
+      <div class="card p-3 border-0 anim-container fade-in-up">
         <div class="row g-2 align-items-start">
           <div class="col-md-4 col-lg-3 text-center">
-            <div
-              class="ratio ratio-1x1 border border-3 rounded-circle overflow-hidden bg-light d-inline-block p-1 photo-frame zoom-in">
+            <div class="ratio ratio-1x1 border border-3 rounded-circle overflow-hidden bg-light d-inline-block p-1 photo-frame zoom-in">
               <img [src]="enfant?.photo_enfant ? api.resolveFileUrl(enfant.photo_enfant) : api.placeholderLogo"
-                (error)="$any($event.target).src = api.placeholderLogo"
-                class="w-100 h-100 object-fit-cover rounded-circle" alt="photo enfant">
+                   (error)="$any($event.target).src = api.placeholderLogo"
+                   class="w-100 h-100 object-fit-cover rounded-circle" alt="photo enfant">
             </div>
 
             <h6 class="mt-2 fw-bold fade-in" style="--delay: .15s;">
               {{ enfant?.prenom_enfant | titlecase }} {{ enfant?.nom_enfant | titlecase }}
             </h6>
 
-            <span class="badge bg-success-subtle text-success mt-1 fade-in" style="--delay: .25s;"
-              *ngIf="enfant?.id_structure">
+            <span class="badge bg-success-subtle text-success mt-1 fade-in" style="--delay: .25s;" *ngIf="enfant?.id_structure">
               Structure: {{ enfant?.nom_structure }}
             </span>
           </div>
 
           <div class="col-md-8 col-lg-9">
             <div class="row g-2 border-start ps-3 ps-md-4 grid-animate">
-
               <!-- Identité -->
               <div class="col-12">
                 <h6 class="section-title fade-in" style="--delay: .2s;">
@@ -132,11 +158,13 @@
         </div>
       </div>
     </div>
+
+    <!-- Onglet Parents -->
     <div class="tab-pane fade show" [class.active]="activeTab === 'parents'" role="tabpanel">
       <ng-container *ngIf="parents?.length; else noParent">
         <div class="row g-4">
           <div class="col-12 col-md-6 col-xl-4" *ngFor="let p of parents">
-            <div class="card h-100 shadow-hover border-primary-subtle">
+            <div class="card h-100 shadow-hover border-primary-subtle fade-in-up" style="--delay:.08s;">
               <div class="card-body">
                 <div class="d-flex gap-3 align-items-center mb-3 border-bottom pb-3">
                   <div class="avatar-circle avatar-lg bg-light-blue text-primary">
@@ -173,6 +201,7 @@
           </div>
         </div>
       </ng-container>
+
       <ng-template #noParent>
         <div class="text-center text-secondary py-5 border rounded bg-light-subtle">
           <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
@@ -181,11 +210,33 @@
       </ng-template>
     </div>
   </div>
-<br><br><br>
-  <!-- Les activités -->
-  <app-list-activite *ngIf="id_enfant!=0" [id_enfant]="id_enfant"></app-list-activite>
-  <br><br><br>
-  <app-list-galerie-enfant *ngIf="id_enfant!=0" [id_enfant]="id_enfant"></app-list-galerie-enfant>
+
+  <!-- === Section Cahiers de vie === -->
+  <section id="activites" class="section-block fade-in-up">
+    <div class="section-header">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-journal-text text-primary"></i>
+        <h5 class="m-0">Cahiers de vie</h5>
+      </div>
+      <p class="text-secondary m-0 small">Les activités quotidiennes renseignées pour l’enfant.</p>
+    </div>
+
+    <app-list-activite *ngIf="id_enfant!=0" [id_enfant]="id_enfant"></app-list-activite>
+  </section>
+
+  <!-- === Section Galerie photos === -->
+  <section id="galerie" class="section-block fade-in-up" style="--delay:.06s;">
+    <div class="section-header">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-images text-primary"></i>
+        <h5 class="m-0">Galerie photos</h5>
+      </div>
+      <p class="text-secondary m-0 small">Les photos prises à la crèche et partagées aux parents.</p>
+    </div>
+
+    <app-list-galerie-enfant *ngIf="id_enfant!=0" [id_enfant]="id_enfant"></app-list-galerie-enfant>
+  </section>
+
 </ng-container>
 
 <ng-template #emptyTpl>

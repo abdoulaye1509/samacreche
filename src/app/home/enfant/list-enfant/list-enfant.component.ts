@@ -91,32 +91,7 @@ import { RouterLink } from '@angular/router';
         this.loading_delete_enfant = false;
       })
     }
-    // openModal_add_enfant() {
-    //   let options: any = {
-    //     centered: true,
-    //     scrollable: true,
-    //     size: "xl"//'sm' | 'lg' | 'xl' | string
-    //   }
-    //   const modalRef = this.modalService.open(AddEnfantComponent, { ...options, backdrop: 'static' })
-    //   modalRef.result.then((result: any) => {
-    //     console.log('Modal closed with:', result);
-    //     if (result?.status) {
-    //       this.get_enfant()
-    //     } else {
-
-    //     }
-    //   })
-    // }
-//     openModal_add_enfant() {
-//   const modalRef = this.modalService.open(AddEnfantComponent, {
-//     centered: true,
-//     scrollable: true,
-//     backdrop: 'static',
-//     size: 'xl',
-//     modalDialogClass: 'modal-xxl',   // ⬅️ cible .modal-dialog
-//   });
-//   modalRef.result.then((result: any) => { if (result?.status) this.get_enfant(); });
-// }
+    
 openModal_add_enfant() {
   const modalRef = this.modalService.open(AddEnfantComponent, {
     centered: true,

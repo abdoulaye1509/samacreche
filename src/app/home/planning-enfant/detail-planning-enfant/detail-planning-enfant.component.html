@@ -1,0 +1,103 @@
+<div class="modal-header">
+  <h5 class="modal-title d-flex align-items-center gap-2">
+    <i class="bi bi-clipboard2-check"></i>
+
+    <ng-container *ngIf="mode === 'day'; else singleTitle">
+      Plannings du {{ date | date:'EEEE d MMMM yyyy' : undefined : 'fr' }}
+      <span class="text-muted small" *ngIf="(les_planning_enfants?.length || 0) > 0">
+        • {{ les_planning_enfants.length }}
+      </span>
+    </ng-container>
+
+    <ng-template #singleTitle>
+      Détail du planning
+      <span class="text-muted small" *ngIf="eventsOfDay?.length">• {{ eventsOfDay.length }}</span>
+    </ng-template>
+  </h5>
+
+  <button type="button" class="btn-close" aria-label="Fermer" (click)="activeModal.close()"></button>
+</div>
+
+<div class="modal-body">
+
+  <!-- loading -->
+  <div *ngIf="loading_get_planning_enfant" class="text-center py-4">
+    <div class="spinner-border" role="status"></div>
+    <div class="mt-2">Chargement…</div>
+  </div>
+
+  <!-- contenu -->
+  <ng-container *ngIf="!loading_get_planning_enfant">
+
+    <!-- MODE JOUR : on affiche ce que renvoie l'API -->
+    <ng-container *ngIf="mode === 'day'">
+      <div *ngIf="(les_planning_enfants?.length || 0) > 0; else noDay" class="d-grid gap-3">
+        <div class="plan-card" *ngFor="let p of les_planning_enfants" [style.--color]="p.couleur || '#4f46e5'">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+              <span class="color-dot" [style.background]="p.couleur || '#4f46e5'"></span>
+              <div class="fw-semibold">
+                {{ p.titre_planning_enfant }}
+                <span class="text-muted">
+                  • {{ fullname(p) || ('Enfant #' + p.id_enfant) }}
+                </span>
+
+              </div>
+            </div>
+
+            <span class="badge bg-light text-dark">
+              {{ p.date_debut | date:'dd/MM/yyyy' }} {{ hhmm(p.heure_debut) }}
+              <ng-container *ngIf="p.date_fin || p.heure_fin"> — </ng-container>
+              <ng-container *ngIf="p.date_fin">{{ p.date_fin | date:'dd/MM/yyyy' }}</ng-container>
+              <ng-container *ngIf="p.heure_fin"> {{ hhmm(p.heure_fin) }}</ng-container>
+            </span>
+          </div>
+
+          <div class="mt-2 text-secondary" *ngIf="p.description_planning_enfant">
+            {{ p.description_planning_enfant }}
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noDay>
+        <div class="text-center text-secondary py-4">
+          <i class="bi bi-info-circle fs-4 d-block mb-2"></i>
+          Aucun planning pour cette journée.
+        </div>
+      </ng-template>
+    </ng-container>
+
+    <!-- MODE SINGLE : on affiche la/les entrée(s) passée(s) par le parent -->
+    <ng-container *ngIf="mode === 'single'">
+      <div class="d-grid gap-3">
+        <div class="plan-card" *ngFor="let p of eventsOfDay" [style.--color]="p.couleur || '#4f46e5'">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+              <span class="color-dot" [style.background]="p.couleur || '#4f46e5'"></span>
+              <div class="fw-semibold">
+                {{ p.titre_planning_enfant }}
+                <span class="text-muted">• {{ fullname(p) || ('Enfant #' + p.id_enfant) }}</span>
+              </div>
+            </div>
+
+            <span class="badge bg-light text-dark">
+              {{ p.date_debut | date:'dd/MM/yyyy' }} {{ hhmm(p.heure_debut) }}
+              <ng-container *ngIf="p.date_fin || p.heure_fin"> — </ng-container>
+              <ng-container *ngIf="p.date_fin">{{ p.date_fin | date:'dd/MM/yyyy' }}</ng-container>
+              <ng-container *ngIf="p.heure_fin"> {{ hhmm(p.heure_fin) }}</ng-container>
+            </span>
+          </div>
+
+          <div class="mt-2 text-secondary" *ngIf="p.description_planning_enfant">
+            {{ p.description_planning_enfant }}
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+  </ng-container>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-outline-secondary" (click)="activeModal.close()">Fermer</button>
+</div>

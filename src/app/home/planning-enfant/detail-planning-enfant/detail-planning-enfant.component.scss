@@ -1,0 +1,27 @@
+.plan-card {
+  border: 1px solid var(--bs-border-color);
+  border-left: 6px solid var(--color, #4f46e5);
+  border-radius: .6rem;
+  padding: .75rem .9rem;
+  background: #fff;
+  animation: slideIn .22s ease-out both;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.plan-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+}
+
+.color-dot {
+  width: .75rem;
+  height: .75rem;
+  border-radius: 50%;
+  display: inline-block;
+  flex: 0 0 auto;
+  box-shadow: 0 0 0 2px #fff inset;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}

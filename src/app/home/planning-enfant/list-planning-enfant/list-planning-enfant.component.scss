@@ -1,0 +1,84 @@
+/* Carte + anim légère */
+.card { border: 0; box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+.card, full-calendar { animation: fadeIn .25s ease-out both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px);} to { opacity: 1; transform: none; } }
+
+/* Toolbar */
+:host ::ng-deep .fc .fc-toolbar-title { font-size: 1.1rem; transition: transform .25s ease; }
+:host ::ng-deep .fc .fc-toolbar-title:hover { transform: translateY(-1px); }
+:host ::ng-deep .fc .fc-button { padding: .35rem .6rem; border-radius: .5rem; }
+
+/* Zone du numéro de jour = conteneur relatif pour placer le badge */
+:host ::ng-deep .fc-daygrid-day-top { position: relative; padding: .15rem .35rem; }
+
+/* Numéro du jour */
+.daynum { font-weight: 700; color: var(--bs-secondary-color); }
+
+/* Badge bien visible (affiche le nombre de plannings) */
+.plan-badge {
+  position: absolute;
+  right: .35rem; top: .18rem;
+  display: inline-grid; place-items: center;
+  min-width: 1.35rem; height: 1.35rem; /* plus grand */
+  padding: 0 .35rem;
+  border-radius: 999px;
+  font-size: .75rem; font-weight: 800; line-height: 1;
+  color: #fff;
+  background: radial-gradient(100% 100% at 70% 20%, #53a2ff 0%, #0d6efd 60%);
+  border: 2px solid #fff;
+  box-shadow: 0 4px 12px rgba(13,110,253,.35);
+}
+
+/* Effet “pulse” discret autour du badge */
+.plan-badge.pulse::after {
+  content: "";
+  position: absolute; inset: -4px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 0 rgba(13,110,253,.35);
+  animation: ping 1.8s cubic-bezier(0,0,.2,1) infinite;
+}
+@keyframes ping {
+  0%   { box-shadow: 0 0 0 0 rgba(13,110,253,.35); opacity: 1; }
+  100% { box-shadow: 0 0 0 12px rgba(13,110,253,0); opacity: 0; }
+}
+
+/* Petit point bleu (facultatif car badge déjà présent) */
+.plan-dot {
+  position: absolute; right: .45rem; top: 1.9rem;
+  width: .5rem; height: .5rem; border-radius: 50%;
+  background: #0d6efd;
+  box-shadow: 0 0 0 2px #fff, 0 2px 6px rgba(13,110,253,.35);
+}
+
+/* Mise en avant de la case qui possède ≥1 planning */
+:host ::ng-deep .fc-daygrid-day.has-planning .fc-daygrid-day-frame {
+  position: relative;
+  background: rgba(13,110,253,.06);
+  box-shadow: inset 0 0 0 2px rgba(13,110,253,.10);
+}
+
+/* Un bandeau coloré en haut de la case (très visible) */
+:host ::ng-deep .fc-daygrid-day.has-planning .fc-daygrid-day-frame::after {
+  content: "";
+  position: absolute; left: 0; right: 0; top: 0; height: 4px;
+  background: var(--plan-accent, #0d6efd);
+  opacity: .9;
+  border-top-left-radius: .25rem; border-top-right-radius: .25rem;
+}
+
+/* Survol : encore plus contrasté */
+:host ::ng-deep .fc-daygrid-day.has-planning:hover .fc-daygrid-day-frame {
+  background: rgba(13,110,253,.12);
+  transition: background .15s ease;
+}
+
+/* Rappels pour la légende (si tu l’affiches) */
+.legend { display: flex; align-items: center; flex-wrap: wrap; }
+.legend-item { display: inline-flex; align-items: center; gap: .4rem; }
+.plan-badge.example {
+  position: static; inset: auto; transform: none;
+  min-width: 1.35rem; height: 1.35rem;
+  border: 2px solid #fff;
+  background: radial-gradient(100% 100% at 70% 20%, #53a2ff 0%, #0d6efd 60%);
+  box-shadow: 0 4px 12px rgba(13,110,253,.35);
+}

@@ -53,6 +53,7 @@ export class ListGalerieEnfantComponent implements OnInit, OnDestroy, OnChanges 
   ngOnInit(): void {
     console.groupCollapsed('ListGalerieEnfantComponent');
     this.loadAccordingToMode();
+    console.log('Mode:', this.isStructureMode ? 'Structure' : 'Enfant', this.isStructureMode ? '' : `(#${this.id_enfant})`);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -90,15 +91,14 @@ export class ListGalerieEnfantComponent implements OnInit, OnDestroy, OnChanges 
     }
     return null;
   }
-
-  /** Mode enfant */
-  private get_galerie_enfant() {
+ get_galerie_enfant() {
     if (!this.id_enfant) { this.resetLists(); return; }
 
     this.loading_get_galerie_enfant = true;
     this.api.taf_post('galerie_enfant/get', { id_enfant: this.id_enfant }, (reponse: any) => {
       this.loading_get_galerie_enfant = false;
       this.raw = reponse?.status ? (reponse.data || []) : [];
+      console.log(`Galerie enfant (enfant #${this.id_enfant})`, this.raw);
       this.filter_change();
       if (!reponse?.status) this.api.Swal_error("Lecture de la galerie échouée");
     }, () => {
@@ -126,6 +126,7 @@ export class ListGalerieEnfantComponent implements OnInit, OnDestroy, OnChanges 
     this.api.taf_post('galerie_enfant/get_galerie_enfant_structure', { id_structure }, (reponse: any) => {
       this.loading_get_galerie_enfant = false;
       this.raw = reponse?.status ? (reponse.data || []) : [];
+      console.log(`Galerie enfant (structure #${id_structure})`, this.raw);
       this.filter_change();
       if (!reponse?.status) this.api.Swal_error("Lecture de la galerie structure échouée");
     }, () => {

@@ -1,7 +1,5 @@
 <div class="d-flex justify-content-between align-items-center">
-  <h1 class="m-0">
-    Les cahiers de vie - {{ (api.les_activites_structures?.length ?? 0) }}
-  </h1>
+  <h1 class="m-0">Les cahiers de vie - {{ total }}</h1>
 
   <div class="d-flex">
     <button class="btn btn-primary"
@@ -14,17 +12,19 @@
 
 <br>
 
-<!-- États de chargement / vide (Angular v17 @if) -->
-@if (loading_get_activite || loading_get_activite_structure) {
+<!-- états chargement / vide -->
+@if (isLoading) {
   <h1 class="m-5 p-5 text-center">Chargement en cours ...</h1>
-} @else if ((api.les_activites_structures?.length ?? 0) === 0) {
-  <h1 class="m-5 p-5 text-center">Pas d'activités pour cet enfant</h1>
+} @else if (total === 0) {
+  <h1 class="m-5 p-5 text-center">
+    Pas d'activités {{ isStructureMode ? 'pour la structure' : 'pour cet enfant' }}
+  </h1>
 }
 
-<!-- Liste -->
-<div class="row" *ngIf="api.les_activites_structures as activites">
+<!-- liste -->
+<div class="row" *ngIf="!isLoading && total > 0">
   <div class="col-12 col-lg-4 clique"
-       *ngFor="let one_activite of activites; trackBy: trackById"
+       *ngFor="let one_activite of listActivites; trackBy: trackById"
        (click)="openModal_details_activite(one_activite)">
     <div class="card h-100">
       <div class="card-title">
