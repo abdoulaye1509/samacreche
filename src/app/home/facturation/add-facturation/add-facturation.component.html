@@ -1,172 +1,133 @@
-<div class="modal-header" data-bs-theme="ligth">
-      <h1 class="modal-title fs-5">Ajouter facturation</h1>
-      <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+<div class="modal-header">
+  <h1 class="modal-title fs-6">
+    <i class="bi bi-receipt-cutoff me-2"></i> Nouvelle facture
+  </h1>
+  <button type="button" class="btn-close" aria-label="Fermer" (click)="activeModal.close()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="reactiveForm_add_facturation"
+        (ngSubmit)="onSubmit_add_facturation()"
+        #form_add_facturation="ngForm"
+        class="row g-3">
+
+    <!-- Enfant -->
+    <div class="col-12">
+      <label class="form-label">
+        <i class="bi bi-person-badge me-1"></i> Enfant à facturer
+      </label>
+
+      <ng-select
+        [items]="form_details?.les_enfants || []"
+        bindValue="id_enfant"
+        placeholder="Choisir l’enfant"
+        formControlName="id_enfant"
+        (change)="onSelectEnfant($event)"
+        [ngClass]="{ 'is-invalid': submitted && f['id_enfant'].errors }">
+
+        <!-- libellé affiché dans le champ -->
+        <ng-template ng-label-tmp let-item="item">
+          {{ item?.prenom_enfant }} {{ item?.nom_enfant }}
+        </ng-template>
+
+        <!-- rendu des options -->
+        <ng-template ng-option-tmp let-item="item">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-person-circle text-primary"></i>
+            <span class="fw-semibold">{{ item?.prenom_enfant }} {{ item?.nom_enfant }}</span>
+          </div>
+        </ng-template>
+      </ng-select>
+
+      <div class="invalid-feedback" *ngIf="submitted && f['id_enfant'].errors">
+        L’enfant est obligatoire.
+      </div>
     </div>
-    <div class="modal-body">
-      <form [formGroup]="reactiveForm_add_facturation" 
-            (ngSubmit)="onSubmit_add_facturation()" 
-            #form_add_facturation="ngForm" 
-            class="row">
-        <!-- Erreur : La clé étrangère id_enfant de la table facturation n'est pas référencée -->
 
-            <!-- Champ Designation -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="designation">Designation</label>
-              <input id="designation" class="form-control" 
-                     type="text" 
-                     formControlName="designation" 
-                     placeholder="Designation"  
-                     [ngClass]="{ 'is-invalid': submitted && f.designation.errors }"/>
-              @if (submitted && f.designation.errors) {
-                <div class="invalid-feedback">
-                  @if (f.designation.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Libelle Facturation -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="libelle_facturation">Libelle Facturation</label>
-              <input id="libelle_facturation" class="form-control" 
-                     type="text" 
-                     formControlName="libelle_facturation" 
-                     placeholder="Libelle Facturation"  
-                     [ngClass]="{ 'is-invalid': submitted && f.libelle_facturation.errors }"/>
-              @if (submitted && f.libelle_facturation.errors) {
-                <div class="invalid-feedback">
-                  @if (f.libelle_facturation.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Prix Designation -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="prix_designation">Prix Designation</label>
-              <input id="prix_designation" class="form-control" 
-                     type="text" 
-                     formControlName="prix_designation" 
-                     placeholder="Prix Designation"  
-                     [ngClass]="{ 'is-invalid': submitted && f.prix_designation.errors }"/>
-              @if (submitted && f.prix_designation.errors) {
-                <div class="invalid-feedback">
-                  @if (f.prix_designation.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Date Facturation -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="date_facturation">Date Facturation</label>
-              <input id="date_facturation" class="form-control" 
-                     type="text" 
-                     formControlName="date_facturation" 
-                     placeholder="Date Facturation"  
-                     [ngClass]="{ 'is-invalid': submitted && f.date_facturation.errors }"/>
-              @if (submitted && f.date_facturation.errors) {
-                <div class="invalid-feedback">
-                  @if (f.date_facturation.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Cantine -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="cantine">Cantine</label>
-              <input id="cantine" class="form-control" 
-                     type="text" 
-                     formControlName="cantine" 
-                     placeholder="Cantine"  
-                     [ngClass]="{ 'is-invalid': submitted && f.cantine.errors }"/>
-              @if (submitted && f.cantine.errors) {
-                <div class="invalid-feedback">
-                  @if (f.cantine.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_at">Created At</label>
-              <input id="created_at" class="form-control" 
-                     type="text" 
-                     formControlName="created_at" 
-                     placeholder="Created At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
-              @if (submitted && f.created_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_at">Updated At</label>
-              <input id="updated_at" class="form-control" 
-                     type="text" 
-                     formControlName="updated_at" 
-                     placeholder="Updated At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
-              @if (submitted && f.updated_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_by">Created By</label>
-              <input id="created_by" class="form-control" 
-                     type="text" 
-                     formControlName="created_by" 
-                     placeholder="Created By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
-              @if (submitted && f.created_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_by">Updated By</label>
-              <input id="updated_by" class="form-control" 
-                     type="text" 
-                     formControlName="updated_by" 
-                     placeholder="Updated By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
-              @if (submitted && f.updated_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-      </form>
+    <!-- Mois & Date -->
+    <div class="col-sm-6">
+      <label class="form-label"><i class="bi bi-calendar2-month me-1"></i> Mois de facturation</label>
+      <input type="month" class="form-control"
+             formControlName="mois_facture"
+             [ngClass]="{ 'is-invalid': submitted && f.mois_facture.errors }">
+      <div class="invalid-feedback" *ngIf="submitted && f.mois_facture.errors">Requis (format YYYY-MM).</div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary m-2" [disabled]="loading_add_facturation || loading_get_details_add_facturation_form"
-      (click)="form_add_facturation.ngSubmit.emit()">
-      {{ loading_add_facturation ? "En cours ..." : "Valider" }}
-      </button>
-      <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
+
+    <div class="col-sm-6">
+      <label class="form-label"><i class="bi bi-calendar-event me-1"></i> Date de facturation</label>
+      <input type="date" class="form-control"
+             formControlName="date_facturation"
+             [ngClass]="{ 'is-invalid': submitted && f.date_facturation.errors }">
+      <div class="invalid-feedback" *ngIf="submitted && f.date_facturation.errors">Requis.</div>
     </div>
+
+    <!-- Libellé & Désignation optionnelle -->
+    <div class="col-12">
+      <label class="form-label"><i class="bi bi-card-text me-1"></i> Libellé de la facture</label>
+      <input type="text" class="form-control"
+             placeholder="Ex. Mensualité Novembre 2025"
+             formControlName="libelle_facturation"
+             [ngClass]="{ 'is-invalid': submitted && f.libelle_facturation.errors }">
+      <div class="invalid-feedback" *ngIf="submitted && f.libelle_facturation.errors">Requis.</div>
+    </div>
+
+   
+
+    <!-- Bloc montants auto -->
+    <div class="col-12">
+      <div class="row g-2 align-items-end">
+        <div class="col-sm-4">
+          <label class="form-label"><i class="bi bi-mortarboard me-1"></i> Mensualité</label>
+          <div class="input-group">
+            <span class="input-group-text">CFA</span>
+            <input class="form-control" formControlName="montant_mensualite" type="number" min="0" step="100" (input)="recalcTotal()">
+          </div>
+          <div class="form-text">Récupérée automatiquement depuis la fiche enfant.</div>
+        </div>
+
+        <div class="col-sm-4">
+          <label class="form-label"><i class="bi bi-egg-fried me-1"></i> Cantine</label>
+          <div class="input-group">
+            <span class="input-group-text">CFA</span>
+            <input class="form-control" formControlName="montant_cantine" type="number" min="0" step="100" (input)="recalcTotal()">
+          </div>
+          <div class="form-text">
+            <span class="badge bg-light text-dark">Statut: {{ f.cantine.value || '—' }}</span>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <label class="form-label fw-bold"><i class="bi bi-calculator me-1"></i> Total</label>
+          <div class="input-group">
+            <span class="input-group-text">CFA</span>
+            <input class="form-control fw-bold" formControlName="montant_total" type="number" readonly>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statut (si disponible) -->
+    <div class="col-md-6" *ngIf="(form_details?.les_statuts?.length || 0) > 0">
+      <label class="form-label"><i class="bi bi-flag me-1"></i> Statut</label>
+      <ng-select
+        [items]="form_details?.les_statuts"
+        bindLabel="libelle_statut_facture"
+        bindValue="id_statut_facture"
+        placeholder="Choisir un statut"
+        formControlName="id_statut_facture">
+      </ng-select>
+    </div>
+
+  
+
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary"
+          [disabled]="loading_add_facturation || loading_get_details_add_facturation_form"
+          (click)="form_add_facturation.ngSubmit.emit()">
+    {{ loading_add_facturation ? "En cours..." : "Valider" }}
+  </button>
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.close()">Fermer</button>
+</div>

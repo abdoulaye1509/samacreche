@@ -24,14 +24,16 @@ import { ListUtilisateurComponent } from './utilisateur/list-utilisateur/list-ut
 import { ParametreComponent } from './home/parametre/parametre.component';
 import { DetailEnfantComponent } from './enfant/detail-enfant/detail-enfant.component';
 import { DetailParentComponent } from './parent/detail-parent/detail-parent.component';
+import { DetailFacturationComponent } from './facturation/detail-facturation/detail-facturation.component';
 
 const routes: Routes = [
   { path: "", redirectTo: "enfant", pathMatch: "full" }, // ou "enfant", comme tu veux
   { path: "activite", component: ListActiviteComponent },
-    //{ path: "activite/:id_activite", component: ListActiviteComponent },
+  //{ path: "activite/:id_activite", component: ListActiviteComponent },
   { path: "enfant", component: ListEnfantComponent },
   { path: "enfant/:id_enfant", component: DetailEnfantComponent },
   { path: "facturation", component: ListFacturationComponent },
+  { path: "facturation/:id_facturation", component: DetailFacturationComponent },
   { path: "fiche_enfant", component: ListFicheEnfantComponent },
   { path: "galerie_enfant", component: ListGalerieEnfantComponent },
   { path: "genre", component: ListGenreComponent },

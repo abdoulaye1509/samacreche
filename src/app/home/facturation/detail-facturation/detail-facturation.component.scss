@@ -1,0 +1,215 @@
+// Variables
+$primary-color: #00008b; // Bleu foncé (similaire au logo)
+$secondary-color: #ffcc00; // Jaune (similaire au logo)
+$border-color: #ddd;
+$font-family: Arial, sans-serif;
+
+body {
+    font-family: $font-family;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+.invoice-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 30px;
+    border: 1px solid $border-color;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* --- HEADER --- */
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    border-bottom: 3px solid $primary-color;
+    padding-bottom: 15px;
+}
+
+.logo-area {
+    // Ceci simule la zone du logo textuel et du slogan
+    .logo-placeholder {
+        padding: 10px 0;
+        .logo-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: $primary-color;
+            display: block;
+            line-height: 1;
+        }
+        .logo-slogan {
+            font-size: 14px;
+            font-style: italic;
+            color: #555;
+            display: block;
+            margin-top: 5px;
+        }
+    }
+}
+
+.school-info {
+    font-size: 12px;
+    text-align: right;
+    p {
+        margin: 2px 0;
+        color: #555;
+    }
+}
+
+/* --- INFOS FACTURE ET CLIENT --- */
+.invoice-details {
+    margin-bottom: 30px;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 15px;
+
+    .invoice-title {
+        font-size: 24px;
+        color: $primary-color;
+        margin-bottom: 10px;
+
+        .invoice-number {
+            color: $secondary-color;
+        }
+    }
+
+    .client-info {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-left: 5px solid $secondary-color;
+        
+        .client-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0;
+        }
+    }
+}
+
+/* --- TABLEAU DES PRESTATIONS --- */
+.items-table {
+    margin-bottom: 30px;
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 10px 8px;
+        border: 1px solid $border-color;
+        text-align: left;
+    }
+
+    thead th {
+        background-color: $primary-color;
+        color: white;
+        text-transform: uppercase;
+        font-size: 13px;
+    }
+
+    .qty, .price, .amount {
+        text-align: right;
+        width: 15%; // Pour aligner les colonnes de chiffres
+    }
+    .discount {
+        text-align: right;
+        width: 10%;
+    }
+    .designation {
+        width: 35%;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+}
+
+/* --- TOTAUX --- */
+.invoice-totals {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+}
+
+.summary-text {
+    width: 60%;
+    font-style: italic;
+    font-size: 14px;
+    padding: 10px;
+    border: 1px dashed $border-color;
+    
+    p {
+        margin: 0;
+    }
+}
+
+.totals-box {
+    width: 35%;
+    .total-line {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        font-size: 14px;
+        border-bottom: 1px solid $border-color;
+
+        .value {
+            font-weight: bold;
+        }
+    }
+
+    .net-a-payer {
+        background-color: $secondary-color;
+        color: $primary-color;
+        padding: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 5px;
+        border: 2px solid $primary-color; // Pour mettre en évidence
+
+        .currency {
+            margin-left: 5px;
+        }
+    }
+}
+
+/* --- FOOTER --- */
+.invoice-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-top: 20px;
+    border-top: 1px solid $border-color;
+
+    p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .signature-box {
+        text-align: center;
+        p {
+            margin-bottom: 50px; // Espace pour la signature / le cachet
+            font-weight: bold;
+        }
+    }
+}
+
+/* --- STYLE POUR IMPRESSION (Média Print) --- */
+@media print {
+    body {
+        background-color: white;
+        padding: 0;
+    }
+    .invoice-container {
+        border: none;
+        box-shadow: none;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+}

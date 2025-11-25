@@ -1,206 +1,106 @@
-<div class="modal-header" data-bs-theme="ligth">
-      <h1 class="modal-title fs-5">Ajouter planning_equipe</h1>
-      <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+<div class="modal-header">
+  <h5 class="modal-title">
+    <i class="bi bi-people-fill me-2"></i> Ajouter un planning d’équipe
+  </h5>
+  <button type="button" class="btn-close" aria-label="Fermer" (click)="activeModal.close()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="reactiveForm_add_planning_equipe"
+        (ngSubmit)="onSubmit_add_planning_equipe()"
+        #form_add_planning_equipe="ngForm"
+        class="row g-3">
+
+ 
+    <!-- Utilisateur -->
+<div class="col-12">
+  <label class="form-label">
+    <i class="bi bi-person-badge me-1"></i> Agent
+  </label>
+
+  <ng-select
+    [items]="form_details?.les_utilisateurs || []"
+    bindValue="id_utilisateur"
+    placeholder="Choisir l’utilisateur"
+    formControlName="id_utilisateur"
+    [searchable]="true"
+    [ngClass]="{ 'is-invalid': submitted && f['id_utilisateur'].errors }">
+
+    <!-- libellé affiché une fois sélectionné -->
+    <ng-template ng-label-tmp let-item="item">
+      {{ item.prenom_utilisateur }} {{ item.nom_utilisateur }}
+    </ng-template>
+
+    <!-- options de la liste -->
+    <ng-template ng-option-tmp let-item="item">
+      <i class="bi bi-person-circle me-2"></i>
+      {{ item.prenom_utilisateur }} {{ item.nom_utilisateur }}
+    </ng-template>
+  </ng-select>
+
+  <div class="invalid-feedback" *ngIf="submitted && f['id_utilisateur'].errors">Requis</div>
+</div>
+
+    <!-- Titre -->
+    <div class="col-md-8">
+      <label class="form-label"><i class="bi bi-card-text me-1"></i> Titre</label>
+      <input class="form-control" type="text" placeholder="Ex. Réunion parents"
+             formControlName="titre_planning_equipe"
+             [ngClass]="{ 'is-invalid': submitted && f['titre_planning_equipe'].errors }">
+      <div class="invalid-feedback" *ngIf="submitted && f['titre_planning_equipe'].errors">Requis</div>
     </div>
-    <div class="modal-body">
-      <form [formGroup]="reactiveForm_add_planning_equipe" 
-            (ngSubmit)="onSubmit_add_planning_equipe()" 
-            #form_add_planning_equipe="ngForm" 
-            class="row">
-        <!-- Erreur : La clé étrangère id_utilisateur de la table planning_equipe n'est pas référencée -->
 
-            <!-- Champ Titre Planning Equipe -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="titre_planning_equipe">Titre Planning Equipe</label>
-              <input id="titre_planning_equipe" class="form-control" 
-                     type="text" 
-                     formControlName="titre_planning_equipe" 
-                     placeholder="Titre Planning Equipe"  
-                     [ngClass]="{ 'is-invalid': submitted && f.titre_planning_equipe.errors }"/>
-              @if (submitted && f.titre_planning_equipe.errors) {
-                <div class="invalid-feedback">
-                  @if (f.titre_planning_equipe.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Description Planning Equipe -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="description_planning_equipe">Description Planning Equipe</label>
-              <input id="description_planning_equipe" class="form-control" 
-                     type="text" 
-                     formControlName="description_planning_equipe" 
-                     placeholder="Description Planning Equipe"  
-                     [ngClass]="{ 'is-invalid': submitted && f.description_planning_equipe.errors }"/>
-              @if (submitted && f.description_planning_equipe.errors) {
-                <div class="invalid-feedback">
-                  @if (f.description_planning_equipe.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Date Debut -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="date_debut">Date Debut</label>
-              <input id="date_debut" class="form-control" 
-                     type="text" 
-                     formControlName="date_debut" 
-                     placeholder="Date Debut"  
-                     [ngClass]="{ 'is-invalid': submitted && f.date_debut.errors }"/>
-              @if (submitted && f.date_debut.errors) {
-                <div class="invalid-feedback">
-                  @if (f.date_debut.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Date Fin -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="date_fin">Date Fin</label>
-              <input id="date_fin" class="form-control" 
-                     type="text" 
-                     formControlName="date_fin" 
-                     placeholder="Date Fin"  
-                     [ngClass]="{ 'is-invalid': submitted && f.date_fin.errors }"/>
-              @if (submitted && f.date_fin.errors) {
-                <div class="invalid-feedback">
-                  @if (f.date_fin.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Heure Debut -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="heure_debut">Heure Debut</label>
-              <input id="heure_debut" class="form-control" 
-                     type="text" 
-                     formControlName="heure_debut" 
-                     placeholder="Heure Debut"  
-                     [ngClass]="{ 'is-invalid': submitted && f.heure_debut.errors }"/>
-              @if (submitted && f.heure_debut.errors) {
-                <div class="invalid-feedback">
-                  @if (f.heure_debut.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Heure Fin -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="heure_fin">Heure Fin</label>
-              <input id="heure_fin" class="form-control" 
-                     type="text" 
-                     formControlName="heure_fin" 
-                     placeholder="Heure Fin"  
-                     [ngClass]="{ 'is-invalid': submitted && f.heure_fin.errors }"/>
-              @if (submitted && f.heure_fin.errors) {
-                <div class="invalid-feedback">
-                  @if (f.heure_fin.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Couleur -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="couleur">Couleur</label>
-              <input id="couleur" class="form-control" 
-                     type="text" 
-                     formControlName="couleur" 
-                     placeholder="Couleur"  
-                     [ngClass]="{ 'is-invalid': submitted && f.couleur.errors }"/>
-              @if (submitted && f.couleur.errors) {
-                <div class="invalid-feedback">
-                  @if (f.couleur.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_at">Created At</label>
-              <input id="created_at" class="form-control" 
-                     type="text" 
-                     formControlName="created_at" 
-                     placeholder="Created At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
-              @if (submitted && f.created_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_at">Updated At</label>
-              <input id="updated_at" class="form-control" 
-                     type="text" 
-                     formControlName="updated_at" 
-                     placeholder="Updated At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
-              @if (submitted && f.updated_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_by">Created By</label>
-              <input id="created_by" class="form-control" 
-                     type="text" 
-                     formControlName="created_by" 
-                     placeholder="Created By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
-              @if (submitted && f.created_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_by">Updated By</label>
-              <input id="updated_by" class="form-control" 
-                     type="text" 
-                     formControlName="updated_by" 
-                     placeholder="Updated By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
-              @if (submitted && f.updated_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-      </form>
+    <!-- Couleur -->
+    <div class="col-md-4">
+      <label class="form-label d-flex align-items-center gap-2">
+        <i class="bi bi-palette2"></i> Couleur
+      </label>
+      <input class="form-control form-control-color p-1" type="color"
+             formControlName="couleur"
+             [ngClass]="{ 'is-invalid': submitted && f['couleur'].errors }">
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary m-2" [disabled]="loading_add_planning_equipe || loading_get_details_add_planning_equipe_form"
-      (click)="form_add_planning_equipe.ngSubmit.emit()">
-      {{ loading_add_planning_equipe ? "En cours ..." : "Valider" }}
-      </button>
-      <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
+
+    <!-- Description -->
+    <div class="col-12">
+      <label class="form-label"><i class="bi bi-chat-left-text me-1"></i> Description</label>
+      <textarea class="form-control" rows="2" placeholder="Notes, contexte…"
+                formControlName="description_planning_equipe"></textarea>
     </div>
+
+    <!-- Dates -->
+    <div class="col-sm-6">
+      <label class="form-label"><i class="bi bi-calendar-event me-1"></i> Du</label>
+      <input class="form-control" type="date"
+             formControlName="date_debut"
+             [ngClass]="{ 'is-invalid': submitted && f['date_debut'].errors }">
+      <div class="invalid-feedback" *ngIf="submitted && f['date_debut'].errors">Requis</div>
+    </div>
+    <div class="col-sm-6">
+      <label class="form-label"><i class="bi bi-calendar-event me-1"></i> Au</label>
+      <input class="form-control" type="date"
+             formControlName="date_fin"
+             [ngClass]="{ 'is-invalid': submitted && f['date_fin'].errors }">
+      <div class="invalid-feedback" *ngIf="submitted && f['date_fin'].errors">Requis</div>
+    </div>
+
+    <!-- Heures -->
+    <div class="col-sm-6">
+      <label class="form-label"><i class="bi bi-alarm me-1"></i> Heure début</label>
+      <input class="form-control" type="time" formControlName="heure_debut">
+    </div>
+    <div class="col-sm-6">
+      <label class="form-label"><i class="bi bi-alarm me-1"></i> Heure fin</label>
+      <input class="form-control" type="time" formControlName="heure_fin">
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary"
+          [disabled]="loading_add_planning_equipe || loading_get_details_add_planning_equipe_form"
+          (click)="form_add_planning_equipe.ngSubmit.emit()">
+    <i class="bi bi-check2-circle me-1"></i>
+    {{ loading_add_planning_equipe ? 'En cours…' : 'Valider' }}
+  </button>
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.close()">Fermer</button>
+</div>

@@ -126,7 +126,17 @@ export class ApiService {
         { menu: 'Galerie', ongle: 'Supprimer', id: 'delete_galerie', action: 'Supprimer un média' }
       ]
     },
-
+    {
+      name: 'Plannings Equipe',
+      path: '/home/planning_equipe',
+      icon: 'bi-calendar-week-fill',
+      children: [
+        
+      ],
+      les_actions: [
+        { menu: 'Planning Equipe', ongle: 'Vue', id: '/home/planning_equipe', action: 'Accéder au planning equipe' }
+      ]
+    },
     {
       name: 'Facturation',
       path: '/home/facturation',

@@ -27,64 +27,69 @@
       </ng-select>
     </div>
   </div>
-  <!-- Liste des éléments sous forme de tableau -->
-  <div class="table-responsive">
-    <table class="table table-striped">
-      <thead>
+<!-- entête inchangée au-dessus -->
+
+<div class="table-responsive">
+  <table class="table align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>N° facture</th>
+        <th>Enfant</th>
+        <th>Mois</th>
+        <th>Libellé</th>
+       
+        <th class="text-end">Total</th>
+        <th>Statut</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @if (loading_get_facturation) {
         <tr>
-          <th scope="col">id_facturation</th>
-<th scope="col">designation</th>
-<th scope="col">libelle_facturation</th>
-<th scope="col">prix_designation</th>
-<th scope="col">date_facturation</th>
-<th scope="col">cantine</th>
-<th scope="col">id_enfant</th>
-<th scope="col">created_at</th>
-<th scope="col">updated_at</th>
-<th scope="col">created_by</th>
-<th scope="col">updated_by</th><th scope="col">actions</th>
+          <td colspan="11" class="text-center py-4">
+            <div class="spinner-border" role="status"></div>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <!-- Affichage du message de chargement -->
-        @if (loading_get_facturation) {
-          <tr>
-            <td colspan="12" class="text-center">
-              <div class="spinner-border" role="status">
-                <span class="visually-hidden">Chargement...</span>
-              </div>
-            </td>
-          </tr>
-        }
-        <!-- Affichage du message lorsqu'il n'y a pas d'éléments -->
-        @if (list.length == 0) {
-          <tr>
-            <td colspan="12" class="text-center">
-              <div class="alert alert-info" role="alert">
-                Aucune donnée trouvée.
-              </div>
-            </td>
-          </tr>
-        }
-        <!-- Boucle pour afficher chaque élément de la liste -->
-        @for (one_facturation of list; track one_facturation) {
-          <tr>
-            <td>{{one_facturation.id_facturation}}</td>
-<td>{{one_facturation.designation}}</td>
-<td>{{one_facturation.libelle_facturation}}</td>
-<td>{{one_facturation.prix_designation}}</td>
-<td>{{one_facturation.date_facturation}}</td>
-<td>{{one_facturation.cantine}}</td>
-<td>{{one_facturation.id_enfant}}</td>
-<td>{{one_facturation.created_at}}</td>
-<td>{{one_facturation.updated_at}}</td>
-<td>{{one_facturation.created_by}}</td>
-<td>{{one_facturation.updated_by}}</td><td>
-    <i style="cursor: pointer;" class="bi bi-pencil-square me-2" (click)="openModal_edit_facturation(one_facturation)"></i>
-    <i style="cursor: pointer;" class="bi bi-trash" (click)="delete_facturation(one_facturation)"></i>
-</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+      }
+      @if (!loading_get_facturation && list.length === 0) {
+        <tr><td colspan="11" class="text-center text-secondary py-4">Aucune facture</td></tr>
+      }
+
+      @for (f of list; track f) {
+        <tr>
+          <td class="fw-semibold">{{ f.numero_facture || '—' }}</td>
+          <td>{{ fullname(f) }}</td>
+          <td>{{ f.mois_facture || '—' }}</td>
+          <td class="text-truncate" style="max-width: 260px">{{ f.libelle_facturation }}</td>
+
+         
+          <td class="text-end fw-bold">{{ money(f.montant_total) }}</td>
+
+          <td>
+            <span class="badge" [ngClass]="statusClass(f)">
+              {{ f.libelle_statut_facture || '—' }}
+            </span>
+          </td>
+
+          <td class="text-center">
+            <!-- Voir -->
+            <a class="btn btn-sm btn-outline-primary me-1"
+               [routerLink]="['/home/facturation', f.id_facturation]"
+               title="Voir la facture">
+              <i class="bi bi-eye"></i>
+            </a>
+
+            <!-- Éditer / Supprimer déjà présents -->
+            <button class="btn btn-sm btn-outline-secondary me-1"
+                    (click)="openModal_edit_facturation(f)" title="Modifier">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+
+           
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
