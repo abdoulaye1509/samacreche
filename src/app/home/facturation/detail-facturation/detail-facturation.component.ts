@@ -65,30 +65,50 @@ export class DetailFacturationComponent implements OnInit, OnDestroy {
           // 2. Construire le tableau des prestations
           factureData.prestations = [];
 
+          // 🔹 Mensualité
           const montantMensualite = parseFloat(factureData.montant_mensualite) || 0;
+          const remiseMensPct = parseFloat(factureData.remise_mensualite_pct) || 0;
+          const remiseMensualite = montantMensualite * remiseMensPct / 100;
+
           if (montantMensualite > 0) {
+            const montantLigne = montantMensualite - remiseMensualite;
+
             factureData.prestations.push({
-              reference: 'MEN',
+              reference: factureData.reference_mensualite || 'MENS',
               designation: factureData.libelle_facturation || 'Mensualité (Frais de scolarité)',
-              prix_unitaire: montantMensualite,
               quantite: 1,
-              montant_ht: montantMensualite
+              prix_unitaire: montantMensualite,
+              remise_pct: remiseMensPct,
+              remise_montant: remiseMensualite,
+              montant_ht: montantLigne
             });
           }
 
+          // 🔹 Cantine
           const montantCantine = parseFloat(factureData.montant_cantine) || 0;
+          const remiseCantPct = parseFloat(factureData.remise_cantine_pct) || 0;
+          const remiseCantine = montantCantine * remiseCantPct / 100;
+
           if (factureData.cantine === 'abonné' && montantCantine > 0) {
+            const montantLigne = montantCantine - remiseCantine;
+
             factureData.prestations.push({
               reference: 'CANT',
               designation: 'Cantine (Abonnement mensuel)',
-              prix_unitaire: montantCantine,
               quantite: 1,
-              montant_ht: montantCantine
+              prix_unitaire: montantCantine,
+              remise_pct: remiseCantPct,
+              remise_montant: remiseCantine,
+              montant_ht: montantLigne
             });
           }
 
-          // 3. Assigner les données à ton template
+          // 🔹 Recalcule le total à partir des lignes
+          factureData.montant_total = factureData.prestations
+            .reduce((sum: number, l: any) => sum + (l.montant_ht || 0), 0);
+
           this.details = factureData;
+
           console.log('Détails de la facture structurés =', this.details);
 
         } else {
@@ -103,7 +123,7 @@ export class DetailFacturationComponent implements OnInit, OnDestroy {
     );
   }
   // Convertit un nombre en toutes lettres (simplifié, jusqu'aux millions)
- numberToWordsFr(n: number): string {
+  numberToWordsFr(n: number): string {
     const units = [
       'zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six',
       'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize',
@@ -180,19 +200,19 @@ export class DetailFacturationComponent implements OnInit, OnDestroy {
     const montant = Math.round(parseFloat(this.details.montant_total));
     return this.numberToWordsFr(montant);
   }
-// Bouton "Retour"
-goBack(): void {
-  // Retour au niveau de route précédent
-  this.router.navigate(['../'], { relativeTo: this.a_route });
+  // Bouton "Retour"
+  goBack(): void {
+    // Retour au niveau de route précédent
+    this.router.navigate(['../'], { relativeTo: this.a_route });
 
-  // Si tu as une route fixe, tu peux utiliser à la place :
-  // this.router.navigate(['/home/facturation']);
-}
+    // Si tu as une route fixe, tu peux utiliser à la place :
+    // this.router.navigate(['/home/facturation']);
+  }
 
-// Bouton "Exporter en PDF"
-downloadPdf(): void {
-  // Ouvre la boîte de dialogue impression => l'utilisateur peut choisir "Enregistrer en PDF"
-  window.print();
-}
+  // Bouton "Exporter en PDF"
+  downloadPdf(): void {
+    // Ouvre la boîte de dialogue impression => l'utilisateur peut choisir "Enregistrer en PDF"
+    window.print();
+  }
 
 }

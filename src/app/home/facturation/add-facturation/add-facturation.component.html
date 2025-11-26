@@ -22,7 +22,6 @@
         bindValue="id_enfant"
         placeholder="Choisir l’enfant"
         formControlName="id_enfant"
-        (change)="onSelectEnfant($event)"
         [ngClass]="{ 'is-invalid': submitted && f['id_enfant'].errors }">
 
         <!-- libellé affiché dans le champ -->
@@ -73,38 +72,97 @@
 
    
 
-    <!-- Bloc montants auto -->
-    <div class="col-12">
-      <div class="row g-2 align-items-end">
-        <div class="col-sm-4">
-          <label class="form-label"><i class="bi bi-mortarboard me-1"></i> Mensualité</label>
-          <div class="input-group">
-            <span class="input-group-text">CFA</span>
-            <input class="form-control" formControlName="montant_mensualite" type="number" min="0" step="100" (input)="recalcTotal()">
-          </div>
-          <div class="form-text">Récupérée automatiquement depuis la fiche enfant.</div>
-        </div>
+   <!-- Bloc montants auto -->
+<div class="col-12">
+  <div class="row g-2 align-items-end">
+    <!-- Mensualité -->
+    <div class="col-sm-4">
+      <label class="form-label">
+        <i class="bi bi-mortarboard me-1"></i> Mensualité
+      </label>
 
-        <div class="col-sm-4">
-          <label class="form-label"><i class="bi bi-egg-fried me-1"></i> Cantine</label>
-          <div class="input-group">
-            <span class="input-group-text">CFA</span>
-            <input class="form-control" formControlName="montant_cantine" type="number" min="0" step="100" (input)="recalcTotal()">
-          </div>
-          <div class="form-text">
-            <span class="badge bg-light text-dark">Statut: {{ f.cantine.value || '—' }}</span>
-          </div>
-        </div>
+      <!-- Montant brut -->
+      <div class="input-group mb-1">
+        <span class="input-group-text">CFA</span>
+        <input class="form-control"
+               formControlName="montant_mensualite"
+               type="number"
+               min="0"
+               step="100"
+               (input)="recalcTotal()">
+      </div>
+      <div class="form-text">Récupérée automatiquement depuis la fiche enfant.</div>
 
-        <div class="col-sm-4">
-          <label class="form-label fw-bold"><i class="bi bi-calculator me-1"></i> Total</label>
-          <div class="input-group">
-            <span class="input-group-text">CFA</span>
-            <input class="form-control fw-bold" formControlName="montant_total" type="number" readonly>
-          </div>
+      <!-- Remise % -->
+      <div class="mt-2">
+        <label class="form-label mb-1">Remise mensualité (%)</label>
+        <div class="input-group input-group-sm">
+          <input class="form-control"
+                 type="number"
+                 min="0"
+                 max="100"
+                 step="1"
+                 formControlName="remise_mensualite_pct"
+                 (input)="recalcTotal()">
+          <span class="input-group-text">%</span>
         </div>
       </div>
     </div>
+
+    <!-- Cantine -->
+    <div class="col-sm-4">
+      <label class="form-label">
+        <i class="bi bi-egg-fried me-1"></i> Cantine
+      </label>
+
+      <!-- Montant brut -->
+      <div class="input-group mb-1">
+        <span class="input-group-text">CFA</span>
+        <input class="form-control"
+               formControlName="montant_cantine"
+               type="number"
+               min="0"
+               step="100"
+               (input)="recalcTotal()">
+      </div>
+      <div class="form-text">
+        <span class="badge bg-light text-dark">Statut: {{ f.cantine.value || '—' }}</span>
+      </div>
+
+      <!-- Remise % -->
+      <div class="mt-2">
+        <label class="form-label mb-1">Remise cantine (%)</label>
+        <div class="input-group input-group-sm">
+          <input class="form-control"
+                 type="number"
+                 min="0"
+                 max="100"
+                 step="1"
+                 formControlName="remise_cantine_pct"
+                 (input)="recalcTotal()">
+          <span class="input-group-text">%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total net à payer -->
+    <div class="col-sm-4">
+      <label class="form-label fw-bold">
+        <i class="bi bi-calculator me-1"></i> Total NET
+      </label>
+      <div class="input-group">
+        <span class="input-group-text">CFA</span>
+        <input class="form-control fw-bold"
+               formControlName="montant_total"
+               type="number"
+               readonly>
+      </div>
+      <div class="form-text">
+        Somme des montants après remise.
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Statut (si disponible) -->
     <div class="col-md-6" *ngIf="(form_details?.les_statuts?.length || 0) > 0">

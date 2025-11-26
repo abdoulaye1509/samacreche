@@ -1,7 +1,11 @@
 <aside class="sidebar">
   <div class="sidebar-header">
     <a>
-      <img src="assets/images/logo.png" alt="Logo" class="logo">
+      <img
+        class="logo"
+        [src]="logoUrl"
+        (error)="$any($event.target).src = api.placeholderLogo"
+        alt="Logo structure" />
     </a>
   </div>
 
@@ -14,15 +18,13 @@
         [routerLinkActiveOptions]="{exact: true}">
         <a [routerLink]="item.path" [title]="item.name">
           <i class="bi" [ngClass]="item.icon"></i>
-          <!-- <span class="label">{{ item.name }}</span> -->
         </a>
       </li>
     </ul>
   </nav>
 
-
   <div class="sidebar-footer">
-     <ul>
+    <ul>
       <li class="nav-item">
         <a title="Déconnexion" (click)="api.deconnexion()">
           <i class="bi bi-box-arrow-left"></i>

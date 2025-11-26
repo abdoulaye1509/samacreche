@@ -40,99 +40,106 @@
 <!-- Utilisation de *ngIf pour n'afficher la facture qu'une fois les données chargées -->
 <div class="invoice-container" *ngIf="details">
 
-    <!-- HEADER: Infos de la structure -->
-    <header class="invoice-header">
-        <div class="logo-area">
-            <div class="logo-placeholder">
-                <!-- Utilisez un logo si disponible : <img [src]="details.logo_structure" alt="Logo"> -->
-                <span class="logo-title">{{ details.nom_structure }}</span>
-                <span class="logo-slogan">
-                    Crèche & Maternelle, Ninea: {{ details.ninea }}
-                </span>
-            </div>
-        </div>
-        <div class="school-info">
-            <p>Adresse: {{ details.adresse_structure }}</p>
-            <p>Tél: {{ details.telephone_structure }}</p>
-            <p>Nom Court: {{ details.nom_court }}</p>
-            <p>Statut: {{ details.libelle_statut_facture }}</p>
-        </div>
-    </header>
+  <header class="invoice-header">
+    <div class="logo-area">
+      <div class="logo-img-wrapper">
+        <img class="logo-img" [src]="api.resolveFileUrl(details.logo_structure || '')"
+          (error)="$any($event.target).src = api.placeholderLogo" [alt]="'Logo ' + (details.nom_structure || '')" />
+      </div>
 
-    <!-- INFOS FACTURE ET CLIENT -->
-    <section class="invoice-details">
-        <h1 class="invoice-title">Facture N° <span class="invoice-number">{{ details.numero_facture }}</span></h1>
-        <div class="client-info">
-            <p class="client-name">Enfant: {{ details.prenom_enfant }} {{ details.nom_enfant }}</p>
-            <p class="invoice-label">Libellé: {{ details.libelle_facturation }}</p>
-        </div>
-    </section>
-
-    <!-- TABLEAU DES PRESTATIONS (Dynamique avec *ngFor) -->
-    <section class="items-table">
-        <table>
-            <thead>
-                <tr>
-                    <th class="ref">Référence</th>
-                    <th class="designation">Désignation</th>
-                    <th class="qty">Qté</th>
-                    <th class="price">Px unitaire</th>
-                    <th class="discount">Remise</th>
-                    <th class="amount">Montant HT</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- BOUCLE *ngFor sur le tableau de prestations préparé dans le composant TS -->
-                <tr *ngFor="let element of details.prestations">
-                    <td class="ref">{{ element.reference }}</td>
-                    <td class="designation">{{ element.designation }}</td>
-                    <td class="qty">{{ element.quantite }}</td>
-                    <!-- Formatage avec CurrencyPipe (XOF) -->
-                    <td class="price">{{ element.prix_unitaire | currency:'XOF':'symbol':'1.2-2':'fr' }}</td>
-                    <td class="discount"></td>
-                    <td class="amount">{{ element.montant_ht | currency:'XOF':'symbol':'1.2-2':'fr' }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <!-- TOTAUX -->
-    <section class="invoice-totals">
-        <p>
-            Arrêté cette présente facture à la somme de
-            {{ getMontantTotalEnLettres() }}
-        </p>
-
-        <div class="totals-box">
-            <div class="total-line">
-                <span>Total HT</span>
-                <span class="value">{{ details.montant_total | currency:'XOF':'symbol':'1.2-2':'fr' }}</span>
-            </div>
-            <div class="total-line net-a-payer">
-                <span>NET À PAYER</span>
-                <span class="value">{{ details.montant_total | currency:'XOF':'symbol':'1.2-2':'fr' }}</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER: Date et Signature -->
-    <footer class="invoice-footer">
-        <p>Facturé le, {{ details.date_facturation | date:'dd/MM/yyyy' }} (Emise: {{ details.libelle_statut_facture }})
-        </p>
-        <div class="signature-box">
-            <p>Cachet et Signature</p>
-        </div>
-    </footer>
-
-    <!-- Indicateur de chargement si nécessaire -->
-    <div class="loading-overlay" *ngIf="loading_get_detail_facturation">
-        <div class="spinner"></div>
-        <p>Chargement des détails de la facture...</p>
+      <div class="logo-placeholder">
+        <span class="logo-title">{{ details.nom_structure }}</span>
+        <span class="logo-slogan">
+          Crèche &amp; Maternelle, Ninea: {{ details.ninea }}
+        </span>
+      </div>
     </div>
+
+    <div class="school-info">
+      <p>Adresse: {{ details.adresse_structure }}</p>
+      <p>Tél: {{ details.telephone_structure }}</p>
+      <p>Ninea: {{ details.ninea }}</p>
+    </div>
+  </header>
+
+
+  <!-- INFOS FACTURE ET CLIENT -->
+  <section class="invoice-details">
+    <h1 class="invoice-title">Facture N° <span class="invoice-number">{{ details.numero_facture }}</span></h1>
+    <div class="client-info">
+      <p class="client-name">Enfant: {{ details.prenom_enfant }} {{ details.nom_enfant }}</p>
+      <p class="invoice-label">Libellé: {{ details.libelle_facturation }}</p>
+    </div>
+  </section>
+
+  <!-- TABLEAU DES PRESTATIONS (Dynamique avec *ngFor) -->
+  <section class="items-table">
+    <table>
+      <thead>
+        <tr>
+          <th class="ref">Référence</th>
+          <th class="designation">Désignation</th>
+          <th class="qty">Qté</th>
+          <th class="price">Montant</th>
+          <th class="discount">Remise</th>
+          <th class="amount">Montant HT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- BOUCLE *ngFor sur le tableau de prestations préparé dans le composant TS -->
+        <tr *ngFor="let element of details.prestations">
+          <td class="ref">{{ element.reference }}</td>
+          <td class="designation">{{ element.designation }}</td>
+          <td class="qty">{{ element.quantite }}</td>
+          <!-- Formatage avec CurrencyPipe (XOF) -->
+          <td class="price">{{ element.prix_unitaire | currency:'XOF':'symbol':'1.0-0':'fr' }}</td>
+          <td class="discount">
+            {{ element.remise_pct || 0 }} %
+            ({{ element.remise_montant | currency:'XOF':'symbol':'1.0-0':'fr' }})
+          </td>
+          <td class="amount">{{ element.montant_ht | currency:'XOF':'symbol':'1.0-0':'fr' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- TOTAUX -->
+  <section class="invoice-totals">
+    <p>
+      Arrêté cette présente facture à la somme de
+      {{ getMontantTotalEnLettres() }}
+    </p>
+
+    <div class="totals-box">
+      <div class="total-line">
+        <span>Total HT</span>
+        <span class="value">{{ details.montant_total | currency:'XOF':'symbol':'1.2-2':'fr' }}</span>
+      </div>
+      <div class="total-line net-a-payer">
+        <span>NET À PAYER</span>
+        <span class="value">{{ details.montant_total | currency:'XOF':'symbol':'1.2-2':'fr' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER: Date et Signature -->
+  <footer class="invoice-footer">
+    <p>Facturé le, {{ details.date_facturation | date:'dd/MM/yyyy' }} (Emise: {{ details.libelle_statut_facture }})
+    </p>
+    <div class="signature-box">
+      <p>Cachet et Signature</p>
+    </div>
+  </footer>
+
+  <!-- Indicateur de chargement si nécessaire -->
+  <div class="loading-overlay" *ngIf="loading_get_detail_facturation">
+    <div class="spinner"></div>
+    <p>Chargement des détails de la facture...</p>
+  </div>
 
 </div>
 
 <!-- Afficher un message si aucune donnée n'est chargée -->
 <div class="alert-message" *ngIf="!details && !loading_get_detail_facturation">
-    Aucune donnée de facturation trouvée pour l'ID {{ id_facturation }}.
+  Aucune donnée de facturation trouvée pour l'ID {{ id_facturation }}.
 </div>

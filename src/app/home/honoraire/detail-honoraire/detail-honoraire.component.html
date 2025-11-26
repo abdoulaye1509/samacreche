@@ -29,20 +29,32 @@
 <div class="invoice-container" *ngIf="details">
 
   <!-- En-tête: structure -->
-  <header class="invoice-header">
-    <div class="logo-area">
-      <div class="logo-placeholder">
-        <span class="logo-title">{{ details.nom_structure }}</span>
-        <span class="logo-slogan">Crèche & Maternelle · Ninea: {{ details.ninea }}</span>
-      </div>
+<header class="invoice-header">
+  <div class="logo-area">
+    <div class="logo-img-wrapper">
+      <img
+        class="logo-img"
+        [src]="api.resolveFileUrl(details.logo_structure || api.user_connected?.logo_structure || '')"
+        (error)="$any($event.target).src = api.placeholderLogo"
+        [alt]="'Logo ' + (details.nom_structure || '')"
+      />
     </div>
-    <div class="school-info">
-      <p>Adresse: {{ details.adresse_structure }}</p>
-      <p>Tél: {{ details.telephone_structure }}</p>
-      <p>Nom court: {{ details.nom_court }}</p>
-      <p>Statut: {{ details.libelle_statut_honoraire }}</p>
+
+    <div class="logo-placeholder">
+      <span class="logo-title">{{ details.nom_structure }}</span>
+      <span class="logo-slogan">
+        Crèche &amp; Maternelle · Ninea: {{ details.ninea }}
+      </span>
     </div>
-  </header>
+  </div>
+
+  <div class="school-info">
+    <p>Adresse: {{ details.adresse_structure }}</p>
+    <p>Tél: {{ details.telephone_structure }}</p>
+    <p>Ninea: {{ details.ninea }}</p>
+  </div>
+</header>
+
 
   <!-- Infos honoraire -->
   <section class="invoice-details">

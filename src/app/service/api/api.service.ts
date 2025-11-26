@@ -1279,4 +1279,48 @@ export class ApiService {
     // encodeURI n’encode pas '/', c’est ce qu’on veut
     return base + encodeURI(clean);
   }
+
+  // --- Helper logo structure courante
+getCurrentStructureLogoUrl(): string {
+  // Directement depuis user_connected → toujours rempli après login
+  const logoPath = this.user_connected?.logo_structure;
+  
+  if (logoPath) {
+    return this.resolveFileUrl(logoPath) || this.placeholderLogo;
+  }
+
+  return this.placeholderLogo;
+}
+// Dans ApiService
+private ensureUserPromise: Promise<any> | null = null;
+
+async ensure_user_connected(): Promise<any | null> {
+  // Déjà chargé en mémoire ?
+  if (this.user_connected) return this.user_connected;
+
+  // Évite de lancer plusieurs fois la même promesse
+  if (this.ensureUserPromise) return this.ensureUserPromise;
+
+  this.ensureUserPromise = (async () => {
+    // 1) Essayer depuis le cache (IndexedDB)
+    const cached = await this.get_from_local_storage('user_connected');
+    if (cached) {
+      this.user_connected = cached;
+      return cached;
+    }
+
+    // 2) Sinon, fallback minimal depuis le token décodé (taf_data)
+    if (this.token?.user_connected) {
+      this.user_connected = this.token.user_connected;
+      return this.user_connected;
+    }
+
+    return null;
+  })();
+
+  const res = await this.ensureUserPromise;
+  this.ensureUserPromise = null;
+  return res;
+}
+
 }

@@ -92,6 +92,49 @@ body { font-family: $font-family; margin: 0; padding: 20px; background-color: #f
   background: rgba($primary-color,.07); color: $primary-color; border: 1px solid rgba($primary-color,.3); }
 .topbar-center { flex: 1; text-align: center; font-size: 12px; color: #666; }
 .topbar-right { display: flex; align-items: center; gap: 8px; }
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .logo-img-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, .08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .logo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .logo-placeholder {
+    padding: 0;
+
+    .logo-title {
+      font-size: 30px;
+      font-weight: 800;
+      color: $primary-color;
+      display: block;
+      line-height: 1.1;
+    }
+
+    .logo-slogan {
+      font-size: 13px;
+      font-style: italic;
+      color: #666;
+      display: block;
+      margin-top: 5px;
+    }
+  }
+}
 
 /* Print */
 @media print {

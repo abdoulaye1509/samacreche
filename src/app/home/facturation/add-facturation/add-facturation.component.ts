@@ -62,6 +62,9 @@ export class AddFacturationComponent implements OnInit, OnDestroy {
       // montants
       montant_mensualite: [0, [Validators.required, Validators.min(0)]],
       montant_cantine: [0, [Validators.required, Validators.min(0)]],
+      // remises en %
+      remise_mensualite_pct: [0, [Validators.min(0), Validators.max(100)]],
+      remise_cantine_pct: [0, [Validators.min(0), Validators.max(100)]],
       montant_total: [{ value: 0, disabled: false }, [Validators.required, Validators.min(0)]],
 
       // méta
@@ -89,10 +92,26 @@ export class AddFacturationComponent implements OnInit, OnDestroy {
     return isNaN(n) ? 0 : n;
   }
 
+  // recalcTotal() {
+  //   const mensu = this.toNumber(this.f.montant_mensualite.value);
+  //   const cant = this.toNumber(this.f.montant_cantine.value);
+  //   this.f.montant_total.setValue(mensu + cant, { emitEvent: false });
+  // }
   recalcTotal() {
     const mensu = this.toNumber(this.f.montant_mensualite.value);
     const cant = this.toNumber(this.f.montant_cantine.value);
-    this.f.montant_total.setValue(mensu + cant, { emitEvent: false });
+
+    const tauxMensu = this.toNumber(this.f.remise_mensualite_pct.value);
+    const tauxCant = this.toNumber(this.f.remise_cantine_pct.value);
+
+    // borne de sécurité 0–100
+    const tMensu = Math.min(Math.max(tauxMensu, 0), 100);
+    const tCant = Math.min(Math.max(tauxCant, 0), 100);
+
+    const netMensu = Math.round(mensu * (1 - tMensu / 100));
+    const netCant = Math.round(cant * (1 - tCant / 100));
+
+    this.f.montant_total.setValue(netMensu + netCant, { emitEvent: false });
   }
 
   private formatMoisHumain(ym: string): string {
@@ -106,34 +125,86 @@ export class AddFacturationComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelectEnfant(id_enfant: number) {
+  // onSelectEnfant(id_enfant: number) {
+  //   if (!id_enfant) return;
+
+  //   // Récupère la mensualité + cantine de l’enfant
+  //   const payload = {
+  //     id_enfant,
+  //     id_structure: this.api?.user_connected?.id_structure ?? null
+  //   };
+  //   this.api.taf_post_object('facturation/get_enfant_billing', payload, (rep: any) => {
+  //     if (rep?.status) {
+  //       const info = rep.data || {};
+  //       // montants
+  //       this.f.montant_mensualite.setValue(Number(info.montant_mensualite || 0));
+  //       this.f.montant_cantine.setValue(Number(info.montant_cantine || 0));
+  //       this.f.cantine.setValue(info.cantine || '');
+  //       // libellé si vide
+  //       const ym = this.f.mois_facture.value;
+  //       if (!this.f.libelle_facturation.value) {
+  //         this.f.libelle_facturation.setValue(`Mensualité ${this.formatMoisHumain(ym)}`);
+  //       }
+  //       this.recalcTotal();
+  //     } else {
+  //       this.api.Swal_error("Impossible de récupérer la fiche de l'enfant");
+  //     }
+  //   }, () => { });
+  // }
+
+  // ---------- Submit ----------
+  onSelectEnfant(enfant: any) {
+    const id_enfant =
+      typeof enfant === 'number'
+        ? enfant
+        : enfant?.id_enfant;
+
     if (!id_enfant) return;
 
-    // Récupère la mensualité + cantine de l’enfant
     const payload = {
       id_enfant,
       id_structure: this.api?.user_connected?.id_structure ?? null
     };
+
     this.api.taf_post_object('facturation/get_enfant_billing', payload, (rep: any) => {
       if (rep?.status) {
         const info = rep.data || {};
-        // montants
-        this.f.montant_mensualite.setValue(Number(info.montant_mensualite || 0));
-        this.f.montant_cantine.setValue(Number(info.montant_cantine || 0));
-        this.f.cantine.setValue(info.cantine || '');
-        // libellé si vide
+
+        const mensu = Number(info.montant_mensualite || 0);
+        const cant = Number(info.montant_cantine || 0);
+        const statut = info.cantine || '';
+
+        this.f.montant_mensualite.setValue(mensu);
+        this.f.montant_cantine.setValue(cant);
+        this.f.cantine.setValue(statut);
+
+        // si pas abonné, tu peux forcer 0 :
+        if (statut !== 'abonné') {
+          this.f.montant_cantine.setValue(0);
+        }
+
         const ym = this.f.mois_facture.value;
         if (!this.f.libelle_facturation.value) {
           this.f.libelle_facturation.setValue(`Mensualité ${this.formatMoisHumain(ym)}`);
         }
+
         this.recalcTotal();
       } else {
+        // en cas d’erreur, on nettoie les champs pour éviter de garder l’ancienne valeur
+        this.f.montant_mensualite.setValue(0);
+        this.f.montant_cantine.setValue(0);
+        this.f.cantine.setValue('');
+        this.recalcTotal();
         this.api.Swal_error("Impossible de récupérer la fiche de l'enfant");
       }
-    }, () => { });
+    }, () => {
+      this.f.montant_mensualite.setValue(0);
+      this.f.montant_cantine.setValue(0);
+      this.f.cantine.setValue('');
+      this.recalcTotal();
+    });
   }
 
-  // ---------- Submit ----------
   onSubmit_add_facturation() {
     this.submitted = true;
 
@@ -169,6 +240,8 @@ export class AddFacturationComponent implements OnInit, OnDestroy {
       libelle_facturation: '',
       montant_mensualite: 0,
       montant_cantine: 0,
+      remise_mensualite_pct: 0,   // 👈 nouveau
+      remise_cantine_pct: 0,      // 👈 nouveau
       montant_total: 0,
       cantine: '',
       id_statut_facture: null,
