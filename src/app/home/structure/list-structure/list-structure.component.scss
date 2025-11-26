@@ -1,0 +1,25 @@
+.structure-card {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: transform .15s ease, box-shadow .15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.08);
+  }
+}
+
+.structure-logo-wrapper {
+  width: 100%;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.structure-logo {
+  max-height: 110px;
+  max-width: 100%;
+  object-fit: contain;
+}

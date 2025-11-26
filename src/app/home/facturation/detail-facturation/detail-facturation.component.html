@@ -1,80 +1,138 @@
+<!-- ENTÊTE FACTURE -->
+<div class="invoice-topbar" *ngIf="details">
+  <div class="topbar-left">
+    <h2 class="topbar-title">Détail de la facture</h2>
+    <span class="topbar-badge statut-{{ details.id_statut_facture }}">
+      {{ details.libelle_statut_facture }}
+    </span>
+  </div>
 
-    <div class="invoice-container">
-        
-        <header class="invoice-header">
-            <div class="logo-area">
-                <div class="logo-placeholder">
-                    <span class="logo-title">O'p'tits MOMES</span>
-                    <span class="logo-slogan">Accueillir Animer Stimuler<br>Apprendre et grandir ensemble</span>
-                </div>
+  <div class="topbar-center">
+    <span class="topbar-meta">
+      N° {{ details.numero_facture }} ·
+      {{ details.prenom_enfant }} {{ details.nom_enfant }} ·
+      {{ details.date_facturation | date:'MM/yyyy' }}
+    </span>
+  </div>
+
+  <div class="topbar-right invoice-actions">
+    <button type="button" class="btn-action" (click)="goBack()">
+      <span class="icon">←</span>
+      <span>Retour</span>
+    </button>
+
+    <button type="button" class="btn-action" (click)="downloadPdf()">
+      <span class="icon">⤓</span>
+      <span>PDF</span>
+    </button>
+
+    <!-- bouton optionnel pour plus tard -->
+    <!--
+    <button type="button" class="btn-action">
+      <span class="icon">✉</span>
+      <span>Envoyer par mail</span>
+    </button>
+    -->
+  </div>
+</div>
+
+
+<!-- Utilisation de *ngIf pour n'afficher la facture qu'une fois les données chargées -->
+<div class="invoice-container" *ngIf="details">
+
+    <!-- HEADER: Infos de la structure -->
+    <header class="invoice-header">
+        <div class="logo-area">
+            <div class="logo-placeholder">
+                <!-- Utilisez un logo si disponible : <img [src]="details.logo_structure" alt="Logo"> -->
+                <span class="logo-title">{{ details.nom_structure }}</span>
+                <span class="logo-slogan">
+                    Crèche & Maternelle, Ninea: {{ details.ninea }}
+                </span>
             </div>
-            <div class="school-info">
-                [cite_start]<p>Adresse: 8394 Sicap Sacré Cœur 1 [cite: 11]</p>
-                [cite_start]<p>Tél: 33 822 21 88 / 77 669 90 88 [cite: 11]</p>
-                [cite_start]<p>NINEA: 008678403 [cite: 11]</p>
-                [cite_start]<p>RCCM: SN DKR 2021 B 22185 [cite: 12]</p>
+        </div>
+        <div class="school-info">
+            <p>Adresse: {{ details.adresse_structure }}</p>
+            <p>Tél: {{ details.telephone_structure }}</p>
+            <p>Nom Court: {{ details.nom_court }}</p>
+            <p>Statut: {{ details.libelle_statut_facture }}</p>
+        </div>
+    </header>
+
+    <!-- INFOS FACTURE ET CLIENT -->
+    <section class="invoice-details">
+        <h1 class="invoice-title">Facture N° <span class="invoice-number">{{ details.numero_facture }}</span></h1>
+        <div class="client-info">
+            <p class="client-name">Enfant: {{ details.prenom_enfant }} {{ details.nom_enfant }}</p>
+            <p class="invoice-label">Libellé: {{ details.libelle_facturation }}</p>
+        </div>
+    </section>
+
+    <!-- TABLEAU DES PRESTATIONS (Dynamique avec *ngFor) -->
+    <section class="items-table">
+        <table>
+            <thead>
+                <tr>
+                    <th class="ref">Référence</th>
+                    <th class="designation">Désignation</th>
+                    <th class="qty">Qté</th>
+                    <th class="price">Px unitaire</th>
+                    <th class="discount">Remise</th>
+                    <th class="amount">Montant HT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- BOUCLE *ngFor sur le tableau de prestations préparé dans le composant TS -->
+                <tr *ngFor="let element of details.prestations">
+                    <td class="ref">{{ element.reference }}</td>
+                    <td class="designation">{{ element.designation }}</td>
+                    <td class="qty">{{ element.quantite }}</td>
+                    <!-- Formatage avec CurrencyPipe (XOF) -->
+                    <td class="price">{{ element.prix_unitaire | currency:'XOF':'symbol':'1.2-2':'fr' }}</td>
+                    <td class="discount"></td>
+                    <td class="amount">{{ element.montant_ht | currency:'XOF':'symbol':'1.2-2':'fr' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- TOTAUX -->
+    <section class="invoice-totals">
+        <p>
+            Arrêté cette présente facture à la somme de
+            {{ getMontantTotalEnLettres() }}
+        </p>
+
+        <div class="totals-box">
+            <div class="total-line">
+                <span>Total HT</span>
+                <span class="value">{{ details.montant_total | currency:'XOF':'symbol':'1.2-2':'fr' }}</span>
             </div>
-        </header>
-
-        <section class="invoice-details">
-            <h1 class="invoice-title">Facture N° <span class="invoice-number">FT212</span></h1> <div class="client-info">
-                <p class="client-name">Client: **MOUSSA DOUCOURE**</p> </div>
-        </section>
-
-        <section class="items-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="ref">Référence</th>
-                        <th class="designation">Désignation</th>
-                        <th class="qty">Qté</th>
-                        <th class="price">Px unitaire</th>
-                        <th class="discount">Remise</th>
-                        <th class="amount">Montant HT</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="ref">CT</td>
-                        <td class="designation">CANTINE</td>
-                        <td class="qty"></td>
-                        <td class="price">25 000</td>
-                        <td class="discount"></td>
-                        <td class="amount">25 000</td>
-                    </tr>
-                    <tr>
-                        <td class="ref">FT_GARDERIE</td>
-                        <td class="designation">FORFAIT GARDERIE</td>
-                        <td class="qty"></td>
-                        <td class="price">60 000</td>
-                        <td class="discount"></td>
-                        <td class="amount">60 000</td>
-                    </tr>
-                    </tbody>
-            </table>
-        </section>
-
-        <section class="invoice-totals">
-            <div class="summary-text">
-                [cite_start]<p>Arrété cette présente facture à la somme de **Quatre-vingt cinq mille**</p> [cite: 6]
+            <div class="total-line net-a-payer">
+                <span>NET À PAYER</span>
+                <span class="value">{{ details.montant_total | currency:'XOF':'symbol':'1.2-2':'fr' }}</span>
             </div>
-            <div class="totals-box">
-                <div class="total-line">
-                    <span>Total HT</span>
-                    [cite_start]<span class="value">85 000</span> [cite: 9]
-                </div>
-                <div class="total-line net-a-payer">
-                    <span>NET A PAYER</span>
-                    [cite_start]<span class="value">85 000 <span class="currency">FCFA</span></span> [cite: 9, 10]
-                </div>
-            </div>
-        </section>
+        </div>
+    </section>
 
-        <footer class="invoice-footer">
-            [cite_start]<p>DAKAR le, **24/06/23**</p> [cite: 7]
-            <div class="signature-box">
-                <p>Cachet et Signature</p>
-                </div>
-        </footer>
+    <!-- FOOTER: Date et Signature -->
+    <footer class="invoice-footer">
+        <p>Facturé le, {{ details.date_facturation | date:'dd/MM/yyyy' }} (Emise: {{ details.libelle_statut_facture }})
+        </p>
+        <div class="signature-box">
+            <p>Cachet et Signature</p>
+        </div>
+    </footer>
 
+    <!-- Indicateur de chargement si nécessaire -->
+    <div class="loading-overlay" *ngIf="loading_get_detail_facturation">
+        <div class="spinner"></div>
+        <p>Chargement des détails de la facture...</p>
     </div>
+
+</div>
+
+<!-- Afficher un message si aucune donnée n'est chargée -->
+<div class="alert-message" *ngIf="!details && !loading_get_detail_facturation">
+    Aucune donnée de facturation trouvée pour l'ID {{ id_facturation }}.
+</div>

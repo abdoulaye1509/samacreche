@@ -1,8 +1,8 @@
 // Variables
-$primary-color: #00008b; // Bleu foncé (similaire au logo)
-$secondary-color: #ffcc00; // Jaune (similaire au logo)
-$border-color: #ddd;
-$font-family: Arial, sans-serif;
+$primary-color: #004d40;    // Vert foncé (thème Les petits pas)
+$secondary-color: #ffb300; // Jaune/Orange vif (couleur d'accent)
+$border-color: #ccc;
+$font-family: 'Inter', Arial, sans-serif;
 
 body {
     font-family: $font-family;
@@ -17,7 +17,10 @@ body {
     background-color: #fff;
     padding: 30px;
     border: 1px solid $border-color;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative; // Nécessaire pour l'overlay de chargement
 }
 
 /* --- HEADER --- */
@@ -31,20 +34,19 @@ body {
 }
 
 .logo-area {
-    // Ceci simule la zone du logo textuel et du slogan
     .logo-placeholder {
         padding: 10px 0;
         .logo-title {
-            font-size: 36px;
-            font-weight: bold;
+            font-size: 30px;
+            font-weight: 800;
             color: $primary-color;
             display: block;
-            line-height: 1;
+            line-height: 1.1;
         }
         .logo-slogan {
-            font-size: 14px;
+            font-size: 13px;
             font-style: italic;
-            color: #555;
+            color: #666;
             display: block;
             margin-top: 5px;
         }
@@ -52,11 +54,11 @@ body {
 }
 
 .school-info {
-    font-size: 12px;
+    font-size: 13px;
     text-align: right;
     p {
         margin: 2px 0;
-        color: #555;
+        color: #444;
     }
 }
 
@@ -69,7 +71,8 @@ body {
     .invoice-title {
         font-size: 24px;
         color: $primary-color;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+        font-weight: 600;
 
         .invoice-number {
             color: $secondary-color;
@@ -77,14 +80,21 @@ body {
     }
 
     .client-info {
-        background-color: #f9f9f9;
-        padding: 10px;
-        border-left: 5px solid $secondary-color;
+        background-color: #f0fff0; // Très léger vert
+        padding: 12px;
+        border-left: 5px solid $primary-color;
+        border-radius: 4px;
         
         .client-name {
             font-size: 16px;
             font-weight: bold;
+            margin: 0 0 5px 0;
+            color: #222;
+        }
+        .invoice-label {
+            font-size: 14px;
             margin: 0;
+            color: #444;
         }
     }
 }
@@ -96,35 +106,43 @@ body {
     table {
         width: 100%;
         border-collapse: collapse;
+        border: 1px solid $border-color;
+        border-radius: 4px;
+        overflow: hidden;
     }
 
     th, td {
-        padding: 10px 8px;
-        border: 1px solid $border-color;
+        padding: 10px 12px;
+        border-left: 1px solid $border-color;
         text-align: left;
     }
+    td:first-child, th:first-child {
+        border-left: none;
+    }
+
 
     thead th {
         background-color: $primary-color;
         color: white;
         text-transform: uppercase;
         font-size: 13px;
+        font-weight: 600;
     }
 
     .qty, .price, .amount {
         text-align: right;
-        width: 15%; // Pour aligner les colonnes de chiffres
+        width: 12%; 
     }
     .discount {
-        text-align: right;
-        width: 10%;
+        text-align: center;
+        width: 8%;
     }
-    .designation {
-        width: 35%;
+    .ref {
+        width: 10%;
     }
 
     tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
+        background-color: #f7f7f7;
     }
 }
 
@@ -141,7 +159,8 @@ body {
     font-style: italic;
     font-size: 14px;
     padding: 10px;
-    border: 1px dashed $border-color;
+    border: 1px dashed $primary-color;
+    border-radius: 4px;
     
     p {
         margin: 0;
@@ -153,9 +172,9 @@ body {
     .total-line {
         display: flex;
         justify-content: space-between;
-        padding: 5px 0;
-        font-size: 14px;
-        border-bottom: 1px solid $border-color;
+        padding: 8px 0;
+        font-size: 15px;
+        border-bottom: 1px dashed #bbb;
 
         .value {
             font-weight: bold;
@@ -165,15 +184,15 @@ body {
     .net-a-payer {
         background-color: $secondary-color;
         color: $primary-color;
-        padding: 10px;
-        font-size: 16px;
-        font-weight: bold;
-        margin-top: 5px;
-        border: 2px solid $primary-color; // Pour mettre en évidence
-
-        .currency {
-            margin-left: 5px;
-        }
+        padding: 12px;
+        font-size: 18px;
+        font-weight: 900;
+        margin-top: 10px;
+        border: 2px solid $primary-color; 
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 }
 
@@ -184,6 +203,7 @@ body {
     align-items: flex-end;
     padding-top: 20px;
     border-top: 1px solid $border-color;
+    margin-top: 20px;
 
     p {
         margin: 0;
@@ -192,14 +212,62 @@ body {
 
     .signature-box {
         text-align: center;
+        padding-top: 20px;
         p {
-            margin-bottom: 50px; // Espace pour la signature / le cachet
+            margin-bottom: 70px; // Espace pour la signature / le cachet
             font-weight: bold;
+            border-top: 1px solid #444;
+            padding-top: 5px;
         }
     }
 }
 
-/* --- STYLE POUR IMPRESSION (Média Print) --- */
+/* --- RESPONSIVE / PRINT --- */
+
+@media screen and (max-width: 600px) {
+    .invoice-container {
+        padding: 15px;
+    }
+    .invoice-header, .invoice-footer, .invoice-totals {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .school-info {
+        text-align: center;
+        margin-top: 15px;
+    }
+    .summary-text, .totals-box {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    .items-table table, .items-table th, .items-table td {
+        display: block;
+        width: 100%;
+    }
+    .items-table thead {
+        display: none; // Masquer l'entête sur petit écran
+    }
+    .items-table tbody tr {
+        margin-bottom: 10px;
+        border-bottom: 2px solid $primary-color;
+        display: block;
+    }
+    .items-table td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        text-align: right;
+    }
+    .items-table td:before {
+        content: attr(class); // Afficher le nom de la colonne
+        float: left;
+        font-weight: bold;
+        text-transform: capitalize;
+    }
+}
+
+
+/* Style pour l'impression */
 @media print {
     body {
         background-color: white;
@@ -212,4 +280,181 @@ body {
         margin: 0;
         padding: 0;
     }
+}
+
+/* --- Chargement --- */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid $primary-color;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.alert-message {
+    padding: 20px;
+    background-color: #ffe0b2;
+    color: #e65100;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* --- BARRE D'ACTIONS --- */
+.invoice-actions {
+    max-width: 800px;
+    margin: 0 auto 12px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid $primary-color;
+    background-color: #fff;
+    color: $primary-color;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+
+    .icon {
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    &:hover {
+        background-color: rgba($primary-color, 0.06);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+}
+
+.btn-action.primary {
+    background-color: $primary-color;
+    color: #fff;
+    border-color: darken($primary-color, 3%);
+
+    &:hover {
+        background-color: darken($primary-color, 5%);
+    }
+}
+
+
+.invoice-topbar {
+  max-width: 800px;
+  margin: 0 auto 12px auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  color: $primary-color;
+}
+
+.topbar-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  background: rgba($primary-color, .07);
+  color: $primary-color;
+  border: 1px solid rgba($primary-color, .3);
+}
+
+.topbar-center {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media print {
+  /* On cache tout */
+  body * {
+    visibility: hidden;
+  }
+
+  /* On montre uniquement la facture */
+  .invoice-container,
+  .invoice-container * {
+    visibility: visible;
+  }
+
+  /* On met la facture en pleine page */
+  .invoice-container {
+    position: absolute;
+    inset: 0;      // équivaut à top:0; right:0; bottom:0; left:0;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    max-width: 100%;
+    padding: 20px;
+
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* On cache la barre d'actions dans le PDF */
+  .invoice-actions {
+    display: none !important;
+  }
+
+  body {
+    margin: 0;
+    background: #fff;
+  }
 }

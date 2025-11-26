@@ -25,6 +25,7 @@ import { ParametreComponent } from './home/parametre/parametre.component';
 import { DetailEnfantComponent } from './enfant/detail-enfant/detail-enfant.component';
 import { DetailParentComponent } from './parent/detail-parent/detail-parent.component';
 import { DetailFacturationComponent } from './facturation/detail-facturation/detail-facturation.component';
+import { DetailHonoraireComponent } from './honoraire/detail-honoraire/detail-honoraire.component';
 
 const routes: Routes = [
   { path: "", redirectTo: "enfant", pathMatch: "full" }, // ou "enfant", comme tu veux
@@ -39,6 +40,7 @@ const routes: Routes = [
   { path: "genre", component: ListGenreComponent },
   { path: "groupe_sanguin", component: ListGroupeSanguinComponent },
   { path: "honoraire", component: ListHonoraireComponent },
+  { path: "honoraire/:id_honoraire", component: DetailHonoraireComponent },
   { path: "lien_parente", component: ListLienParenteComponent },
   { path: "mensualite_structure", component: ListMensualiteStructureComponent },
   { path: "parent", component: ListParentComponent },

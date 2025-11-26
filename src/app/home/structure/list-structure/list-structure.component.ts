@@ -6,10 +6,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
   import { NgSelectModule } from '@ng-select/ng-select';
 import { StructureTafType } from '../taf-type/structure-taf-type';
   import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
   @Component({
     selector: 'app-list-structure',
     standalone: true, // Composant autonome
-    imports: [FormsModule,NgSelectModule], // Dépendances importées
+    imports: [FormsModule,NgSelectModule,CommonModule], // Dépendances importées
     templateUrl: './list-structure.component.html',
     styleUrls: ['./list-structure.component.scss']
   })

@@ -1,0 +1,123 @@
+<!-- TOP BAR -->
+<div class="invoice-topbar" *ngIf="details">
+  <div class="topbar-left">
+    <h2 class="topbar-title">Détail de l'honoraire</h2>
+    <span class="topbar-badge">
+      {{ details.libelle_statut_honoraire }}
+    </span>
+  </div>
+
+  <div class="topbar-center">
+    <span class="topbar-meta">
+      N° {{ numeroFiche() }} ·
+      {{ fullname() }} ·
+      {{ details.date_honoraire | date:'MM/yyyy' }}
+    </span>
+  </div>
+
+  <div class="topbar-right invoice-actions">
+    <button type="button" class="btn-action" (click)="goBack()">
+      <span class="icon">←</span><span>Retour</span>
+    </button>
+    <button type="button" class="btn-action" (click)="downloadPdf()">
+      <span class="icon">⤓</span><span>PDF</span>
+    </button>
+  </div>
+</div>
+
+<!-- CONTENU -->
+<div class="invoice-container" *ngIf="details">
+
+  <!-- En-tête: structure -->
+  <header class="invoice-header">
+    <div class="logo-area">
+      <div class="logo-placeholder">
+        <span class="logo-title">{{ details.nom_structure }}</span>
+        <span class="logo-slogan">Crèche & Maternelle · Ninea: {{ details.ninea }}</span>
+      </div>
+    </div>
+    <div class="school-info">
+      <p>Adresse: {{ details.adresse_structure }}</p>
+      <p>Tél: {{ details.telephone_structure }}</p>
+      <p>Nom court: {{ details.nom_court }}</p>
+      <p>Statut: {{ details.libelle_statut_honoraire }}</p>
+    </div>
+  </header>
+
+  <!-- Infos honoraire -->
+  <section class="invoice-details">
+    <h1 class="invoice-title">
+      Fiche d'honoraire N° <span class="invoice-number">{{ numeroFiche() }}</span>
+    </h1>
+
+    <div class="client-info">
+      <p class="client-name">Employé: {{ fullname() }}</p>
+      <p class="invoice-label">Libellé: {{ details.libelle_honoraire }}</p>
+    </div>
+  </section>
+
+  <!-- Tableau récap (1 ligne) -->
+  <section class="items-table">
+    <table>
+      <thead>
+        <tr>
+          <th class="ref">N° fiche</th>
+          <th class="designation">Libellé</th>
+          <th class="price">Montant brut</th>
+          <th class="discount">Montant retenue (BRS : 5%)</th>
+          <th class="amount">Montant net perçu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ref">{{ numeroFiche() }}</td>
+          <td class="designation">{{ details.libelle_honoraire }}</td>
+          <td class="price">{{ details.montant_brut | currency:'XOF':'symbol':'1.0-0':'fr' }}</td>
+          <td class="discount">{{ details.brs | currency:'XOF':'symbol':'1.0-0':'fr' }}</td>
+          <td class="amount">{{ details.montant_recu | currency:'XOF':'symbol':'1.0-0':'fr' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Totaux -->
+  <section class="invoice-totals">
+    <p>
+      Arrêté le présent état à la somme de {{ getNetEnLettres() }}.
+    </p>
+
+    <div class="totals-box">
+      <div class="total-line">
+        <span>Montant brut</span>
+        <span class="value">{{ details.montant_brut | currency:'XOF':'symbol':'1.0-0':'fr' }}</span>
+      </div>
+      <div class="total-line">
+        <span>Retenue BRS (5%)</span>
+        <span class="value">- {{ details.brs | currency:'XOF':'symbol':'1.0-0':'fr' }}</span>
+      </div>
+      <div class="total-line net-a-payer">
+        <span>NET À PAYER</span>
+        <span class="value">{{ details.montant_recu | currency:'XOF':'symbol':'1.0-0':'fr' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pied -->
+  <footer class="invoice-footer">
+    <p>Émis le {{ details.date_honoraire | date:'dd/MM/yyyy' }} ({{ details.libelle_statut_honoraire }})</p>
+    <div class="signature-box">
+      <p>Cachet et Signature</p>
+    </div>
+  </footer>
+
+  <!-- Chargement -->
+  <div class="loading-overlay" *ngIf="loading_get_detail_honoraire">
+    <div class="spinner"></div>
+    <p>Chargement des détails…</p>
+  </div>
+</div>
+
+<!-- Alerte si rien -->
+<div class="alert-message" *ngIf="!details && !loading_get_detail_honoraire">
+  Aucune donnée d’honoraire trouvée pour l’ID {{ id_honoraire }}.
+</div>

@@ -6,7 +6,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
   import { NgSelectModule } from '@ng-select/ng-select';
 import { FacturationTafType } from '../taf-type/facturation-taf-type';
   import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import {  RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
   @Component({
     selector: 'app-list-facturation',
@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
     };
     @Input()
     id_facturation: number | null = null;
-    constructor(public api: ApiService,private modalService: NgbModal,private router: Router) {
+    constructor(public api: ApiService,private modalService: NgbModal) {
   
     }
     ngOnInit(): void {
@@ -89,6 +89,7 @@ import { CommonModule } from '@angular/common';
 
         return search// && text
       })
+      console.log("Facturation filtrée = ",this.list)
     }
     delete_facturation (facturation : any){
       this.loading_delete_facturation = true;
@@ -164,4 +165,10 @@ import { CommonModule } from '@angular/common';
     if (lib.includes('annul')) return 'bg-danger-subtle text-danger';
     return 'bg-light text-secondary';
   }
+
+trackByFacturation(index: number, item: FacturationTafType): string | number {
+  // si id_facturation existe, on l’utilise, sinon on tombe sur l’index
+  return item.id_facturation ?? index;
+}
+
   }

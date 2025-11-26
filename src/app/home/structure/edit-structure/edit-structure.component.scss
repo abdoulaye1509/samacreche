@@ -1,0 +1,15 @@
+.cam-card {
+  width: 72px;
+  height: 72px;
+  border: 2px dashed #ced4da;
+  border-radius: .5rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.card-img-top {
+  max-width: 160px;
+  max-height: 160px;
+  object-fit: contain;
+}

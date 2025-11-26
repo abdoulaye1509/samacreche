@@ -1,0 +1,42 @@
+.invoice-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0 !important;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    border-color: #004d40 !important;
+  }
+}
+
+.avatar-sm {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+
+.hover-shadow {
+  transition: all 0.3s ease;
+}
+
+// Amélioration du ng-select
+::ng-deep .custom-select .ng-select-container {
+  border-radius: 12px !important;
+  border: 1px solid #ced4da;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+::ng-deep .ng-select.ng-select-focused .ng-select-container {
+  border-color: #004d40;
+  box-shadow: 0 0 0 0.2rem rgba(0, 77, 64, 0.25);
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+// Badge plus joli
+.badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+}

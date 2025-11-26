@@ -94,90 +94,51 @@
               }
             </div>
 
-            <!-- Champ Logo Structure -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="logo_structure">Logo Structure</label>
-              <input id="logo_structure" class="form-control" 
-                     type="text" 
-                     formControlName="logo_structure" 
-                     placeholder="Logo Structure"  
-                     [ngClass]="{ 'is-invalid': submitted && f.logo_structure.errors }"/>
-              @if (submitted && f.logo_structure.errors) {
-                <div class="invalid-feedback">
-                  @if (f.logo_structure.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
+     <!-- Champ Logo Structure -->
+<div class="form-group col-sm-12">
+  <label class="form-label d-block">Logo de la structure</label>
 
-            <!-- Champ Created At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_at">Created At</label>
-              <input id="created_at" class="form-control" 
-                     type="text" 
-                     formControlName="created_at" 
-                     placeholder="Created At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
-              @if (submitted && f.created_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
+  <div class="d-flex align-items-center gap-3">
+    <!-- carte cliquable -->
+    <div class="cam-card" (click)="logoInput.click()">
+      <i class="bi bi-camera fs-2"></i>
+    </div>
 
-            <!-- Champ Updated At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_at">Updated At</label>
-              <input id="updated_at" class="form-control" 
-                     type="text" 
-                     formControlName="updated_at" 
-                     placeholder="Updated At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
-              @if (submitted && f.updated_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
+    <div class="d-flex flex-column gap-2">
+      <button type="button" class="btn btn-outline-secondary btn-sm"
+              (click)="logoInput.click()">
+        <i class="bi bi-upload me-1"></i> Choisir un logo
+      </button>
+      <button type="button" class="btn btn-outline-danger btn-sm"
+              (click)="clearLogo()"
+              [disabled]="!logoFile">
+        <i class="bi bi-x-circle me-1"></i> Retirer le logo
+      </button>
+      <div class="small text-muted">
+        1 image max, {{maxLogoSizeMb}} Mo max (JPG/PNG/WEBP/GIF).
+      </div>
 
-            <!-- Champ Created By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_by">Created By</label>
-              <input id="created_by" class="form-control" 
-                     type="text" 
-                     formControlName="created_by" 
-                     placeholder="Created By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
-              @if (submitted && f.created_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
+      <div class="text-danger small" *ngIf="logoError">
+        {{ logoError }}
+      </div>
+    </div>
+  </div>
 
-            <!-- Champ Updated By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_by">Updated By</label>
-              <input id="updated_by" class="form-control" 
-                     type="text" 
-                     formControlName="updated_by" 
-                     placeholder="Updated By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
-              @if (submitted && f.updated_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
+  <!-- input fichier caché -->
+  <input type="file"
+         class="d-none"
+         accept="image/*"
+         #logoInput
+         (change)="onLogoSelected($event)">
+
+  <!-- preview -->
+  <div class="mt-3" *ngIf="logoPreviewUrl">
+    <img [src]="logoPreviewUrl" class="card-img-top rounded border" alt="Logo structure">
+  </div>
+</div>
+
+
+          
       </form>
     </div>
     <div class="modal-footer">
