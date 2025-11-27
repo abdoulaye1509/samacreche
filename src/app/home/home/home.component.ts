@@ -31,51 +31,38 @@ export class HomeComponent implements OnInit {
   get_utilisateur() {
     console.log("id_utilisateur dans get_utilisateur", this.api.token.user_connected.id_utilisateur);
     this.api.loading_get_utilisateur = true;
-    this.api.taf_post_object('utilisateur/auth',{ 'u.id_utilisateur': this.api.token.user_connected.id_utilisateur },
+    this.api.taf_post_object('utilisateur/auth', { 'u.id_utilisateur': this.api.token.user_connected.id_utilisateur },
       async (reponse: any) => {
-        // if (reponse.status) {
-        //   const droits = this.normalizeLesDroits(reponse?.data?.action);
-        //   this.api.les_droits = droits;
-        //   console.log('droits= ', this.api.les_droits);
-        //   await this.api.save_on_local_storage("les_droits", droits);
-        //   this.api.custom_menu();
-        //   // console.log('auth= ', reponse);
-        //   this.api.user_connected = reponse.data;
-        //   console.log('utilisateur/auth= ', this.api.user_connected);
-        //   setTimeout(() => {
-        //     this.api.loading_get_utilisateur = false;
-        //   }, 500);
-        // } 
+       
         if (reponse.status) {
-  const droits = this.normalizeLesDroits(reponse?.data?.action);
-  this.api.les_droits = droits;
-  console.log('droits= ', this.api.les_droits);
-  await this.api.save_on_local_storage("les_droits", droits);
-  this.api.custom_menu();
+          // const droits = this.normalizeLesDroits(reponse?.data?.action);
+          // this.api.les_droits = droits;
+          // console.log('droits dans home = ', this.api.les_droits);
+          // await this.api.save_on_local_storage("les_droits", droits);
+          // this.api.custom_menu();
+          // 🔹 1) Mémoriser l'utilisateur dans le service
+          this.api.user_connected = reponse.data;
+          console.log('utilisateur/auth= ', this.api.user_connected);
 
-  // 🔹 1) Mémoriser l'utilisateur dans le service
-  this.api.user_connected = reponse.data;
-  console.log('utilisateur/auth= ', this.api.user_connected);
+          // 🔹 2) Sauvegarder en local (IndexedDB) pour les prochains rechargements
+          await this.api.save_on_local_storage('user_connected', reponse.data);
 
-  // 🔹 2) Sauvegarder en local (IndexedDB) pour les prochains rechargements
-  await this.api.save_on_local_storage('user_connected', reponse.data);
+          // 🔹 3) (optionnel mais pratique) mettre à jour infos.current_structure
+          this.api.infos.current_structure = {
+            id_structure: reponse.data.id_structure,
+            nom_structure: reponse.data.nom_structure,
+            adresse_structure: reponse.data.adresse_structure,
+            telephone_structure: reponse.data.telephone_structure,
+            logo_structure: reponse.data.logo_structure,
+            id_statut_structure: reponse.data.id_statut_structure,
+            nom_court: reponse.data.nom_court,
+          };
+          await this.api.save_on_local_storage('infos', this.api.infos);
 
-  // 🔹 3) (optionnel mais pratique) mettre à jour infos.current_structure
-  this.api.infos.current_structure = {
-    id_structure: reponse.data.id_structure,
-    nom_structure: reponse.data.nom_structure,
-    adresse_structure: reponse.data.adresse_structure,
-    telephone_structure: reponse.data.telephone_structure,
-    logo_structure: reponse.data.logo_structure,
-    id_statut_structure: reponse.data.id_statut_structure,
-    nom_court: reponse.data.nom_court,
-  };
-  await this.api.save_on_local_storage('infos', this.api.infos);
-
-  setTimeout(() => {
-    this.api.loading_get_utilisateur = false;
-  }, 500);
-}
+          setTimeout(() => {
+            this.api.loading_get_utilisateur = false;
+          }, 500);
+        }
 
         else {
           console.log("L'opération sur la table utilisateur a échoué. Réponse= ", reponse);

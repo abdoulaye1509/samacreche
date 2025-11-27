@@ -70,47 +70,92 @@ export class ListLoginComponent implements OnInit, OnDestroy {
     return [];
   }
 
-  login_login(login: any) {
-    this.loading_login_login = true;
-    // Remets 'taf_auth/auth' si ton backend n'a pas 'auth2'
-    this.api.taf_post_login('taf_auth/auth', login, async (reponse: any) => {
-      try {
-        if (reponse?.status) {
-          // 1) token
-          await this.api.save_on_local_storage('token', reponse.data);
+  // login_login(login: any) {
+  //   this.loading_login_login = true;
+  //   // Remets 'taf_auth/auth' si ton backend n'a pas 'auth2'
+  //   this.api.taf_post_login('taf_auth/auth2', login, async (reponse: any) => {
+  //     try {
+  //       if (reponse?.status) {
+  //         // 1) token
+  //         await this.api.save_on_local_storage('token', reponse.data);
 
-          // 2) droits
-          const droits = this.normalizeLesDroits(reponse?.les_droits) || [];
-          this.api.les_droits = droits;
-          await this.api.save_on_local_storage('les_droits', droits);
+  //         // 2) droits
+  //         const droits = this.normalizeLesDroits(reponse?.les_droits) || [];
+  //         this.api.les_droits = droits;
+  //         await this.api.save_on_local_storage('les_droits', droits);
 
-          // 3) seed 'infos' pour usage futur
-          await this.api.update_infos({
-            token_key: reponse.data,
-            utilisateur: { les_droits_utilisateur: JSON.stringify(droits) },
-            les_structures: reponse?.les_structures || [],
-          });
+  //         // 3) seed 'infos' pour usage futur
+  //         await this.api.update_infos({
+  //           token_key: reponse.data,
+  //           utilisateur: { les_droits_utilisateur: JSON.stringify(droits) },
+  //           les_structures: reponse?.les_structures || [],
+  //         });
 
-          // 4) refresh contexte + menu
-          await this.api.update_data_from_token();
-          this.api.custom_menu();
+  //         // 4) refresh contexte + menu
+  //         await this.api.update_data_from_token();
+  //         this.api.custom_menu();
 
-          this.api.Swal_success('Opération éffectuée avec succès');
-          this.onReset_login_login();
+  //         this.api.Swal_success('Opération éffectuée avec succès');
+  //         this.onReset_login_login();
 
-          // 5) retour vers la page demandée
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/home';
-          this.router.navigateByUrl(returnUrl);
-        } else {
-          this.api.Swal_error("L'opération a échoué");
-        }
-      } finally {
-        this.loading_login_login = false;
+  //         // 5) retour vers la page demandée
+  //         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/home';
+  //         this.router.navigateByUrl(returnUrl);
+  //       } else {
+  //         this.api.Swal_error("L'opération a échoué");
+  //       }
+  //     } finally {
+  //       this.loading_login_login = false;
+  //     }
+  //   }, (_err: any) => {
+  //     this.loading_login_login = false;
+  //   });
+  // }
+login_login(login: any) {
+  this.loading_login_login = true;
+
+  this.api.taf_post_login('taf_auth/auth2', login, async (reponse: any) => {
+    try {
+      console.log('Réponse auth2 = ', reponse);
+
+      if (reponse?.status) {
+        // 1) token
+        await this.api.save_on_local_storage('token', reponse.data);
+
+        // 2) droits depuis auth2.php
+        const droits = this.normalizeLesDroits(reponse?.les_droits) || [];
+        console.log('Droits reçus du backend = ', droits);
+
+        this.api.les_droits = droits;
+        await this.api.save_on_local_storage('les_droits', droits);
+
+        // 3) seed "infos" (pour AuthGuard & co)
+        await this.api.update_infos({
+          token_key: reponse.data,
+          utilisateur: { les_droits_utilisateur: JSON.stringify(droits) },
+          les_structures: reponse?.les_structures || [],
+        });
+
+        // 4) refresh token + menu
+        await this.api.update_data_from_token();
+        this.api.custom_menu();
+        console.log('Menu après login = ', this.api.menu);
+
+        this.api.Swal_success('Opération éffectuée avec succès');
+        this.onReset_login_login();
+
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/home';
+        this.router.navigateByUrl(returnUrl);
+      } else {
+        this.api.Swal_error("L'opération a échoué");
       }
-    }, (_err: any) => {
+    } finally {
       this.loading_login_login = false;
-    });
-  }
+    }
+  }, (_err: any) => {
+    this.loading_login_login = false;
+  });
+}
 
   
 }

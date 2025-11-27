@@ -6,10 +6,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
   import { NgSelectModule } from '@ng-select/ng-select';
 import { PrivilegeTafType } from '../taf-type/privilege-taf-type';
   import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
   @Component({
     selector: 'app-list-privilege',
     standalone: true, // Composant autonome
-    imports: [FormsModule,NgSelectModule], // Dépendances importées
+    imports: [FormsModule,NgSelectModule,CommonModule], // Dépendances importées
     templateUrl: './list-privilege.component.html',
     styleUrls: ['./list-privilege.component.scss']
   })
@@ -91,7 +92,7 @@ import { PrivilegeTafType } from '../taf-type/privilege-taf-type';
       let options: any = {
         centered: true,
         scrollable: true,
-        size: "lg"//'sm' | 'lg' | 'xl' | string
+        size: "xl"//'sm' | 'lg' | 'xl' | string
       }
       const modalRef = this.modalService.open(AddPrivilegeComponent, { ...options, backdrop: 'static' })
       modalRef.result.then((result: any) => {
@@ -107,7 +108,7 @@ import { PrivilegeTafType } from '../taf-type/privilege-taf-type';
       let options: any = {
         centered: true,
         scrollable: true,
-        size: "lg"//'sm' | 'lg' | 'xl' | string
+        size: "xl"//'sm' | 'lg' | 'xl' | string
       }
       const modalRef = this.modalService.open(EditPrivilegeComponent, { ...options, backdrop: 'static', })
       modalRef.componentInstance.privilege_to_edit = one_privilege;

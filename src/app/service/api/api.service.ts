@@ -1106,69 +1106,115 @@ export class ApiService {
     this.route.navigate(['/login']); // ou ['/'] selon ta route de connexion
   }
 
-  // ---------- DROITS (source unique)
-  private parseMaybeString(x: any): any[] {
-    if (!x) return [];
-    if (Array.isArray(x)) return x;
-    try { const j = JSON.parse(x); return Array.isArray(j) ? j : []; } catch { return []; }
+ private parseMaybeString(x: any): any[] {
+  if (!x) return [];
+  if (Array.isArray(x)) return x;
+  try {
+    const j = JSON.parse(x);
+    return Array.isArray(j) ? j : [];
+  } catch {
+    return [];
+  }
+}
+
+effectiveDroits(): any[] {
+  if (Array.isArray(this.les_droits) && this.les_droits.length) {
+    return this.les_droits;
+  }
+  return this.parseMaybeString(this.infos?.les_droits_utilisateur);
+}
+
+can(id: string): boolean {
+  const droits = this.effectiveDroits();
+
+  // super admin support Jambar (id_utilisateur = 1)
+  if (this.infos?.token?.user_connected?.id_utilisateur == 1) {
+    return true;
   }
 
-  /** renvoie toujours le set de droits effectif, que ça vienne de les_droits OU de infos.les_droits_utilisateur */
-  effectiveDroits(): any[] {
-    const a = this.parseMaybeString(this.les_droits);
-    if (a.length) return a;
-    return this.parseMaybeString(this.infos?.les_droits_utilisateur);
+  if (!droits || !droits.length) return false;
+
+  return droits.some((d: any) =>
+    d.id === id ||
+    d.id?.includes(id) ||
+    id?.includes(d.id)
+  );
+}
+
+custom_menu() {
+  const droits = this.effectiveDroits();
+
+  if ((!droits || !droits.length) &&
+      this.infos?.token?.user_connected?.id_utilisateur != 1) {
+    this.menu = [];
+    console.log('MENU vide (aucun droit)', droits);
+    return;
   }
 
-  can(id: string) {
-    // console.log(this.infos.token.user_connected, 'user_connected');
-    if (this.infos.token.user_connected.id_utilisateur == 1) {// ne pas restreindre les droits de l'administrateur JANT TECH support
-      return true
-    }
-    return this.les_droits.some((a: any) =>
-      a.id === id || a.id.includes(id) || id.includes(a.id)
-    );
-  }
-  custom_menu() {
-    this.menu = this.full_menu.filter((one: any) => {// pour chaque module
-      return this.can(one.path)
-    })
-    console.log('this.menu', this.menu);
-    //.filter((one: any) => one.items.length > 0)// filtrer la module non vide
-  }
+  this.menu = this.full_menu
+    .map((module: any) => {
+      const allowedActions = (module.les_actions || []).filter((act: any) =>
+        this.can(act.id)
+      );
 
+      const allowedChildren = (module.children || []).filter((child: any) =>
+        this.can(child.path)
+      );
 
+      const visible =
+        this.can(module.path) ||
+        allowedActions.length > 0 ||
+        allowedChildren.length > 0;
 
-  // ---------- infos
-  async update_infos(new_infos?: any) {
-    if (!new_infos) {
-      this.infos = await this.get_from_local_storage('infos');
-    } else if (!new_infos.token_key) {
-      this.infos.utilisateur = new_infos.utilisateur;
-      this.infos.les_structures = new_infos.les_structures;
-      const idx = this.infos.les_structures.findIndex((s: any) => s.id_structure == this.infos.current_structure?.id_structure);
-      this.infos.current_structure = this.infos.les_structures[idx || 0];
-      // si les droits utilisateur sont déjà donnés, garde-les
-      this.infos.les_droits_utilisateur = this.parseMaybeString(this.infos.utilisateur?.les_droits_utilisateur);
-    } else {
-      this.infos = new_infos;
-      const helper = new JwtHelperService();
-      const tk = this.infos.token_key;
-      this.infos.token = {
-        token_key: tk,
-        token_decoded: helper.decodeToken(tk),
-        user_connected: helper.decodeToken(tk)?.taf_data,
-        is_expired: helper.isTokenExpired(tk),
-        date_expiration: helper.getTokenExpirationDate(tk),
+      if (!visible) return null;
+
+      return {
+        ...module,
+        les_actions: allowedActions,
+        children: allowedChildren
       };
-      this.infos.current_structure = this.infos.les_structures?.[0] || {};
-      this.infos.les_droits_utilisateur = this.parseMaybeString(this.infos.utilisateur?.les_droits_utilisateur);
-    }
+    })
+    .filter((m: any) => m !== null);
 
-    await this.save_on_local_storage('infos', this.infos);
-    // reconstruit le menu à partir des droits effectifs
-    this.custom_menu();
+  console.log('MENU construit :', this.menu);
+}
+
+
+
+async update_infos(new_infos?: any) {
+  if (!new_infos) {
+    this.infos = await this.get_from_local_storage('infos');
+  } else if (!new_infos.token_key) {
+    this.infos.utilisateur = new_infos.utilisateur;
+    this.infos.les_structures = new_infos.les_structures;
+    const idx = this.infos.les_structures
+      .findIndex((s: any) => s.id_structure == this.infos.current_structure?.id_structure);
+    this.infos.current_structure = this.infos.les_structures[idx || 0];
+    this.infos.les_droits_utilisateur =
+      this.parseMaybeString(this.infos.utilisateur?.les_droits_utilisateur);
+    this.les_droits = this.infos.les_droits_utilisateur;
+  } else {
+    this.infos = new_infos;
+    const helper = new JwtHelperService();
+    const tk = this.infos.token_key;
+    this.infos.token = {
+      token_key: tk,
+      token_decoded: helper.decodeToken(tk),
+      user_connected: helper.decodeToken(tk)?.taf_data,
+      is_expired: helper.isTokenExpired(tk),
+      date_expiration: helper.getTokenExpirationDate(tk),
+    };
+    this.infos.current_structure = this.infos.les_structures?.[0] || {};
+    this.infos.les_droits_utilisateur =
+      this.parseMaybeString(this.infos.utilisateur?.les_droits_utilisateur);
+    this.les_droits = this.infos.les_droits_utilisateur;
   }
+
+  await this.save_on_local_storage('infos', this.infos);
+  this.custom_menu();
+}
+
+
 
   async ensure_infos(): Promise<any | null> {
     const existing = await this.get_from_local_storage('infos');

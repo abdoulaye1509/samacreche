@@ -1,137 +1,111 @@
-<div class="modal-header" data-bs-theme="ligth">
-      <h1 class="modal-title fs-5">Ajouter privilege</h1>
-      <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+<!-- add-privilege.component.html -->
+<div class="modal-header bg-light border-bottom">
+  <h1 class="modal-title fs-5 fw-bold text-dark">Ajouter un privilège</h1>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+</div>
+
+<div class="modal-body bg-light p-4">
+  <form [formGroup]="reactiveForm_add_privilege" (ngSubmit)="onSubmit_add_privilege()" #form_add_privilege="ngForm"
+    class="row g-4">
+    <!-- Libellé -->
+    <div class="col-md-6">
+      <label for="nom_privilege" class="form-label fw-semibold text-muted">Libellé</label>
+      <input id="nom_privilege" class="form-control shadow-sm" type="text" formControlName="nom_privilege"
+        placeholder="Admin" [ngClass]="{ 'is-invalid': submitted && f['nom_privilege'].errors }" />
+      <div *ngIf="submitted && f['nom_privilege'].errors" class="invalid-feedback">
+        <div *ngIf="f['nom_privilege'].errors['required']">Le libellé est requis</div>
+      </div>
     </div>
-    <div class="modal-body">
-      <form [formGroup]="reactiveForm_add_privilege" 
-            (ngSubmit)="onSubmit_add_privilege()" 
-            #form_add_privilege="ngForm" 
-            class="row">
-        
-            <!-- Champ Nom Privilege -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="nom_privilege">Nom Privilege</label>
-              <input id="nom_privilege" class="form-control" 
-                     type="text" 
-                     formControlName="nom_privilege" 
-                     placeholder="Nom Privilege"  
-                     [ngClass]="{ 'is-invalid': submitted && f.nom_privilege.errors }"/>
-              @if (submitted && f.nom_privilege.errors) {
-                <div class="invalid-feedback">
-                  @if (f.nom_privilege.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
 
-            <!-- Champ Description Privilege -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="description_privilege">Description Privilege</label>
-              <input id="description_privilege" class="form-control" 
-                     type="text" 
-                     formControlName="description_privilege" 
-                     placeholder="Description Privilege"  
-                     [ngClass]="{ 'is-invalid': submitted && f.description_privilege.errors }"/>
-              @if (submitted && f.description_privilege.errors) {
-                <div class="invalid-feedback">
-                  @if (f.description_privilege.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Les Droits -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="les_droits">Les Droits</label>
-              <input id="les_droits" class="form-control" 
-                     type="text" 
-                     formControlName="les_droits" 
-                     placeholder="Les Droits"  
-                     [ngClass]="{ 'is-invalid': submitted && f.les_droits.errors }"/>
-              @if (submitted && f.les_droits.errors) {
-                <div class="invalid-feedback">
-                  @if (f.les_droits.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_at">Created At</label>
-              <input id="created_at" class="form-control" 
-                     type="text" 
-                     formControlName="created_at" 
-                     placeholder="Created At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
-              @if (submitted && f.created_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_at">Updated At</label>
-              <input id="updated_at" class="form-control" 
-                     type="text" 
-                     formControlName="updated_at" 
-                     placeholder="Updated At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
-              @if (submitted && f.updated_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_by">Created By</label>
-              <input id="created_by" class="form-control" 
-                     type="text" 
-                     formControlName="created_by" 
-                     placeholder="Created By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
-              @if (submitted && f.created_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_by">Updated By</label>
-              <input id="updated_by" class="form-control" 
-                     type="text" 
-                     formControlName="updated_by" 
-                     placeholder="Updated By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
-              @if (submitted && f.updated_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-      </form>
+    <!-- Description -->
+    <div class="col-md-6">
+      <label for="description_privilege" class="form-label fw-semibold text-muted">Description</label>
+      <input id="description_privilege" class="form-control shadow-sm" type="text" formControlName="description_privilege"
+        placeholder="Entrez une description_privilege" [ngClass]="{ 'is-invalid': submitted && f['description_privilege'].errors }" />
+      <div *ngIf="submitted && f['description_privilege'].errors" class="invalid-feedback">
+        <div *ngIf="f['description_privilege'].errors['required']">La description est requise</div>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary m-2" [disabled]="loading_add_privilege || loading_get_details_add_privilege_form"
-      (click)="form_add_privilege.ngSubmit.emit()">
-      {{ loading_add_privilege ? "En cours ..." : "Valider" }}
+
+
+    <!-- Checkbox list for rights -->
+    <div class="col-12 mt-2">
+      <label class="form-label fw-bold text-primary">Sélectionner les droits</label>
+      <div class="card shadow-sm border-0" style="max-height: 300px; overflow-y: auto;">
+        <div class="accordion accordion-flush" id="rightsAccordion">
+          <ng-container *ngFor="let one_menu of full_menu_copie; let i = index">
+            <div class="accordion-item border-bottom">
+              <h2 class="accordion-header">
+                <button class="accordion-button fw-semibold" [ngClass]="{ 'collapsed': i !== 0 }" type="button"
+                  data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i"
+                  [attr.aria-expanded]="i === 0 ? 'true' : 'false'" [attr.aria-controls]="'collapse' + i">
+                  {{ one_menu.name }}
+                </button>
+              </h2>
+              <div [id]="'collapse' + i" class="accordion-collapse collapse" [ngClass]="{ 'show': i === 0 }"
+                data-bs-parent="#rightsAccordion">
+                <div class="accordion-body py-2">
+                  <!-- ✅ Master checkbox pour ce menu -->
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" [id]="'check-all-' + i"
+                      [checked]="isAllChecked(one_menu)" 
+                       (change)="toggleAllForMenu(one_menu, $event)" />
+                    <label class="form-check-label fw-semibold" [for]="'check-all-' + i">
+                      Tout sélectionner / désélectionner
+                    </label>
+                  </div>
+
+                  <hr class="my-2">
+                  <div class="form-check mb-2" *ngFor="let action of one_menu.les_actions">
+                    <input class="form-check-input" type="checkbox" [id]="'checkbox-' + action.id"
+                      [(ngModel)]="action.checked" [ngModelOptions]="{ standalone: true }"
+                      (change)="toggleDroit(action)" />
+                    <label class="form-check-label text-secondary" [for]="'checkbox-' + action.id">
+                      {{ action.action }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des droits sélectionnés -->
+    <div class="col-12 mt-3">
+      <h6 class="fw-bold text-primary mb-3">Droits sélectionnés</h6>
+      <div *ngIf="les_droits.length === 0" class="alert alert-info text-center py-2" role="alert">
+        Aucun droit sélectionné pour l’instant
+      </div>
+      <div *ngIf="les_droits.length > 0" class="card shadow-sm border-0">
+        <ul class="list-group list-group-flush">
+          <li *ngFor="let droit of les_droits; let i = index"
+            class="list-group-item d-flex justify-content-between align-items-center py-2 animate__animated animate__fadeIn">
+            <span class="text-secondary">{{ droit.action }}</span>
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="retirerDroit(droit)"
+              aria-label="Supprimer">
+              <i class="bi bi-x-circle"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer bg-light border-top mt-3">
+      <button (click)="form_add_privilege.ngSubmit.emit()" type="submit" class="btn btn-primary fw-semibold px-4"
+        [disabled]="loading_add_privilege">
+        <span *ngIf="loading_add_privilege" class="spinner-border spinner-border-sm me-2" role="status"
+          aria-hidden="true"></span>
+        {{ loading_add_privilege ? 'En cours...' : 'Valider' }}
       </button>
-      <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
+      <button type="button" class="btn btn-outline-secondary fw-semibold px-4" (click)="onReset_add_privilege()">
+        Réinitialiser
+      </button>
+      <button type="button" class="btn btn-outline-danger fw-semibold px-4" (click)="activeModal.close()">
+        Fermer
+      </button>
     </div>
+  </form>
+</div>
