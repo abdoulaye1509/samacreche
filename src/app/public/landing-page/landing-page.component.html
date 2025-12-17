@@ -1,0 +1,368 @@
+<div class="landing-wrapper">
+
+  <header class="landing-nav shadow-sm">
+    <div class="container-xl nav-inner">
+      <div class="nav-left">
+        <div class="logo-circle">
+          <img src="assets/images/logo.png" alt="Sama Crèche" />
+        </div>
+        <span class="brand-name">Sama Crèche</span>
+      </div>
+
+      <nav class="nav-center d-none d-md-flex">
+        <a href="#features">Fonctionnalités</a>
+        <a href="#benefits">Bénéfices</a>
+        <a href="#gallery">Galerie</a>
+        <a href="#team">Équipe</a>
+        <a href="#pricing">Tarifs</a>
+      </nav>
+
+      <div class="nav-right">
+        <a class="btn btn-ghost" routerLink="/login">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Connexion
+        </a>
+        <a class="btn btn-primary d-none d-sm-inline-flex" href="#demo">
+          Demander une démo
+        </a>
+        <button class="nav-toggle d-md-none" type="button" (click)="showMobile = !showMobile">
+          <i class="bi" [ngClass]="showMobile ? 'bi-x-lg' : 'bi-list'"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="nav-mobile" *ngIf="showMobile">
+      <a href="#features" (click)="showMobile=false">Fonctionnalités</a>
+      <a href="#benefits" (click)="showMobile=false">Bénéfices</a>
+      <a href="#gallery" (click)="showMobile=false">Galerie</a>
+      <a href="#team" (click)="showMobile=false">Équipe</a>
+      <a href="#pricing" (click)="showMobile=false">Tarifs</a>
+      <a routerLink="/login" (click)="showMobile=false">Connexion</a>
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <div class="container-xl hero-grid">
+      <div class="hero-text animate-fade-in-up">
+        <div class="hero-badge">
+          <i class="bi bi-stars"></i>
+          Plateforme de gestion **100% dédiée** aux crèches
+        </div>
+        <h1>
+          Organisez votre crèche,<br />
+          <span class="text-primary">simplifiez la journée des enfants.</span>
+        </h1>
+        <p class="hero-subtitle">
+          **Sama Crèche** centralise les présences, les plannings, la facturation
+          et la communication avec les parents dans une interface **simple, moderne et intuitive**.
+        </p>
+
+        <div class="hero-actions">
+          <a routerLink="/login" class="btn btn-primary btn-lg">
+            <i class="bi bi-lightning-charge me-1"></i> Accéder à mon espace
+          </a>
+          <a href="#demo" class="btn btn-outline-dark btn-lg">
+            <i class="bi bi-play-circle me-1"></i> Voir une démo
+          </a>
+        </div>
+
+        <div class="hero-metas">
+          <div>
+            <strong>+50</strong>
+            <span>enfants suivis au quotidien</span>
+          </div>
+          <div>
+            <strong>Temps gagné</strong>
+            <span>+2h par jour pour votre équipe</span>
+          </div>
+          <div>
+            <strong>Local</strong>
+            <span>Hébergement sécurisé au Sénégal</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual animate-fade-in-right">
+        <div class="mockup-screen shadow-lg">
+          <div class="screen-header">
+            <i class="bi bi-menu-app me-2"></i> Tableau de bord
+          </div>
+          <div class="screen-body">
+            <div class="card-sm">
+              <div class="card-title">Enfants du jour</div>
+              <ul class="list-sm">
+                <li><i class="bi bi-check-circle-fill status-present"></i> Mouhamed A. <span class="badge-time">08h15</span></li>
+                <li><i class="bi bi-clock-fill status-late"></i> Aïcha B. <span class="badge-time">Attendu</span></li>
+                <li><i class="bi bi-check-circle-fill status-present"></i> Fatou N. <span class="badge-time">08h30</span></li>
+              </ul>
+            </div>
+            <div class="card-sm bg-primary-soft text-primary">
+              <div class="card-title">Prochaine activité</div>
+              <i class="bi bi-palette me-1"></i> Atelier peinture à **10h00**
+            </div>
+            <div class="card-sm">
+                <div class="card-title">Facture à payer</div>
+                <div class="amount-detail">54 000 CFA <span class="status-pending">En attente</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="features">
+    <div class="container-xl">
+      <div class="section-head">
+        <h2>Une plateforme **tout-en-un** pour la gestion de votre crèche</h2>
+        <p>Centralisez votre organisation, de l'accueil du matin à la facturation, en passant par le suivi pédagogique.</p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card animate-fade-in-up" style="animation-delay: 0.1s;">
+          <div class="icon-circle primary">
+            <i class="bi bi-calendar-week"></i>
+          </div>
+          <h3>Plannings & Présences</h3>
+          <p>
+            Gérez les plannings de votre équipe et des enfants. Enregistrez les arrivées/départs en un clic.
+          </p>
+        </article>
+
+        <article class="feature-card animate-fade-in-up" style="animation-delay: 0.2s;">
+          <div class="icon-circle success">
+            <i class="bi bi-emoji-smile"></i>
+          </div>
+          <h3>Suivi Pédagogique Détaillé</h3>
+          <p>
+            Enregistrez les repas, siestes, soins, observations et activités pour un carnet de liaison complet.
+          </p>
+        </article>
+
+        <article class="feature-card animate-fade-in-up" style="animation-delay: 0.3s;">
+          <div class="icon-circle info">
+            <i class="bi bi-chat-dots"></i>
+          </div>
+          <h3>Communication Instantanée</h3>
+          <p>
+            Partagez des messages, photos et le compte-rendu de la journée en temps réel avec les parents.
+          </p>
+        </article>
+
+        <article class="feature-card animate-fade-in-up" style="animation-delay: 0.4s;">
+          <div class="icon-circle warning">
+            <i class="bi bi-receipt-cutoff"></i>
+          </div>
+          <h3>Facturation Automatisée</h3>
+          <p>
+            Génération et suivi des factures mensuelles, reçus de paiement et exports pour votre comptabilité.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="benefits">
+    <div class="container-xl">
+        <div class="section-head">
+            <h2>Les bénéfices concrets pour votre structure</h2>
+            <p>Plus de temps pour les enfants, moins de stress administratif.</p>
+        </div>
+        
+        <div class="benefit-grid">
+            <div class="benefit-item animate-fade-in-up" style="animation-delay: 0.1s;">
+                <i class="bi bi-clock-history"></i>
+                <h3>Gains de temps massifs</h3>
+                <p>Automatisez l'administratif (factures, pointages) et gagnez jusqu'à **2h par jour** pour votre équipe.</p>
+            </div>
+            <div class="benefit-item animate-fade-in-up" style="animation-delay: 0.2s;">
+                <i class="bi bi-person-check"></i>
+                <h3>Tranquillité des parents</h3>
+                <p>Offrez aux familles une visibilité complète et rassurante sur le bien-être de leur enfant avec l'application mobile.</p>
+            </div>
+            <div class="benefit-item animate-fade-in-up" style="animation-delay: 0.3s;">
+                <i class="bi bi-bar-chart-line"></i>
+                <h3>Contrôle de gestion</h3>
+                <p>Un tableau de bord clair pour suivre l'occupation de la crèche, les paiements en attente et l'historique des données.</p>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="gallery">
+    <div class="container-xl">
+      <div class="section-head">
+        <h2>La vie de la crèche en images : moments de joie et de découverte</h2>
+        <p>Découvrez en un coup d'œil l'ambiance chaleureuse que Sama Crèche vous aide à créer et à partager.</p>
+      </div>
+
+      <div class="carousel-container animate-fade-in-up" (mouseenter)="stopAutoScroll()" (mouseleave)="startAutoScroll()">
+        <div class="carousel-track" [style.transform]="'translateX(-' + currentImageIndex * 100 + '%)'">
+          <div class="carousel-slide" *ngFor="let image of images; let i = index">
+            <img [src]="image" alt="Image de la vie de la crèche {{ i + 1 }}" />
+          </div>
+        </div>
+
+        <button class="carousel-control prev" (click)="prevImage()">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <button class="carousel-control next" (click)="nextImage()">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+
+        <div class="carousel-indicators">
+          <span 
+            *ngFor="let image of images; let i = index"
+            [class.active]="i === currentImageIndex"
+            (click)="goToImage(i)"
+          ></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="parents">
+    <div class="container-xl two-col">
+      <div class="text-col animate-fade-in-left">
+        <h2>**Pour les parents :** L'Application Mobile, votre lien privilégié</h2>
+        <p>
+          L'application **Sama Crèche Parents** est la **version numérique et interactive du carnet de liaison**. Les familles reçoivent des notifications et accèdent à l'historique complet de la journée de leur enfant, directement sur leur téléphone.
+        </p>
+        <ul class="check-list">
+          <li><i class="bi bi-check-circle"></i> **Compte-rendu quotidien** : repas, sieste, humeur, activités.</li>
+          <li><i class="bi bi-check-circle"></i> **Galerie photos** sécurisée et **messages** privés avec l'équipe.</li>
+          <li><i class="bi bi-check-circle"></i> **Factures, contrats** et documents administratifs accessibles.</li>
+          <li><i class="bi bi-check-circle"></i> Historique complet consultable à tout moment, même après le départ.</li>
+        </ul>
+        <a href="#demo" class="btn btn-outline-primary mt-3">Découvrez l'expérience parent</a>
+      </div>
+      <div class="image-col animate-fade-in-right">
+        <div class="mockup-phone parents-app shadow-lg">
+            
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="team">
+    <div class="container-xl two-col reverse">
+      <div class="image-col animate-fade-in-left">
+        <div class="mockup-screen team-view shadow-lg">
+            
+        </div>
+      </div>
+
+      <div class="text-col animate-fade-in-right">
+        <h2>**Pour l’équipe :** moins de papier, plus de pédagogie</h2>
+        <p>
+          Fini les multiples supports (cahiers, tableaux). Sama Crèche met à disposition de votre équipe un outil unique, ergonomique et facile à prendre en main, **réduisant les tâches administratives de 30%**.
+        </p>
+        <ul class="check-list">
+          <li><i class="bi bi-check-circle"></i> **Enregistrement rapide** des données de suivi (repas, sieste, etc.).</li>
+          <li><i class="bi bi-check-circle"></i> **Vue d'ensemble** en temps réel des enfants présents, des allergies, et des plannings.</li>
+          <li><i class="bi bi-check-circle"></i> **Gestion des droits d'accès** par profil (direction, éducateur, administration).</li>
+          <li><i class="bi bi-check-circle"></i> Amélioration de la **collaboration** au sein de l'équipe.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pricing">
+    <div class="container-xl">
+      <div class="section-head">
+        <h2>Tarif simple, transparent et adapté aux structures</h2>
+        <p>Un abonnement unique par crèche, sans surprise et sans engagement long.</p>
+      </div>
+
+      <div class="pricing-card animate-fade-in-up">
+        <div class="pricing-left">
+          <h3>Abonnement Sama Crèche : Sérénité Totale</h3>
+          <p>Toutes les fonctionnalités incluses, support et maintenance compris.</p>
+          <ul class="check-list">
+            <li><i class="bi bi-check-circle"></i> Nombre d’enfants **illimité**</li>
+            <li><i class="bi bi-check-circle"></i> Nombre d’utilisateurs/membres d’équipe **illimité**</li>
+            <li><i class="bi bi-check-circle"></i> Support technique réactif</li>
+            <li><i class="bi bi-check-circle"></i> Mises à jour régulières</li>
+          </ul>
+        </div>
+        <div class="pricing-right">
+          <div class="price-detail">
+            <div class="price-line">
+                <span class="label-price">Frais d'inscription / activation (unique) :</span>
+                <span class="amount-price">50 000 CFA</span>
+            </div>
+            <div class="price-line monthly">
+                <span class="label-price">Abonnement mensuel :</span>
+                <span class="amount-price">25 000 CFA / mois</span>
+            </div>
+          </div>
+          <p class="small">
+            *Les tarifs sont fixes, sans coûts cachés. Contactez-nous pour un devis si vous gérez plusieurs sites.
+          </p>
+          <a href="#demo" class="btn btn-primary btn-lg w-100 mb-2">Démarrer l'essai gratuit</a>
+          <a routerLink="/login" class="btn btn-outline-primary btn-lg w-100">
+            Déjà client ? Se connecter
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="demo">
+    <div class="container-xl two-col">
+      <div class="text-col animate-fade-in-left">
+        <h2>Parlons de votre crèche et de vos besoins</h2>
+        <p>
+          L’équipe Sama Crèche vous accompagne de A à Z. Nous vous proposons une **démo personnalisée et gratuite**, sans engagement.
+        </p>
+        <ul class="contact-metas">
+            <li><i class="bi bi-check-circle"></i> Reprise de vos données existantes.</li>
+            <li><i class="bi bi-check-circle"></i> Formation complète de votre équipe.</li>
+            <li><i class="bi bi-check-circle"></i> Assistance post-déploiement.</li>
+        </ul>
+        <p class="muted mt-3">
+          Laissez-nous vos coordonnées, nous vous rappelons rapidement pour vous présenter l’outil et répondre à vos questions.
+        </p>
+      </div>
+
+      <div class="contact-card animate-fade-in-right">
+        <form>
+            <h3 class="card-title">Demande de Démo Gratuite</h3>
+            <div class="mb-3">
+                <label class="form-label">Nom de la crèche</label>
+                <input type="text" class="form-control" placeholder="Crèche Les P'tits Lions" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Nom & prénom</label>
+                <input type="text" class="form-control" placeholder="Votre nom" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Adresse e-mail professionnelle</label>
+                <input type="email" class="form-control" placeholder="direction@exemple.com" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Téléphone</label>
+                <input type="tel" class="form-control" placeholder="+221…" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Message (Optionnel)</label>
+                <textarea rows="2" class="form-control" placeholder="Quel est votre principal besoin ?"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary w-100">
+                Envoyer ma demande de démo
+            </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <div class="container-xl footer-inner">
+      <div class="left">
+        <strong>Sama Crèche</strong>
+        <span>© {{ currentYear || '2025' }} · Jambar Tech</span>
+      </div>
+      <div class="right">
+        <a href="#">Mentions légales</a>
+        <a href="#">Politique de confidentialité</a>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -42,7 +42,18 @@ export class ListPlanningEquipeComponent implements OnInit, OnDestroy {
 
   constructor(public api: ApiService, private modal: NgbModal) {}
 
-  ngOnInit(): void { this.refresh(); }
+  async ngOnInit(): Promise<void> { 
+ // ON ATTEND QUE user_connected SOIT PRÊT (clé du succès)
+    await this.api.ensure_user_connected();
+
+    if (!this.api.user_connected?.id_structure) {
+      this.api.Swal_error('Aucune structure associée à votre compte');
+      console.groupEnd();
+      return;
+    }
+     this.refresh();
+     }   
+    
   ngOnDestroy(): void {}
 
   // ----- tools
@@ -73,7 +84,7 @@ export class ListPlanningEquipeComponent implements OnInit, OnDestroy {
   // ----- data
   refresh(): void {
     this.loading = true;
-    this.api.taf_post('planning_equipe/get', {}, (res: any) => {
+    this.api.taf_post_object('planning_equipe/get', {id_structure:this.api.user_connected.id_structure}, (res: any) => {
       this.loading = false;
       const rows: PlanningEquipe[] = res?.status ? (res.data || []) : [];
       this.events = rows.map(p => ({

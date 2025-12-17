@@ -1,0 +1,231 @@
+/* Variables et imports Bootstrap (assumés) */
+$primary: #1d4ed8; // Nouveau bleu plus profond
+$primary-soft: #e0edff;
+$bg-page: #f5f7fb;
+$dark: #111827;
+$text-muted: #6b7280;
+$success: #10b981;
+$info: #3b82f6;
+$warning: #f59e0b;
+
+// Mixin pour les animations d'apparition
+@mixin animate-in($name, $from-y: 0, $from-x: 0) {
+    @keyframes #{$name} {
+        from {
+            opacity: 0;
+            transform: translate($from-x, $from-y);
+        }
+        to {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+    }
+}
+
+@include animate-in(fade-in-up, 20px);
+@include animate-in(fade-in-right, 0, 20px);
+@include animate-in(fade-in-left, 0, -20px);
+
+.animate-fade-in-up {
+    opacity: 0;
+    animation: fade-in-up 0.6s ease-out forwards;
+}
+.animate-fade-in-right {
+    opacity: 0;
+    animation: fade-in-right 0.6s ease-out forwards;
+}
+.animate-fade-in-left {
+    opacity: 0;
+    animation: fade-in-left 0.6s ease-out forwards;
+}
+
+
+.landing-wrapper {
+    min-height: 100vh;
+    background: $bg-page;
+    display: flex;
+    flex-direction: column;
+}
+
+/* NAVBAR (Styles inchangés) */
+.landing-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #ffffffcc;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    gap: 1rem;
+}
+// ... (autres styles de navbar)
+
+/* HERO (Styles inchangés) */
+.hero-section {
+    padding: 3rem 0 4rem;
+    background: radial-gradient(circle at top left, $primary-soft, $bg-page 40%);
+}
+// ... (autres styles du hero)
+
+/* SECTIONS GENERALES (Styles inchangés) */
+.section {
+    padding: 3.5rem 0;
+}
+// ... (autres styles de sections)
+
+/* LAYOUT 2 COLONNES (Styles inchangés) */
+.two-col {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 3rem;
+    align-items: center;
+
+    @media (max-width: 992px) {
+        grid-template-columns: 1fr;
+    }
+}
+// ... (autres styles de colonnes)
+
+
+/* --- AJOUTS CARROUSEL --- */
+
+.carousel-container {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 1rem;
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.2);
+    aspect-ratio: 16 / 9; // Ratio moderne
+    background-color: $dark;
+}
+
+.carousel-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s ease-in-out; // Animation de transition
+}
+
+.carousel-slide {
+    min-width: 100%;
+    height: 100%;
+    overflow: hidden; // S'assurer que l'image ne dépasse pas
+    
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; // L'image couvre bien tout l'espace
+    }
+}
+
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(17, 24, 39, 0.6); // Fond sombre transparent
+    color: white;
+    border: none;
+    padding: 0.8rem 0.5rem;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 1.5rem;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    &.prev {
+        left: 0;
+        border-radius: 0 0.5rem 0.5rem 0;
+    }
+
+    &.next {
+        right: 0;
+        border-radius: 0.5rem 0 0 0.5rem;
+    }
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+
+    span {
+        display: block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: background 0.3s, transform 0.3s;
+
+        &.active {
+            background: $primary;
+            transform: scale(1.2);
+        }
+    }
+}
+
+
+/* --- MISE À JOUR MOCKUPS --- */
+
+.placeholder-image {
+    width: 320px;
+    height: 400px;
+    border-radius: 1.5rem;
+    background-color: #f1f5f9;
+    border: 5px solid #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-muted;
+    font-size: 0.9rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+
+    &.mockup-phone {
+        width: 300px;
+        height: 500px;
+        background: #111827; // Couleur sombre pour simuler un téléphone
+        
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+}
+
+.mockup-phone.parents-app {
+    // Style pour le mock-up de l'application parent
+    border-color: #3b82f6; // Bordure couleur app parents
+    box-shadow: 0 15px 40px rgba(59, 130, 246, 0.3);
+}
+
+.mockup-screen.team-view {
+    // Style pour le mock-up de l'interface équipe
+    border-color: #d1d5db;
+    width: 450px;
+    height: 350px;
+
+    @media (max-width: 576px) {
+        width: 100%;
+    }
+}
+
+/* FOOTER (Styles inchangés) */
+// ...

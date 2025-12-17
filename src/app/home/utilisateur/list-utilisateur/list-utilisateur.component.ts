@@ -24,8 +24,16 @@ import { UtilisateurTafType } from '../taf-type/utilisateur-taf-type';
     constructor(public api: ApiService,private modalService: NgbModal) {
   
     }
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
       console.groupCollapsed("ListUtilisateurComponent");
+      // ON ATTEND QUE user_connected SOIT PRÊT (clé du succès)
+    await this.api.ensure_user_connected();
+
+    if (!this.api.user_connected?.id_structure) {
+      this.api.Swal_error('Aucune structure associée à votre compte');
+      console.groupEnd();
+      return;
+    }
       this.get_utilisateur()
     }
     ngOnDestroy(): void {
@@ -33,7 +41,7 @@ import { UtilisateurTafType } from '../taf-type/utilisateur-taf-type';
     }
     get_utilisateur() {
       this.loading_get_utilisateur = true;
-      this.api.taf_post("utilisateur/get", {}, (reponse: any) => {
+      this.api.taf_post_object("utilisateur/get", {'su.id_structure':this.api.user_connected.id_structure}, (reponse: any) => {
         if (reponse.status) {
           this.les_utilisateurs = reponse.data
           console.log("Opération effectuée avec succés sur la table utilisateur. Réponse= ", reponse);

@@ -43,12 +43,21 @@ export class ListPlanningEnfantComponent implements OnInit, OnDestroy {
   loading = false;
   events: EventInput[] = [];
 
-  /** compteur de plannings par jour: 'YYYY-MM-DD' -> n */
   private dayCounts: Record<string, number> = {};
 
   constructor(public api: ApiService, private modal: NgbModal) {}
 
-  ngOnInit(): void { this.refresh(); }
+  async ngOnInit(): Promise<void> {
+      // ON ATTEND QUE user_connected SOIT PRÊT (clé du succès)
+    await this.api.ensure_user_connected();
+
+    if (!this.api.user_connected?.id_structure) {
+      this.api.Swal_error('Aucune structure associée à votre compte');
+      console.groupEnd();
+      return;
+    }
+     this.refresh();
+     }
   ngOnDestroy(): void {}
 
 // + au top du composant
@@ -106,22 +115,30 @@ private decorateCell = (arg: any) => {
 
 
 
-// ----- refresh() : recalcule les points bleus après fetch -----
 refresh(): void {
   this.loading = true;
-  const params = this.id_enfant ? { 'p.id_enfant': this.id_enfant } : {};
+
+  const params: any = {};
+  if (this.id_enfant) {
+    params['pe.id_enfant'] = this.id_enfant;
+  }
+  if (this.api.user_connected?.id_structure) {
+    params['pe.id_structure'] = this.api.user_connected.id_structure;
+  }
+
   this.api.taf_post('planning_enfant/get', params, (res: any) => {
     this.loading = false;
     const rows: Planning[] = res?.status ? (res.data || []) : [];
     this.events = rows.map((p) => this.toEvent(p));
-    this.recomputeDayCounts();                          // <— calcule le nombre par jour
+    this.recomputeDayCounts();
     this.calendarOptions = {
       ...this.calendarOptions,
-      events: [...this.events],                         // on garde les events pour le comptage/logic
-      dayCellDidMount: (arg: any) => this.decorateCell(arg) // rebind pour ce render
+      events: [...this.events],
+      dayCellDidMount: (arg: any) => this.decorateCell(arg),
     };
   }, () => (this.loading = false));
 }
+
 
 
   // ---------- FullCalendar ----------

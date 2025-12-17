@@ -103,7 +103,7 @@ export class ApiService {
       ]
     },
     {
-      name: 'Plannings',
+      name: 'Plannings Enfant',
       path: '/home/planning_enfant',
       icon: 'bi-calendar-week-fill',
       children: [
@@ -111,7 +111,8 @@ export class ApiService {
         // { name: 'Planning Équipes', path: '/home/planning/equipe', icon: 'bi-calendar-check-fill' }
       ],
       les_actions: [
-        { menu: 'Planning', ongle: 'Vue', id: '/home/planning', action: 'Accéder au planning' }
+        { menu: 'Planning', ongle: 'Vue', id: '/home/planning', action: 'Accéder au planning' },
+
       ]
     },
 
@@ -190,7 +191,8 @@ export class ApiService {
         { name: 'Liens de parenté', path: '/home/parametre/lien_parente', icon: 'bi-people' }
       ],
       les_actions: [
-        { menu: 'Paramètre', ongle: 'Vue', id: '/home/parametre', action: 'Accéder aux paramètres' }
+        { menu: 'Paramètre', ongle: 'Vue', id: '/home/parametre', action: 'Accéder aux paramètres' },
+        
       ]
     },
 
@@ -905,18 +907,33 @@ export class ApiService {
     await this.idb.delete_from_indexedDB(key);
   }
 
-  async get_token() {
-    //le token n'est pas encore chargé
-    if (this.network.token == undefined) {
-      this.network.token = await this.get_from_local_storage("token")
-      if (this.network.token != undefined && this.network.token != null) {// token existant
-        this.update_data_from_token()// mise a jour du token
-      }
-    } else {// token dèja chargé
-      this.update_data_from_token()// mise a jour du token
-    }
-    return this.network.token
+async get_token(): Promise<string | null> {
+  // si déjà chargé en mémoire et correct
+  if (typeof this.network.token === 'string' && this.network.token.length > 10) {
+    return this.network.token;
   }
+
+  const saved = await this.get_from_local_storage('token');
+
+  // ton storage doit contenir une string JWT
+  if (typeof saved === 'string') {
+    this.network.token = saved;
+    await this.update_data_from_token(saved); // <-- IMPORTANT : await
+    return saved;
+  }
+
+  // si jamais par erreur tu as stocké un objet
+  const tk = saved?.token_key ?? null;
+  if (typeof tk === 'string') {
+    this.network.token = tk;
+    await this.update_data_from_token(tk);
+    return tk;
+  }
+
+  this.network.token = null;
+  return null;
+}
+
   //les requetes http
   async taf_get(path: string, on_success: Function, on_error: Function) {
     let api_url = this.taf_base_url + path;
@@ -999,24 +1016,38 @@ export class ApiService {
     this.Swal_info("Merci de vérifier votre connexion")
     on_error(error)
   }
-  async update_data_from_token() {
-    let token_key = await this.get_from_local_storage("token")
-    const helper = new JwtHelperService();
-    const decodedToken = helper.decodeToken(token_key);
-    const expirationDate = helper.getTokenExpirationDate(token_key);
-    const isExpired = helper.isTokenExpired(token_key);
-
-    this.token = {
-      token_key: token_key,
-      token_decoded: decodedToken,
-      user_connected: decodedToken.taf_data,
-      is_expired: isExpired,
-      date_expiration: expirationDate
-    }
-    if (this.token.is_expired) {
-      this.on_token_expire()
-    }
+async update_data_from_token(token_key?: string) {
+  const tk = token_key ?? (await this.get_from_local_storage('token'));
+  if (!tk) {
+    this.token = { token_key: null, token_decoded: null, user_connected: null, is_expired: null, date_expiration: null };
+    this.user_connected = null;
+    return;
   }
+
+  const helper = new JwtHelperService();
+  const decodedToken = helper.decodeToken(tk);
+  const expirationDate = helper.getTokenExpirationDate(tk);
+  const isExpired = helper.isTokenExpired(tk);
+
+  this.token = {
+    token_key: tk,
+    token_decoded: decodedToken,
+    user_connected: decodedToken?.taf_data ?? null,
+    is_expired: isExpired,
+    date_expiration: expirationDate
+  };
+
+  // ✅ rend user_connected dispo partout (logo, id_parent, etc.)
+  this.user_connected = this.token.user_connected;
+
+  // ✅ optionnel mais très utile (évite les “premier affichage vide”)
+  if (this.user_connected) {
+    await this.save_on_local_storage('user_connected', this.user_connected);
+  }
+
+  if (this.token.is_expired) this.on_token_expire();
+}
+
   on_token_expire() {
     this.Swal_info("Votre session s'est expiré! Veuillez vous connecter à nouveau")
     this.delete_from_local_storage("token")
@@ -1303,7 +1334,7 @@ async update_infos(new_infos?: any) {
       // normalise juste les doublons dans la partie path
       try {
         const u = new URL(raw);
-        u.pathname = u.pathname.replace(/\/taf\/taf\//g, '/taf/').replace(/\/{2,}/g, '/');
+        u.pathname = u.pathname.replace(/\/taf\/taf\//g, '/taf/').replace(/\/{2,}/g, '/'); 
         return u.toString();
       } catch { return raw; }
     }
@@ -1340,33 +1371,31 @@ getCurrentStructureLogoUrl(): string {
 // Dans ApiService
 private ensureUserPromise: Promise<any> | null = null;
 
-async ensure_user_connected(): Promise<any | null> {
-  // Déjà chargé en mémoire ?
-  if (this.user_connected) return this.user_connected;
 
-  // Évite de lancer plusieurs fois la même promesse
+async ensure_user_connected(): Promise<any | null> {
+  if (this.user_connected) return this.user_connected;
   if (this.ensureUserPromise) return this.ensureUserPromise;
 
   this.ensureUserPromise = (async () => {
-    // 1) Essayer depuis le cache (IndexedDB)
+    // 1) cache
     const cached = await this.get_from_local_storage('user_connected');
     if (cached) {
       this.user_connected = cached;
       return cached;
     }
 
-    // 2) Sinon, fallback minimal depuis le token décodé (taf_data)
-    if (this.token?.user_connected) {
-      this.user_connected = this.token.user_connected;
-      return this.user_connected;
-    }
+    // 2) force charge token + decode
+    const tk = await this.get_token();     // appelle update_data_from_token() avec await
+    if (!tk) return null;
 
-    return null;
+    // 3) maintenant user_connected doit être prêt
+    return this.user_connected ?? this.token?.user_connected ?? null;
   })();
 
   const res = await this.ensureUserPromise;
   this.ensureUserPromise = null;
   return res;
 }
+
 
 }
