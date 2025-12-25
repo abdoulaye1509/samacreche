@@ -8,10 +8,10 @@
     <h5 class="mb-0">
       Parent •
       <span class="fw-semibold">
-    {{ (parent_to_detail?.prenom_parent || parentInfo?.prenom_parent) || ('P°' + id_parent) }}
-    {{ parent_to_detail?.nom_parent    || parentInfo?.nom_parent    || '' }}
-  </span>
-      <span class="text-muted ms-2">— Enfants {{ list?.length || 0 }}</span>
+        {{ (parent_to_detail?.prenom_parent || parentInfo?.prenom_parent) || ('P°' + id_parent) }}
+        {{ parent_to_detail?.nom_parent || parentInfo?.nom_parent || '' }}
+      </span>
+      <span class="text-muted ms-2">— Enfants {{ (list?.length ?? 0) }}</span>
     </h5>
   </div>
 
@@ -38,7 +38,7 @@
 
 <!-- GRILLE IDENTIQUE À LA LISTE INITIALE -->
 <div *ngIf="!loading_get_enfant && list?.length" class="row g-3 mt-2">
-  @for (one_enfant of list; track one_enfant) {
+@for (one_enfant of (list ?? []); track one_enfant.id_enfant) {
   <div class="col-12 col-sm-6 col-lg-4 col-xl-3" [routerLink]="['/home/enfant', one_enfant.id_enfant]">
     <div class="card child-card h-100" title="Voir les détails">
       <div class="card-body d-flex gap-3 align-items-center">
@@ -52,7 +52,7 @@
           <div class="fw-semibold text-truncate">
             {{ one_enfant.prenom_enfant }} {{ one_enfant.nom_enfant }}
           </div>
-          
+
         </div>
 
         <!-- Actions (ne pas déclencher le clic de la carte) -->
@@ -61,7 +61,7 @@
             title="Modifier">
             <i class="bi bi-pencil-square"></i>
           </button>
-         
+
         </div>
       </div>
     </div>

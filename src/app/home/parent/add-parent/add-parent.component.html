@@ -53,7 +53,7 @@
                autocomplete="email"
                [ngClass]="{'is-invalid': submitted && f['email_parent'].errors}">
         <div class="invalid-feedback" *ngIf="submitted && f['email_parent'].errors">
-          {{ f['email_parent'].errors?.['required'] ? 'Champ obligatoire' : 'Email invalide' }}
+          <!-- {{ f['email_parent'].errors?.['required'] ? 'Champ obligatoire' : 'Email invalide' }} -->
         </div>
       </div>
 

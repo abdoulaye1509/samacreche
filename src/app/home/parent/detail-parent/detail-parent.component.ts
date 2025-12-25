@@ -9,18 +9,19 @@ import { ApiService } from '../../../service/api/api.service';
 import { EditEnfantComponent } from '../../enfant/edit-enfant/edit-enfant.component';
 import { AddEnfantParentComponent } from '../../enfant/add-enfant-parent/add-enfant-parent.component';
 import { FormsModule } from '@angular/forms';
+import { EnfantTafType } from '../../enfant/taf-type/enfant-taf-type';
 
 @Component({
   selector: 'app-detail-Parent',
   standalone: true,
-  imports: [CommonModule, RouterLink,FormsModule],
+  imports: [CommonModule, RouterLink,FormsModule, EditEnfantComponent, AddEnfantParentComponent,],
   templateUrl: './detail-Parent.component.html',
   styleUrl: './detail-Parent.component.scss'
 })
 export class DetailParentComponent {
   loading_get_enfant = false;
   les_enfants: any[] = [];
-  list: any[] = [];
+list: EnfantTafType[] | null = null;
   loading_delete_enfant = false;
 
   parent_to_detail: any;

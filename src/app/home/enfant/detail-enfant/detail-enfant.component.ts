@@ -18,7 +18,7 @@ import { ListGalerieEnfantComponent } from '../../galerie-enfant/list-galerie-en
 export class DetailEnfantComponent implements OnInit {
   loading_get_enfant = false;
   enfant: any = null;
-  parents: any[] = [];
+  parents: any[] | null = null;
   id_enfant = 0;
   // 🆕 État de l'onglet actif
   activeTab: 'info' | 'parents' = 'info';
