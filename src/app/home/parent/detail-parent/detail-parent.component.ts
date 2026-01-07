@@ -11,11 +11,11 @@ import { AddEnfantParentComponent } from '../../enfant/add-enfant-parent/add-enf
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-detail-Parent',
+  selector: 'app-detail-parent',
   standalone: true,
   imports: [CommonModule, RouterLink,FormsModule],
-  templateUrl: './detail-Parent.component.html',
-  styleUrl: './detail-Parent.component.scss'
+  templateUrl: './detail-parent.component.html',
+  styleUrl: './detail-parent.component.scss'
 })
 export class DetailParentComponent {
   loading_get_enfant = false;
