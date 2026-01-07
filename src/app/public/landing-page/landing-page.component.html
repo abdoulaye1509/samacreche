@@ -1,1 +1,259 @@
-<p>landing-page works!</p>
+<div class="landing-wrapper">
+<!-- Header avec logo -->
+<header class="landing-header">
+  <div class="container d-flex justify-content-between align-items-center py-3">
+    <!-- Logo + Titre -->
+    <div class="d-flex align-items-center gap-3">
+      <img src="assets/images/logo.png" alt="Sama Crèche Logo" class="logo-img" />
+      <h1 class="brand-title mb-0">Sama Crèche</h1>
+    </div>
+
+    <!-- Boutons CTA -->
+    <div class="d-flex gap-3">
+      <a routerLink="/login" class="btn btn-outline-primary">
+        Connexion
+      </a>
+      <a href="#demo" class="btn btn-primary">
+        Demander une démo
+      </a>
+    </div>
+  </div>
+</header>
+<!-- Hero Section avec background image -->
+<section class="hero hero-with-bg">
+  <div class="hero-overlay"></div> <!-- Overlay pour lisibilité du texte -->
+
+  <div class="container position-relative">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>
+          La solution digitale qui <span class="highlight">simplifie la gestion</span> de votre crèche
+        </h1>
+        <p class="subtitle">
+          Gestion des enfants, équipes, activités et facturation sur une seule plateforme sécurisée et intuitive.
+        </p>
+
+        <div class="hero-cta">
+          <a routerLink="/demo" class="btn btn-primary btn-lg">
+            Demander une démo gratuite
+          </a>
+          <a routerLink="/login" class="btn btn-outline btn-lg">
+            Essayer gratuitement
+          </a>
+        </div>
+      </div>
+
+      <!-- Optionnel : tu peux garder ou supprimer le mockup -->
+      <!-- 
+      <div class="hero-visual">
+        <img src="assets/images/mockup-dashboard.png" alt="Tableau de bord Sama Crèche" class="mockup" />
+      </div>
+      -->
+    </div>
+  </div>
+</section>
+
+  <!-- 2. Problème → Solution -->
+  <section class="problem-solution section-alt">
+    <div class="container">
+      <h2 class="section-title">Vous perdez du temps tous les jours ?</h2>
+      <div class="grid-2">
+        <div class="card problem">
+          <h3>📄 Sans Sama Crèche</h3>
+          <ul>
+            <li>Gestion papier chronophage</li>
+            <li>Informations dispersées</li>
+            <li>Communication compliquée avec les parents</li>
+            <li>Erreurs administratives fréquentes</li>
+            <li>Manque de visibilité sur l’activité</li>
+          </ul>
+        </div>
+        <div class="card solution">
+          <h3>🚀 Avec Sama Crèche</h3>
+          <ul>
+            <li>Tout centralisé en un seul outil</li>
+            <li>Suivi quotidien automatisé</li>
+            <li>Communication instantanée avec les parents</li>
+            <li>Facturation simplifiée</li>
+            <li>Accès sécurisé par rôle</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Fonctionnalités clés -->
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title">Tout ce dont votre crèche a besoin</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="icon">👶</div>
+          <h3>Gestion enfants & parents</h3>
+          <p>Fiches complètes, allergies, autorisations, liens de parenté</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">👩‍🏫</div>
+          <h3>Équipes & droits d’accès</h3>
+          <p>Gestion fine des profils et permissions</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📅</div>
+          <h3>Suivi quotidien</h3>
+          <p>Repas, siestes, activités, humeur, observations</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🖼️</div>
+          <h3>Galerie photos & vidéos</h3>
+          <p>Partage sécurisé avec les parents</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🧾</div>
+          <h3>Facturation automatisée</h3>
+          <p>Mensualités, reçus, relances</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🏗️</div>
+          <h3>Multi-structures</h3>
+          <p>Gérez plusieurs crèches depuis un seul compte</p>
+        </div>
+      </div>
+
+      <div class="text-center mt-5">
+        <a routerLink="/features" class="btn btn-outline">
+          Voir toutes les fonctionnalités →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. À qui s’adresse -->
+  <section class="target section-alt">
+    <div class="container text-center">
+      <h2 class="section-title">Pour qui ?</h2>
+      <div class="target-list">
+        <span class="badge">Directeurs de crèches</span>
+        <span class="badge">Crèches privées</span>
+        <span class="badge">Micro-crèches</span>
+        <span class="badge">Réseaux multi-structures</span>
+        <span class="badge">Structures petite enfance</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Bénéfices concrets -->
+  <section class="benefits">
+    <div class="container">
+      <h2 class="section-title">Les résultats concrets</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <strong>⏱️ +2h gagnées par jour</strong>
+          <p>pour votre équipe</p>
+        </div>
+        <div class="benefit-item">
+          <strong>📉 80% d’erreurs administratives en moins</strong>
+          <p>grâce à l’automatisation</p>
+        </div>
+        <div class="benefit-item">
+          <strong>🤝 Parents plus sereins</strong>
+          <p>suivi en temps réel via l’app mobile</p>
+        </div>
+        <div class="benefit-item">
+          <strong>🔐 Données 100% sécurisées</strong>
+          <p>hébergement local au Sénégal</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Aperçu produit (carousel) -->
+  <section class="gallery section-alt">
+    <div class="container">
+      <h2 class="section-title">Aperçu de l’interface</h2>
+
+      <div class="carousel" (mouseenter)="onCarouselMouseEnter()" (mouseleave)="onCarouselMouseLeave()">
+        <div class="carousel-track" [style.transform]="'translateX(-' + currentImageIndex * 100 + '%)'">
+          <div class="carousel-slide" *ngFor="let image of images">
+            <img [src]="image" alt="Interface Sama Crèche" />
+          </div>
+        </div>
+
+        <button class="prev" (click)="prevImage()">‹</button>
+        <button class="next" (click)="nextImage()">›</button>
+
+        <div class="dots">
+          <span 
+            *ngFor="let _ of images; let i = index"
+            [class.active]="i === currentImageIndex"
+            (click)="goToImage(i)"
+          ></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Sécurité -->
+  <section class="security">
+    <div class="container text-center">
+      <h2 class="section-title">Sécurité & conformité</h2>
+      <div class="security-grid">
+        <div>🔒 Connexion sécurisée</div>
+        <div>👥 Gestion fine des droits</div>
+        <div>🌍 Hébergement local au Sénégal</div>
+        <div>🛡️ Données protégées et chiffrées</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Offre -->
+  <section class="pricing section-alt">
+    <div class="container">
+      <h2 class="section-title">Tarif simple et transparent</h2>
+      <div class="pricing-card">
+        <div class="price">
+          <strong>25 000 FCFA</strong> / mois
+          <span>par structure</span>
+        </div>
+        <ul class="included">
+          <li>Toutes les fonctionnalités</li>
+          <li>Enfants & utilisateurs illimités</li>
+          <li>Support prioritaire</li>
+          <li>Mises à jour incluses</li>
+          <li>Essai gratuit 30 jours</li>
+        </ul>
+        <div class="cta-final">
+          <a routerLink="/demo" class="btn btn-primary btn-lg w-100">
+            Démarrer l’essai gratuit
+          </a>
+          <p class="small mt-3">Sans engagement · Carte non requise</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. CTA Final -->
+  <section class="cta-final">
+    <div class="container text-center">
+      <h2>Prêt à simplifier votre quotidien ?</h2>
+      <p class="lead">Rejoignez les crèches qui gagnent du temps et de la sérénité avec Sama Crèche.</p>
+      <a routerLink="/demo" class="btn btn-primary btn-lg px-5">
+        Demander une démo personnalisée
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container d-flex justify-content-between flex-wrap gap-4">
+      <div>
+        <strong>Sama Crèche</strong><br>
+        <!-- © {{ new Date().getFullYear() }} Jambar Tech -->
+      </div>
+      <div class="links">
+        <a href="#">Mentions légales</a>
+        <a href="#">Politique de confidentialité</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+  </footer>
+</div>
