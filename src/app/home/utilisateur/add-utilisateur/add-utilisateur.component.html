@@ -1,225 +1,235 @@
-<div class="modal-header" data-bs-theme="ligth">
-      <h1 class="modal-title fs-5">Ajouter utilisateur</h1>
-      <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+<div class="modal-header" data-bs-theme="light">
+  <h1 class="modal-title fs-5">Ajouter un utilisateur</h1>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
+</div>
+
+<div class="modal-body">
+  <form
+    [formGroup]="reactiveForm_add_utilisateur"
+    (ngSubmit)="onSubmit_add_utilisateur()"
+    class="d-flex flex-column gap-4"
+  >
+    <!-- SECTION 1 : Infos générales -->
+    <div class="border rounded-3 p-3 p-md-4 bg-body">
+      <div class="mb-3">
+        <h6 class="mb-1">Informations générales</h6>
+        <small class="text-muted">Identité et informations de base</small>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label">Genre <span class="text-danger">*</span></label>
+          <ng-select
+            [items]="form_details.genres"
+            bindLabel="nom_genre"
+            bindValue="id_genre"
+            placeholder="Sélectionner"
+            formControlName="id_genre"
+            [ngClass]="{ 'is-invalid': submitted && f.id_genre.errors }"
+          ></ng-select>
+          @if (submitted && f.id_genre.errors) {
+            <div class="invalid-feedback d-block">Champ obligatoire</div>
+          }
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Groupe sanguin</label>
+          <ng-select
+            [items]="form_details.groupes_sanguins"
+            bindLabel="libelle_groupe_sanguin"
+            bindValue="id_groupe_sanguin"
+            placeholder="Optionnel"
+            formControlName="id_groupe_sanguin"
+          ></ng-select>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Prénom <span class="text-danger">*</span></label>
+          <input
+            class="form-control"
+            type="text"
+            formControlName="prenom_utilisateur"
+            placeholder="Ex: Awa"
+            [ngClass]="{ 'is-invalid': submitted && f.prenom_utilisateur.errors }"
+          />
+          @if (submitted && f.prenom_utilisateur.errors) {
+            <div class="invalid-feedback">Champ obligatoire</div>
+          }
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Nom <span class="text-danger">*</span></label>
+          <input
+            class="form-control"
+            type="text"
+            formControlName="nom_utilisateur"
+            placeholder="Ex: Diop"
+            [ngClass]="{ 'is-invalid': submitted && f.nom_utilisateur.errors }"
+          />
+          @if (submitted && f.nom_utilisateur.errors) {
+            <div class="invalid-feedback">Champ obligatoire</div>
+          }
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Date de naissance</label>
+          <input class="form-control" type="date" formControlName="date_naissance" />
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Profil / Fonction</label>
+          <input
+            class="form-control"
+            type="text"
+            formControlName="profil_utilisateur"
+            placeholder="Ex: Directrice, Éducatrice, Comptable..."
+          />
+        </div>
+      </div>
     </div>
-    <div class="modal-body">
-      <form [formGroup]="reactiveForm_add_utilisateur" 
-            (ngSubmit)="onSubmit_add_utilisateur()" 
-            #form_add_utilisateur="ngForm" 
-            class="row">
-        <!-- Erreur : La clé étrangère id_genre de la table utilisateur n'est pas référencée -->
-<!-- Erreur : La clé étrangère id_groupe_sanguin de la table utilisateur n'est pas référencée -->
-<!-- Erreur : La clé étrangère id_statut_utilisateur de la table utilisateur n'est pas référencée -->
 
-            <!-- Champ Prenom Utilisateur -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="prenom_utilisateur">Prenom Utilisateur</label>
-              <input id="prenom_utilisateur" class="form-control" 
-                     type="text" 
-                     formControlName="prenom_utilisateur" 
-                     placeholder="Prenom Utilisateur"  
-                     [ngClass]="{ 'is-invalid': submitted && f.prenom_utilisateur.errors }"/>
-              @if (submitted && f.prenom_utilisateur.errors) {
-                <div class="invalid-feedback">
-                  @if (f.prenom_utilisateur.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
+    <!-- SECTION 2 : Contact -->
+    <div class="border rounded-3 p-3 p-md-4 bg-body">
+      <h6 class="mb-3">Contact</h6>
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label">Téléphone <span class="text-danger">*</span></label>
+          <input
+            class="form-control"
+            type="text"
+            formControlName="telephone_utilisateur"
+            placeholder="+221 77 000 00 00"
+            [ngClass]="{ 'is-invalid': submitted && f.telephone_utilisateur.errors }"
+          />
+          @if (submitted && f.telephone_utilisateur.errors) {
+            <div class="invalid-feedback">Champ obligatoire</div>
+          }
+        </div>
 
-            <!-- Champ Nom Utilisateur -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="nom_utilisateur">Nom Utilisateur</label>
-              <input id="nom_utilisateur" class="form-control" 
-                     type="text" 
-                     formControlName="nom_utilisateur" 
-                     placeholder="Nom Utilisateur"  
-                     [ngClass]="{ 'is-invalid': submitted && f.nom_utilisateur.errors }"/>
-              @if (submitted && f.nom_utilisateur.errors) {
-                <div class="invalid-feedback">
-                  @if (f.nom_utilisateur.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
+        <div class="col-12 col-md-6">
+          <label class="form-label">Email <span class="text-danger">*</span></label>
+          <input
+            class="form-control"
+            type="email"
+            formControlName="email_utilisateur"
+            placeholder="user@creche.sn"
+            [ngClass]="{ 'is-invalid': submitted && f.email_utilisateur.errors }"
+          />
+          @if (submitted && f.email_utilisateur.errors) {
+            <div class="invalid-feedback">
+              @if (f.email_utilisateur.errors.required) { Champ obligatoire }
+              @if (f.email_utilisateur.errors.email) { Email invalide }
             </div>
+          }
+        </div>
 
-            <!-- Champ Adresse Utilisateur -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="adresse_utilisateur">Adresse Utilisateur</label>
-              <input id="adresse_utilisateur" class="form-control" 
-                     type="text" 
-                     formControlName="adresse_utilisateur" 
-                     placeholder="Adresse Utilisateur"  
-                     [ngClass]="{ 'is-invalid': submitted && f.adresse_utilisateur.errors }"/>
-              @if (submitted && f.adresse_utilisateur.errors) {
-                <div class="invalid-feedback">
-                  @if (f.adresse_utilisateur.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Telephone Utilisateur -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="telephone_utilisateur">Telephone Utilisateur</label>
-              <input id="telephone_utilisateur" class="form-control" 
-                     type="text" 
-                     formControlName="telephone_utilisateur" 
-                     placeholder="Telephone Utilisateur"  
-                     [ngClass]="{ 'is-invalid': submitted && f.telephone_utilisateur.errors }"/>
-              @if (submitted && f.telephone_utilisateur.errors) {
-                <div class="invalid-feedback">
-                  @if (f.telephone_utilisateur.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Date Naissance -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="date_naissance">Date Naissance</label>
-              <input id="date_naissance" class="form-control" 
-                     type="text" 
-                     formControlName="date_naissance" 
-                     placeholder="Date Naissance"  
-                     [ngClass]="{ 'is-invalid': submitted && f.date_naissance.errors }"/>
-              @if (submitted && f.date_naissance.errors) {
-                <div class="invalid-feedback">
-                  @if (f.date_naissance.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Email Utilisateur -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="email_utilisateur">Email Utilisateur</label>
-              <input id="email_utilisateur" class="form-control" 
-                     type="text" 
-                     formControlName="email_utilisateur" 
-                     placeholder="Email Utilisateur"  
-                     [ngClass]="{ 'is-invalid': submitted && f.email_utilisateur.errors }"/>
-              @if (submitted && f.email_utilisateur.errors) {
-                <div class="invalid-feedback">
-                  @if (f.email_utilisateur.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Mot De Passe -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="mot_de_passe">Mot De Passe</label>
-              <input id="mot_de_passe" class="form-control" 
-                     type="text" 
-                     formControlName="mot_de_passe" 
-                     placeholder="Mot De Passe"  
-                     [ngClass]="{ 'is-invalid': submitted && f.mot_de_passe.errors }"/>
-              @if (submitted && f.mot_de_passe.errors) {
-                <div class="invalid-feedback">
-                  @if (f.mot_de_passe.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Profil Utilisateur -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="profil_utilisateur">Profil Utilisateur</label>
-              <input id="profil_utilisateur" class="form-control" 
-                     type="text" 
-                     formControlName="profil_utilisateur" 
-                     placeholder="Profil Utilisateur"  
-                     [ngClass]="{ 'is-invalid': submitted && f.profil_utilisateur.errors }"/>
-              @if (submitted && f.profil_utilisateur.errors) {
-                <div class="invalid-feedback">
-                  @if (f.profil_utilisateur.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_at">Created At</label>
-              <input id="created_at" class="form-control" 
-                     type="text" 
-                     formControlName="created_at" 
-                     placeholder="Created At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_at.errors }"/>
-              @if (submitted && f.created_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated At -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_at">Updated At</label>
-              <input id="updated_at" class="form-control" 
-                     type="text" 
-                     formControlName="updated_at" 
-                     placeholder="Updated At"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_at.errors }"/>
-              @if (submitted && f.updated_at.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_at.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Created By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="created_by">Created By</label>
-              <input id="created_by" class="form-control" 
-                     type="text" 
-                     formControlName="created_by" 
-                     placeholder="Created By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.created_by.errors }"/>
-              @if (submitted && f.created_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.created_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Champ Updated By -->
-            <div class="form-group col-sm-12">
-              <label class="form-label" for="updated_by">Updated By</label>
-              <input id="updated_by" class="form-control" 
-                     type="text" 
-                     formControlName="updated_by" 
-                     placeholder="Updated By"  
-                     [ngClass]="{ 'is-invalid': submitted && f.updated_by.errors }"/>
-              @if (submitted && f.updated_by.errors) {
-                <div class="invalid-feedback">
-                  @if (f.updated_by.errors.required) {
-                    <div>Ce champ est obligatoire</div>
-                  }
-                </div>
-              }
-            </div>
-      </form>
+        <div class="col-12">
+          <label class="form-label">Adresse</label>
+          <input
+            class="form-control"
+            type="text"
+            formControlName="adresse_utilisateur"
+            placeholder="Rue, quartier, ville..."
+          />
+        </div>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary m-2" [disabled]="loading_add_utilisateur || loading_get_details_add_utilisateur_form"
-      (click)="form_add_utilisateur.ngSubmit.emit()">
-      {{ loading_add_utilisateur ? "En cours ..." : "Valider" }}
-      </button>
-      <button type="button" class="btn btn-outline-danger" (click)="activeModal.close()">Fermer</button>
+
+    <!-- SECTION 3 : Affectation -->
+    <div class="border rounded-3 p-3 p-md-4 bg-body">
+      <h6 class="mb-3">Affectation</h6>
+
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label">Structure <span class="text-danger">*</span></label>
+          <ng-select
+            [items]="form_details.structures"
+            bindLabel="nom_structure"
+            bindValue="id_structure"
+            placeholder="Sélectionner une structure"
+            formControlName="id_structure"
+            [ngClass]="{ 'is-invalid': submitted && f.id_structure.errors }"
+          ></ng-select>
+          @if (submitted && f.id_structure.errors) {
+            <div class="invalid-feedback d-block">Champ obligatoire</div>
+          }
+          <small class="text-muted d-block mt-1">
+            @if (api.user_connected?.id_privilege != 1) { Structure imposée à votre crèche }
+            @if (api.user_connected?.id_privilege == 1) { Le superadmin peut choisir n’importe quelle structure }
+          </small>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Privilège <span class="text-danger">*</span></label>
+          <ng-select
+            [items]="form_details.privileges"
+            bindLabel="nom_privilege"
+            bindValue="id_privilege"
+            placeholder="Sélectionner un privilège"
+            formControlName="id_privilege"
+            [ngClass]="{ 'is-invalid': submitted && f.id_privilege.errors }"
+          ></ng-select>
+          @if (submitted && f.id_privilege.errors) {
+            <div class="invalid-feedback d-block">Champ obligatoire</div>
+          }
+          <small class="text-muted d-block mt-1">
+            @if (api.user_connected?.id_privilege != 1) { La liste est filtrée : pas de DEV, pas de superadmin }
+            @if (api.user_connected?.id_privilege == 1) { Le superadmin peut attribuer tous les privilèges }
+          </small>
+        </div>
+      </div>
     </div>
+
+    <!-- SECTION 4 : Sécurité -->
+    <div class="border rounded-3 p-3 p-md-4 bg-body">
+      <h6 class="mb-3">Sécurité</h6>
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label">Mot de passe <span class="text-danger">*</span></label>
+          <input
+            class="form-control"
+            type="password"
+            formControlName="mot_de_passe"
+            placeholder="••••••••"
+            [ngClass]="{ 'is-invalid': submitted && f.mot_de_passe.errors }"
+          />
+          @if (submitted && f.mot_de_passe.errors) {
+            <div class="invalid-feedback">Champ obligatoire</div>
+          }
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Statut <span class="text-danger">*</span></label>
+          <ng-select
+            [items]="form_details.statuts_utilisateur"
+            bindLabel="libelle_statut_utilisateur"
+            bindValue="id_statut_utilisateur"
+            placeholder="Sélectionner"
+            formControlName="id_statut_utilisateur"
+            [ngClass]="{ 'is-invalid': submitted && f.id_statut_utilisateur.errors }"
+          ></ng-select>
+          @if (submitted && f.id_statut_utilisateur.errors) {
+            <div class="invalid-feedback d-block">Champ obligatoire</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="d-none"></button>
+  </form>
+</div>
+
+<div class="modal-footer d-flex justify-content-between">
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.close()">
+    Annuler
+  </button>
+  <button
+    type="button"
+    class="btn btn-primary"
+    [disabled]="loading_add_utilisateur"
+    (click)="onSubmit_add_utilisateur()"
+  >
+    <span *ngIf="loading_add_utilisateur" class="spinner-border spinner-border-sm me-2"></span>
+    {{ loading_add_utilisateur ? 'Création en cours...' : 'Créer l\'utilisateur' }}
+  </button>
+</div>
