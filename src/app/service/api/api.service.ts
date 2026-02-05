@@ -941,22 +941,39 @@ export class ApiService {
     this.Swal_info("Merci de vérifier votre connexion")
     on_error(error)
   }
+  // async taf_post(path: string, data_to_send: any, on_success: Function, on_error: Function) {
+  //   let api_url = this.taf_base_url + path;
+  //   const httpOptions = {
+  //     headers: new HttpHeaders({
+  //       Authorization: "Bearer " + await this.get_token(),
+  //     })
+  //   };
+  //   this.http.post(api_url, data_to_send, httpOptions).subscribe(
+  //     (reponse: any) => {// on success
+  //       on_success(reponse)
+  //     },
+  //     (error: any) => {// on error
+  //       this.on_taf_post_error(error, on_error)
+  //     }
+  //   )
+  // }
   async taf_post(path: string, data_to_send: any, on_success: Function, on_error: Function) {
-    let api_url = this.taf_base_url + path;
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: "Bearer " + await this.get_token(),
-      })
-    };
-    this.http.post(api_url, data_to_send, httpOptions).subscribe(
-      (reponse: any) => {// on success
-        on_success(reponse)
-      },
-      (error: any) => {// on error
-        this.on_taf_post_error(error, on_error)
-      }
-    )
-  }
+  let api_url = this.taf_base_url + path;
+  const token = await this.get_token();
+
+  const httpOptions = {
+    headers: new HttpHeaders({
+      Authorization: "Bearer " + token,
+      "X-Authorization": "Bearer " + token,
+    })
+  };
+
+  this.http.post(api_url, data_to_send, httpOptions).subscribe(
+    (reponse: any) => on_success(reponse),
+    (error: any) => this.on_taf_post_error(error, on_error)
+  );
+}
+
   async taf_post_object(path: string, data: any, ok: Function, ko: Function, force_online = false) {
     if (!force_online) {
       const cacheKey = path + JSON.stringify(data);

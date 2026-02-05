@@ -1,4 +1,3 @@
-// add-utilisateur.component.ts
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -20,6 +19,10 @@ export class AddUtilisateurComponent implements OnInit, OnDestroy {
   loading_add_utilisateur = false;
   loading_get_details_add_utilisateur_form = false;
 
+  // type_privilege
+  readonly TYPE_PRIVILEGE_DEV = 1;
+  readonly TYPE_PRIVILEGE_CRECHE = 2;
+
   // listes utilisées par les ng-select
   form_details: any = {
     genres: [],
@@ -29,12 +32,8 @@ export class AddUtilisateurComponent implements OnInit, OnDestroy {
     privileges: []
   };
 
-  // constantes "type_privilege"
-   readonly TYPE_PRIVILEGE_DEV = 1;
-   readonly TYPE_PRIVILEGE_CRECHE = 2;
-
   constructor(
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     public api: ApiService,
     public activeModal: NgbActiveModal
   ) {}
@@ -42,8 +41,10 @@ export class AddUtilisateurComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     console.groupCollapsed('AddUtilisateurComponent');
 
-    // important : s'assurer que user_connected est prêt
-    await this.api.ensure_user_connected();
+    // si ta méthode existe ; sinon enlève ces 2 lignes
+    if (typeof (this.api as any).ensure_user_connected === 'function') {
+      await (this.api as any).ensure_user_connected();
+    }
 
     console.warn('User connected:', this.api.user_connected);
 
@@ -59,12 +60,12 @@ export class AddUtilisateurComponent implements OnInit, OnDestroy {
     return this.reactiveForm_add_utilisateur.controls;
   }
 
-   super_admin(): boolean {
+  super_admin(): boolean {
     return Number(this.api.user_connected?.id_privilege) === 1;
   }
 
   init_form() {
-    this.reactiveForm_add_utilisateur = this.formBuilder.group({
+    this.reactiveForm_add_utilisateur = this.fb.group({
       // Général
       id_genre: [null, Validators.required],
       id_groupe_sanguin: [null],
@@ -84,13 +85,13 @@ export class AddUtilisateurComponent implements OnInit, OnDestroy {
       id_statut_utilisateur: [1, Validators.required],
 
       // Sécurité
-      mot_de_passe: ['', Validators.required],
+      mot_de_passe: ['', Validators.required]
     });
 
-    // Non superadmin : structure forcée + champ verrouillé
+    // Non-superadmin : structure forcée + verrouillage du champ
     if (!this.super_admin() && this.api.user_connected?.id_structure) {
       this.reactiveForm_add_utilisateur.patchValue({
-        id_structure: this.api.user_connected.id_structure
+        id_structure: Number(this.api.user_connected.id_structure)
       });
       this.reactiveForm_add_utilisateur.get('id_structure')?.disable();
     }
@@ -112,58 +113,36 @@ export class AddUtilisateurComponent implements OnInit, OnDestroy {
 
         const data = reponse.data || {};
 
-        // mapping selon tes clés réelles (d'après tes logs)
-        const genres = data.les_genres || [];
-        const groupes = data.les_groupe_sanguins || data.les_groupes_sanguins || [];
-        const statuts = data.les_statut_utilisateurs || data.les_statut_utilisateur || [];
-        const structures = data.les_structures || [];
-        const privileges = data.les_privileges || [];
+        // mapping selon tes clés (d’après tes logs)
+        this.form_details.genres = data.les_genres || [];
+        this.form_details.groupes_sanguins = data.les_groupe_sanguins || data.les_groupes_sanguins || [];
+        this.form_details.statuts_utilisateur = data.les_statut_utilisateurs || data.les_statut_utilisateur || [];
+        this.form_details.structures = data.les_structures || [];
+        const privilegesAll = data.les_privileges || [];
 
-        this.form_details.genres = genres;
-        this.form_details.groupes_sanguins = groupes;
-        this.form_details.statuts_utilisateur = statuts;
-        this.form_details.structures = structures;
-
-        // ✅ FILTRAGE PRIVILEGES
+        // ✅ FILTRAGE PRIVILEGES (privilèges CRECHE globaux)
         if (this.super_admin()) {
-          // superadmin : tout
-          this.form_details.privileges = privileges;
+          // superadmin : voit tout
+          this.form_details.privileges = privilegesAll;
         } else {
-          // admin creche : seulement privilèges CRECHE, de sa structure, jamais superadmin, jamais DEV
-          const myStruct = Number(this.api.user_connected?.id_structure);
-          this.form_details.privileges = (privileges || []).filter((p: any) => {
-            const idPriv = Number(p.id_privilege);
-            const typePriv = Number(p.id_type_privilege);
-            const idStruct = p.id_structure === null ? null : Number(p.id_structure);
-
-            // interdit superadmin
-            if (idPriv === 1) return false;
-
-            // uniquement type CRECHE
-            if (typePriv !== this.TYPE_PRIVILEGE_CRECHE) return false;
-
-            // uniquement privilèges de sa structure
-            if (Number.isFinite(myStruct) && myStruct > 0) {
-              return idStruct === myStruct;
-            }
-
-            return false;
-          });
+          // admin crèche : voit uniquement CRECHE (id_type_privilege=2) + jamais superadmin
+          this.form_details.privileges = privilegesAll.filter((p: any) =>
+            Number(p.id_privilege) !== 1 &&
+            Number(p.id_type_privilege) === this.TYPE_PRIVILEGE_CRECHE
+          );
         }
 
-        // Pré-sélection structure si non superadmin
+        // Pré-sélection structure (non-superadmin)
         if (!this.super_admin() && this.api.user_connected?.id_structure) {
           this.reactiveForm_add_utilisateur.patchValue({
-            id_structure: this.api.user_connected.id_structure
+            id_structure: Number(this.api.user_connected.id_structure)
           });
         }
 
-        // Pré-sélection privilege par défaut (ex: 4) si existe
+        // Pré-sélection privilege par défaut (ex: 4) si présent
         if (!this.reactiveForm_add_utilisateur.get('id_privilege')?.value) {
-          const def = this.form_details.privileges?.find((p: any) => Number(p.id_privilege) === 4);
-          if (def) {
-            this.reactiveForm_add_utilisateur.patchValue({ id_privilege: def.id_privilege });
-          }
+          const def = this.form_details.privileges.find((p: any) => Number(p.id_privilege) === 4);
+          if (def) this.reactiveForm_add_utilisateur.patchValue({ id_privilege: def.id_privilege });
         }
 
         console.log('Détails form chargés:', this.form_details);
@@ -186,20 +165,21 @@ export class AddUtilisateurComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // getRawValue() => récupère id_structure même si disabled
+    // getRawValue() récupère aussi les champs disabled
     const data = this.reactiveForm_add_utilisateur.getRawValue();
 
     // Sécurité front
     if (!this.super_admin()) {
       data.id_structure = Number(me.id_structure);
 
-      // interdiction explicite superadmin
+      // interdit explicite superadmin
       if (Number(data.id_privilege) === 1) {
         this.api.Swal_error("Vous n'avez pas le droit de créer un superadmin.");
         return;
       }
     }
 
+    // created_by doit venir du token côté backend, mais on peut le laisser ici aussi
     data.created_by = Number(me.id_utilisateur);
 
     this.add_utilisateur(data);

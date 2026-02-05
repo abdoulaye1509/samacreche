@@ -27,6 +27,49 @@
       </div>
     </div>
 
+<!-- Type de privilège -->
+<div class="col-12">
+  <label class="form-label fw-bold text-primary">Type de privilège</label>
+
+  <div class="d-flex flex-wrap gap-3 mt-2">
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        id="type_creche"
+        formControlName="id_type_privilege"
+        [value]="TYPE_PRIVILEGE_CRECHE"
+        (change)="onTypePrivilegeChange()"
+      />
+      <label class="form-check-label" for="type_creche">
+        Crèche (lié à ma structure)
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        id="type_dev"
+        formControlName="id_type_privilege"
+        [value]="TYPE_PRIVILEGE_DEV"
+        (change)="onTypePrivilegeChange()"
+      />
+      <label class="form-check-label" for="type_dev">
+        Développeur (global)
+      </label>
+    </div>
+  </div>
+
+  <small class="text-muted d-block mt-2">
+    @if (reactiveForm_add_privilege.get('id_type_privilege')?.value == TYPE_PRIVILEGE_DEV) {
+      Ce privilège sera global : id_structure = NULL
+    }
+    @if (reactiveForm_add_privilege.get('id_type_privilege')?.value == TYPE_PRIVILEGE_CRECHE) {
+      Ce privilège sera lié à votre structure : id_structure = {{ api.user_connected?.id_structure }}
+    }
+  </small>
+</div>
 
     <!-- Checkbox list for rights -->
     <div class="col-12 mt-2">
